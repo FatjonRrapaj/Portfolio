@@ -19,9 +19,39 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--dark);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+@font-face {
+  font-family: "Anonymous Pro";
+  src: url(../src/fonts/AnonymousPro/Anonymous\ Pro.ttf);
+}
+
+@font-face {
+  font-family: "Anonymous Pro Bold";
+  src: url(../src/fonts/AnonymousPro/Anonymous\ Pro\ B.ttf);
+}
+
+@font-face {
+  font-family: "Anonymous Pro Black";
+  src: url(../src/fonts/AnonymousPro/Anonymous\ Pro\ BI.ttf);
+}
+
+@font-face {
+  font-family: "Anonymous Pro Italic";
+  src: url(../src/fonts/AnonymousPro/Anonymous\ Pro\ I.ttf);
+}
+
+:root {
+  --blue: #1a96d6;
+  --darkBlue: #0477bf;
+  --green: #a4bf41;
+  --yellow: #bfb63b;
+  --dark: #262626;
+  --grey: #d0d8d9;
 }
