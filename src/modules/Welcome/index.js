@@ -1,72 +1,28 @@
-import React from "react";
-import { Html } from "@react-three/drei";
-import { useControls } from "leva";
+import React, { useImperativeHandle, forwardRef } from "react";
+import "./styles.css";
 
-import { Comment, Text } from "../components";
-
-function Welcome() {
-  /**
-   * Landing Text Controls
-   */
-
-  const { x, y, z, rX, rY, rZ } = useControls("Landing TXT", {
-    x: {
-      min: -100,
-      max: 100,
-      value: 0,
-      step: 0.1,
-    },
-    y: {
-      min: -100,
-      max: 100,
-      value: 0,
-      step: 0.1,
-    },
-    z: {
-      min: -100,
-      max: 100,
-      value: 100,
-      step: 0.1,
-    },
-    rX: {
-      min: -100,
-      max: 100,
-      value: 0,
-      step: Math.PI / 4,
-    },
-    rY: {
-      min: -100,
-      max: 100,
-      value: 0,
-      step: Math.PI / 4,
-    },
-    rZ: {
-      min: -100,
-      max: 100,
-      value: 0,
-      step: Math.PI / 4,
-    },
+const Welcome = forwardRef(({ tl }, ref) => {
+  useImperativeHandle(ref, () => {
+    return {
+      fadeOut() {
+        tl.to(ref.current, { opacity: 0 });
+      },
+    };
   });
 
   return (
-    <Html
-      prepend
-      transform
-      position={[-window.innerWidth, y, z]}
-      scale={[100, 100, 100]}
-      rotation={[rX, rY, rZ]}
-    >
-      <Comment>&emsp;//Intro</Comment>
+    <div className="welcomeContainer">
+      <h1>
+        Hello <div className="helloHand">👋</div> ,
+      </h1>
+      <h2>I'm Fatjon</h2>
+      <h6>React Js and React Native Developer</h6>
       <br />
-      <Text>
-        &ensp;`Hello,I'm Fatjon
-        <br />
-        &ensp; A Web and Mobile developer
-        <br />
-        &ensp; with 4+ years of experience`
-      </Text>
-    </Html>
+      <br />
+      <br />
+      <p>I love making cool webistes and mobile apps (to be edited)</p>
+    </div>
   );
-}
+});
 
 export default Welcome;

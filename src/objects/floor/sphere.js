@@ -4,23 +4,12 @@ import { useControls } from "leva";
 import noiseShader from "../shaders/noiseShader";
 
 const Sphere = forwardRef(
-  ({ name = "sphere", offset = 0, wireframe = false }, sphere) => {
-    const material = useRef();
-
-    let materialShader;
-
-    /**
-     * Sphere Controls
-     */
-
-    useEffect(() => {
-      console.log("material", material.current);
-    });
-
-    const {
+  (
+    {
+      name = "sphere",
+      offset = 0,
       radius,
       detail,
-      color,
       polygonOffsetFactor,
       polygonOffsetUnits,
       opacity,
@@ -31,9 +20,23 @@ const Sphere = forwardRef(
       wireframeLinecap,
       wireframeLinejoin,
       roughness,
-    } = useControls(`${name}`, {
+    },
+    sphere
+  ) => {
+    const material = useRef();
+
+    let materialShader;
+
+    /**
+     * Sphere Controls
+     */
+
+    const { color, wireframe } = useControls(`${name}`, {
+      color: "#FFFFFF",
+      wireframe: false,
+
       noiseFactor: {
-        value: 0.0,
+        value: 80,
         min: 0.0,
         max: 500.0,
         onChange: function onNoiseFactorChange(n) {
@@ -53,104 +56,10 @@ const Sphere = forwardRef(
           }
         },
       },
-      radius: {
-        value: 199,
-        min: 1,
-        max: 500,
-        step: 10,
-      },
-      detail: {
-        value: 160,
-        min: 1,
-        max: 500,
-        step: 0.5,
-      },
-      opacity: {
-        value: 1,
-        max: 1,
-        min: 0,
-        step: 0.01,
-      },
-      polygonOffsetFactor: {
-        min: -100,
-        max: 100,
-        step: 1,
-        value: 1,
-      },
-      polygonOffsetUnits: {
-        min: -100,
-        max: 100,
-        step: 1,
-        value: 1,
-      },
-      wireframeLinewidth: {
-        min: -100,
-        max: 100,
-        step: 1,
-        value: 1,
-      },
-      wireframeLinecap: {
-        options: {
-          butt: "butt",
-          round: "round",
-          square: "square",
-        },
-        value: "round",
-      },
-      wireframeLinejoin: {
-        options: {
-          bevel: "bevel",
-          round: "round",
-          miter: "miter",
-        },
-        value: "round",
-      },
-      roughness: {
-        value: 0.8,
-        min: 0,
-        max: 1,
-        step: 0.01,
-      },
-      color: "#FFFFFF",
-      positionX: {
-        value: 0,
-        min: -100,
-        max: 100,
-        step: 0.01,
-      },
-      positionY: {
-        value: 0,
-        min: -100,
-        max: 100,
-        step: 0.01,
-      },
-      positionZ: {
-        value: 10,
-        min: -100,
-        max: 100,
-        step: 0.01,
-      },
-      rotationX: {
-        value: 0,
-        step: Math.PI / 4,
-        min: -1000,
-        max: 1000,
-        onChange: (val) => sphere.current && sphere.current.rotateX(val),
-      },
-      rotationY: {
-        value: 0,
-        step: Math.PI / 4,
-        min: -1000,
-        max: 1000,
-        onChange: (val) => sphere.current && sphere.current.rotateY(val),
-      },
-      rotationZ: {
-        value: 0,
-        step: Math.PI / 4,
-        min: -1000,
-        max: 1000,
-        onChange: (val) => sphere.current && sphere.current.rotateZ(val),
-      },
+    });
+
+    useEffect(() => {
+      console.log("material", material.current);
     });
 
     return (
@@ -187,7 +96,7 @@ const Sphere = forwardRef(
               ...shader.uniforms,
               uNoiseFactor: {
                 //80.0
-                value: 0,
+                value: 80.0,
               },
               uPosotionNoiseFactor: {
                 //5.0

@@ -2,22 +2,20 @@ import React, { useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import World from "../objects/world";
 
-import "./style.css";
-
 import { Welcome } from "../modules";
-import DirectionalLight from "../objects/directionalLight";
+
+import "./styles.css";
 
 const Scene = () => {
   const canvas = useRef();
 
   return (
-    <div id="container">
-      <Canvas ref={canvas} className="webgl">
+    <div className="container">
+      <Canvas antialias ref={canvas} className="webgl">
         <World />
-
-        <Welcome />
-        <DirectionalLight />
       </Canvas>
+
+      <Welcome />
     </div>
   );
 };
