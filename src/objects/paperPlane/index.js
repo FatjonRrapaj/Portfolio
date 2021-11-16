@@ -31,32 +31,32 @@ export default forwardRef(({ ...props }, plane) => {
     rotationZ,
   } = useControls("plane", {
     scaleFactor: {
-      value: 12,
+      value: 3,
       min: 0.1,
       max: 100,
       step: 0.5,
     },
     color: "#6200ff",
     positionX: {
-      value: -338.92,
+      value: 0,
       min: -1000,
       max: 1000,
       step: 0.01,
     },
     positionY: {
-      value: 40.0,
+      value: 0,
       min: -1000,
       max: 1000,
       step: 0.1,
     },
     positionZ: {
-      value: -227.2,
+      value: 0,
       min: -1000,
       max: 1000,
       step: 0.1,
     },
     rotationX: {
-      value: -438.39,
+      value: Math.PI / 2,
       step: Math.PI / 10,
       min: -1000,
       max: 1000,
@@ -76,11 +76,35 @@ export default forwardRef(({ ...props }, plane) => {
     wireframe: false,
   });
 
+  const visibleHeightAtZDepth = (depth, camera) => {
+    // compensate for cameras not positioned at z=0
+    const cameraOffset = camera.position.z;
+    if (depth < cameraOffset) depth -= cameraOffset;
+    else depth += cameraOffset;
+
+    // vertical fov in radians
+    const vFOV = (camera.fov * Math.PI) / 180;
+
+    // Math.abs to ensure the result is always positive
+    return 2 * Math.tan(vFOV / 2) * Math.abs(depth);
+  };
+
+  const visibleWidthAtZDepth = (depth, camera) => {
+    const height = visibleHeightAtZDepth(depth, camera);
+    return height * camera.aspect;
+  };
+
   useEffect(() => {
     const { fold } = actions;
     plane.current && plane.current.quaternion.copy(camera.quaternion);
     fold.repetitions = 1;
     fold.clampWhenFinished = true;
+    if (plane.current) {
+      plane.current.rotation.x = Math.PI / 2;
+      console.log("Pl CURRENT", plane.current);
+      plane.current.position.x = -(visibleWidthAtZDepth(0, camera) / 2) + 34;
+      plane.current.position.y = -(visibleHeightAtZDepth(0, camera) / 4);
+    }
     setTimeout(() => {
       // fold.play();
     }, 2000);
@@ -107,7 +131,7 @@ export default forwardRef(({ ...props }, plane) => {
         rotation={[rotationX, rotationY, rotationZ]}
         ref={plane}
         name="Plane"
-        position={[positionX, positionY, positionZ]}
+        position={[-1000, positionY, positionZ]}
         geometry={nodes.Plane.geometry}
         material={materials.Material}
         rotation={[rotationX, rotationY, rotationZ]}

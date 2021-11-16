@@ -32,9 +32,9 @@ const Floor = forwardRef((props, sphericFloor) => {
       },
     },
     positionZ: {
-      value: 0,
-      min: -1000,
-      max: 1000,
+      value: 200,
+      min: -2000,
+      max: 2000,
       step: 0.01,
       onChange: (val) => {
         cam.position.z = val;
@@ -170,8 +170,8 @@ const Floor = forwardRef((props, sphericFloor) => {
     },
     positionX: {
       value: 0,
-      min: -100,
-      max: 100,
+      min: -1000,
+      max: 1000,
       step: 0.01,
     },
     positionY: {
