@@ -20,6 +20,8 @@ const Sphere = forwardRef(
       wireframeLinecap,
       wireframeLinejoin,
       roughness,
+      wireframe,
+      color,
     },
     sphere
   ) => {
@@ -31,10 +33,7 @@ const Sphere = forwardRef(
      * Sphere Controls
      */
 
-    const { color, wireframe } = useControls(`${name}`, {
-      color: "#FFFFFF",
-      wireframe: false,
-
+    useControls(`${name}`, {
       noiseFactor: {
         value: 80,
         min: 0.0,
@@ -65,13 +64,18 @@ const Sphere = forwardRef(
     return (
       <mesh
         // receiveShadow={true}
-        /**
-          scale={(viewport.width / 5) * (active ? 1.5 : 1)} so it's scalable
-        */
+
+        layers={1}
         position={[positionX, positionY, positionZ]}
         ref={sphere}
+        onPointerDown={() => {
+          console.log("SPHERE CLICKEDD");
+        }}
       >
-        <icosahedronBufferGeometry args={[radius + offset, detail]} />
+        <icosahedronBufferGeometry
+          attach="geometry"
+          args={[radius + offset, detail]}
+        />
         <meshStandardMaterial
           ref={material}
           side={THREE.DoubleSide}

@@ -9,7 +9,7 @@ import { useControls } from "leva";
 
 extend({ EffectComposer, ShaderPass, RenderPass });
 
-function Effect({ effects }) {
+function Effect() {
   const { gl, scene, camera, size } = useThree();
 
   useEffect(() => {
@@ -79,12 +79,18 @@ function Effect({ effects }) {
 
   useFrame(() => {
     //APPLY EFFECTS TO A PARTICULAR LAYER.
-    // gl.clear();
-    // camera.layers.set(1);
-    // effectComposer.render();
 
-    // gl.clearDepth();
-    // camera.layers.set(0);
+    gl.autoClear = false;
+    gl.clear();
+    camera.layers.set(1);
+    effectComposer.render();
+
+    gl.clearDepth();
+    camera.layers.set(2);
+    gl.render(scene, camera);
+
+    gl.clearDepth();
+    camera.layers.set(0);
     gl.render(scene, camera);
   }, 1);
 

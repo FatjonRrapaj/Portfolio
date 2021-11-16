@@ -11,10 +11,20 @@ const Scene = () => {
 
   return (
     <div className="container">
-      <Canvas antialias ref={canvas} className="webgl">
+      <Canvas
+        shadows
+        camera={{
+          far: 1500,
+          near: 0.01,
+          fov: 45,
+          aspect: window.innerWidth / window.innerHeight,
+        }}
+        antialias
+        ref={canvas}
+        className="webgl"
+      >
         <World />
       </Canvas>
-
       <Welcome />
     </div>
   );

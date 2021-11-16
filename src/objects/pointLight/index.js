@@ -12,7 +12,7 @@ function PointLight() {
    */
   const { positionX, positionY, positionZ, color, intensity, decay, distance } =
     useControls("pointLight", {
-      color: "#ffffff",
+      color: "#f2eecb",
       intensity: {
         min: 0.01,
         value: 3,
@@ -35,29 +35,31 @@ function PointLight() {
         min: -500,
         max: 500,
         step: 10,
-        value: 0,
+        value: -110,
       },
       positionY: {
         min: -500,
         max: 500,
         step: 10,
-        value: 200,
+        value: 90,
       },
       positionZ: {
         min: -500,
         max: 500,
         step: 10,
-        value: 180,
+        value: -30,
       },
     });
 
   return (
     <pointLight
       ref={pointLight}
+      layers={2}
       position={[positionX, positionY, positionZ]}
       color={color}
       intensity={intensity}
       distance={distance}
+      castShadow={true}
       decay={decay}
     />
   );

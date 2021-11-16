@@ -1,23 +1,20 @@
-import React, { useRef, createRef, useEffect } from "react";
+import React, { useRef, createRef, useEffect, forwardRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
 
 import Sphere from "./sphere";
 
-function Floor() {
-  const sphericFloor = useRef();
+const Floor = forwardRef((props, sphericFloor) => {
   const sphere = createRef();
   const sphere2 = createRef();
-  const sphereMaterialShader = createRef();
-  const sphere2MaterialShader = createRef();
   let cam = null;
 
   /**
    * Camera Controls
    */
-  const { lookX, lookY, lookZ } = useControls("camera", {
+  useControls("camera", {
     positionX: {
-      value: -150.0,
+      value: 0,
       min: -1000,
       max: 1000,
       step: 0.01,
@@ -26,7 +23,7 @@ function Floor() {
       },
     },
     positionY: {
-      value: 81.8,
+      value: 0,
       min: -1000,
       max: 1000,
       step: 0.01,
@@ -35,7 +32,7 @@ function Floor() {
       },
     },
     positionZ: {
-      value: 250,
+      value: 0,
       min: -1000,
       max: 1000,
       step: 0.01,
@@ -84,10 +81,6 @@ function Floor() {
     autoRotate: false,
   });
 
-  useFrame(() => {
-    if (autoRotate) sphericFloor.current.rotation.x += 0.005;
-  });
-
   const {
     radius,
     detail,
@@ -101,7 +94,16 @@ function Floor() {
     wireframeLinecap,
     wireframeLinejoin,
     roughness,
+    sphere1Color,
+    sphere2Color,
+    offset,
+    rotationSpeed,
+    sphere1WireFrame,
+    sphere2WireFrame,
   } = useControls("floorSphere", {
+    sphere1Color: "#00cfff",
+    sphere2Color: "#26ffa6",
+    offset: 0.2,
     radius: {
       value: 199,
       min: 1,
@@ -160,6 +162,12 @@ function Floor() {
       max: 1,
       step: 0.01,
     },
+    rotationSpeed: {
+      value: 0.05,
+      min: 0.001,
+      max: 1,
+      step: 0.001,
+    },
     positionX: {
       value: 0,
       min: -100,
@@ -173,9 +181,9 @@ function Floor() {
       step: 0.01,
     },
     positionZ: {
-      value: 10,
-      min: -100,
-      max: 100,
+      value: -200,
+      min: -1000,
+      max: 2000,
       step: 0.01,
     },
     rotationX: {
@@ -199,10 +207,18 @@ function Floor() {
       max: 1000,
       onChange: (val) => sphere.current && sphere.current.rotateZ(val),
     },
+    sphere1WireFrame: false,
+    sphere2WireFrame: true,
+  });
+
+  useFrame(() => {
+    // if (autoRotate) sphericFloor.current.rotation.y += 0.005;
+    // if (autoRotate) sphericFloor.current.rotation.x += 0.005;
+    if (autoRotate) sphericFloor.current.rotation.x += 0.0001;
   });
 
   return (
-    <group ref={sphericFloor}>
+    <group layers={1} ref={sphericFloor}>
       <Sphere
         radius={radius}
         detail={detail}
@@ -217,6 +233,8 @@ function Floor() {
         wireframeLinejoin={wireframeLinejoin}
         roughness={roughness}
         ref={sphere}
+        color={sphere1Color}
+        wireframe={sphere1WireFrame}
       />
       <Sphere
         radius={radius}
@@ -232,12 +250,13 @@ function Floor() {
         wireframeLinejoin={wireframeLinejoin}
         roughness={roughness}
         name="Sphere2"
-        wireframe
-        offset={0.2}
+        wireframe={sphere2WireFrame}
+        offset={offset}
         ref={sphere2}
+        color={sphere2Color}
       />
     </group>
   );
-}
+});
 
 export default Floor;
