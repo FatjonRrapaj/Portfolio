@@ -32,7 +32,7 @@ const Floor = forwardRef((props, sphericFloor) => {
       },
     },
     positionZ: {
-      value: 200,
+      value: 500,
       min: -2000,
       max: 2000,
       step: 0.01,
@@ -169,7 +169,7 @@ const Floor = forwardRef((props, sphericFloor) => {
       step: 0.001,
     },
     positionX: {
-      value: 0,
+      value: 200,
       min: -1000,
       max: 1000,
       step: 0.01,
@@ -181,7 +181,7 @@ const Floor = forwardRef((props, sphericFloor) => {
       step: 0.01,
     },
     positionZ: {
-      value: -200,
+      value: -1000,
       min: -1000,
       max: 2000,
       step: 0.01,
@@ -216,6 +216,8 @@ const Floor = forwardRef((props, sphericFloor) => {
     // if (autoRotate) sphericFloor.current.rotation.x += 0.005;
     if (autoRotate) sphericFloor.current.rotation.x += 0.0001;
   });
+
+  useEffect(() => console.log("SPHERE RE RENDERED"));
 
   return (
     <group layers={1} ref={sphericFloor}>

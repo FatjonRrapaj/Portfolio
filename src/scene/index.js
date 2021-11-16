@@ -26,6 +26,7 @@ const Scene = () => {
         <World />
       </Canvas>
       <Welcome />
+      <div className="scrollContainer" />
     </div>
   );
 };

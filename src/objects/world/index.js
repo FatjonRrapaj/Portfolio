@@ -1,39 +1,122 @@
-import { Suspense, createRef } from "react";
-import { Stats } from "@react-three/drei";
-import { useThree } from "@react-three/fiber";
+import {
+  Suspense,
+  createRef,
+  useRef,
+  useState,
+  useEffect,
+  useReducer,
+} from "react";
+import { Html, Stats } from "@react-three/drei";
+import { useThree, useFrame } from "@react-three/fiber";
+import anime from "animejs/lib/anime.es";
 
 import DirectionalLight from "../directionalLight";
-import PointLight from "../pointLight";
 import Floor from "../floor";
 import Sky from "../sky";
 import PaperPlane from "../paperPlane";
 
 import Effect from "../../postprocessing";
-import { useEffect } from "react/cjs/react.development";
 
 const World = () => {
-  const { camera } = useThree();
+  const { camera, scene, gl } = useThree();
+
+  const [timeline] = useState(() =>
+    anime.timeline({
+      autoplay: false,
+      duration: 4500,
+      easing: "easeOutSine",
+    })
+  );
+  console.log("timeline: ", timeline);
+
+  let percentage = 0;
+  let scrollY = 0;
+  let event = {
+    y: 0,
+    deltaY: 0,
+  };
+
+  const divContainer = document.querySelector(".container");
+  let maxHeight =
+    (divContainer.clientHeight || divContainer.offsetHeight) -
+    window.innerHeight;
 
   const plane = createRef();
   const floor = createRef();
 
-  const upadtePositions = () => {
-    console.log("Updated");
-    if (plane.current) {
-      plane.current.position.x = 0;
+  useEffect(() => {
+    if (plane.current !== null) {
+      timeline.add({
+        targets: plane.current.position,
+        x: 100,
+        y: 25,
+        z: -500,
+        duration: 2250,
+        update: camera.updateProjectionMatrix(),
+      });
+      timeline.add({
+        targets: plane.current.position,
+        x: 0,
+        y: 0,
+        z: 50,
+        duration: 2250,
+        update: camera.updateProjectionMatrix(),
+      });
     }
-  };
+  }, [plane.current]);
+
+  // linear interpolation function
+  function lerp(a, b, t) {
+    return (1 - t) * a + t * b;
+  }
 
   const onResize = () => {
     camera.updateProjectionMatrix();
-    upadtePositions();
   };
 
-  useEffect(() => {
-    window.addEventListener("resize", onResize);
+  function onWheel(e) {
+    // for embedded demo
+    e.stopImmediatePropagation();
+    e.cancelable && e.preventDefault();
+    e.stopPropagation();
 
-    return () => window.removeEventListener("resize", onResize);
+    var evt = event;
+    evt.deltaY = e.wheelDeltaY || e.deltaY * -1;
+    // reduce by half the delta amount otherwise it scroll too fast
+    evt.deltaY *= 0.5;
+    scroll(e);
+  }
+
+  function scroll() {
+    var evt = event;
+    // limit scroll top
+    if (evt.y + evt.deltaY > 0) {
+      evt.y = 0;
+      // limit scroll bottom
+    } else if (-(evt.y + evt.deltaY) >= maxHeight) {
+      evt.y = -maxHeight;
+    } else {
+      evt.y += evt.deltaY;
+    }
+    scrollY = -evt.y;
+  }
+
+  useEffect(() => {
+    divContainer.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("resize", onResize, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
+
+  useFrame(() => {
+    percentage = lerp(percentage, scrollY, 0.08);
+    // timeline.play();
+    //TODO: PERCENTAGE IS 0
+    // console.log(percentage);
+    // timeline.seek(percentage * (4500 / maxHeight));
+  });
 
   return (
     <>
@@ -54,7 +137,7 @@ const World = () => {
           null
         }
       >
-        <PaperPlane ref={plane} />
+        <PaperPlane ref={plane} timeline={timeline} percentage={percentage} />
       </Suspense>
 
       <DirectionalLight />

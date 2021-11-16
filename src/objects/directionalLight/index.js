@@ -19,13 +19,13 @@ function DirectionalLight() {
     y: {
       min: -1000,
       max: 1000,
-      value: 471.8,
+      value: 138.7,
       step: 0.1,
     },
     z: {
       min: -1000,
       max: 1000,
-      value: 897.1,
+      value: 530.6,
       step: 0.1,
     },
   });

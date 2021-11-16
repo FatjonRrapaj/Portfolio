@@ -23,7 +23,7 @@ const Sky = () => {
     x: {
       min: -1000,
       max: 1000,
-      value: 0,
+      value: 200,
       step: 0.1,
     },
     y: {
@@ -35,7 +35,7 @@ const Sky = () => {
     z: {
       min: -1000,
       max: 1000,
-      value: 0,
+      value: -1000,
       step: 0.1,
     },
     radius: {
@@ -45,7 +45,7 @@ const Sky = () => {
       value: 500,
     },
     detail: {
-      min: 1,
+      min: 400,
       max: 1000,
       value: 10,
       step: 1,
@@ -53,7 +53,7 @@ const Sky = () => {
     emissiveIntensity: {
       min: 0.1,
       max: 100,
-      value: 0.1,
+      value: 5.0,
       step: 0.1,
     },
     color: "#ffffff",
