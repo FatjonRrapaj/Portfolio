@@ -10,7 +10,7 @@ const Scene = () => {
   const canvas = useRef();
 
   return (
-    <div className="container">
+    <>
       <Canvas
         shadows
         camera={{
@@ -25,9 +25,10 @@ const Scene = () => {
       >
         <World />
       </Canvas>
+
       <Welcome />
-      <div className="scrollContainer" />
-    </div>
+      <div className="scrollContainer"></div>
+    </>
   );
 };
 

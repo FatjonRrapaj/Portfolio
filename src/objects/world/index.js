@@ -29,17 +29,20 @@ const World = () => {
   );
   console.log("timeline: ", timeline);
 
-  let percentage = 0;
-  let scrollY = 0;
-  let event = {
+  var percentage = 0;
+  var scrollY = 0;
+  var event = {
     y: 0,
     deltaY: 0,
   };
 
-  const divContainer = document.querySelector(".container");
-  let maxHeight =
-    (divContainer.clientHeight || divContainer.offsetHeight) -
-    window.innerHeight;
+  const divContainer = document.querySelector(".scrollContainer");
+
+  // let maxHeight =
+  //   (divContainer.clientHeight || divContainer.offsetHeight) -
+  //   window.innerHeight;
+  // console.log("maxHeight", divContainer, maxHeight);
+  let maxHeight = 0;
 
   const plane = createRef();
   const floor = createRef();
@@ -71,6 +74,9 @@ const World = () => {
   }
 
   const onResize = () => {
+    maxHeight =
+      (divContainer.clientHeight || divContainer.offsetHeight) -
+      window.innerHeight;
     camera.updateProjectionMatrix();
   };
 
@@ -87,7 +93,7 @@ const World = () => {
     scroll(e);
   }
 
-  function scroll() {
+  function scroll(e) {
     var evt = event;
     // limit scroll top
     if (evt.y + evt.deltaY > 0) {
@@ -99,44 +105,26 @@ const World = () => {
       evt.y += evt.deltaY;
     }
     scrollY = -evt.y;
+    percentage = lerp(percentage, scrollY, 0.08);
+    timeline.seek(percentage * (4500 / maxHeight));
   }
 
   useEffect(() => {
     divContainer.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("resize", onResize, { passive: false });
-    return () => {
-      window.removeEventListener("wheel", onWheel);
+    window.addEventListener("resize", onResize, { passive: true });
+    onResize();
+
+    return function cleanUp() {
+      divContainer.removeEventListener("wheel", onWheel);
       window.removeEventListener("resize", onResize);
     };
   }, []);
-
-  useFrame(() => {
-    percentage = lerp(percentage, scrollY, 0.08);
-    // timeline.play();
-    //TODO: PERCENTAGE IS 0
-    // console.log(percentage);
-    // timeline.seek(percentage * (4500 / maxHeight));
-  });
 
   return (
     <>
       <Floor ref={floor} />
       <Sky />
-      <Suspense
-        fallback={
-          // <div
-          //   style={{
-          //     width: 50,
-          //     height: 50,
-          //     backgroundColor: "white",
-          //     color: "black",
-          //   }}
-          // >
-          //   Let's FLYYY
-          // </div>
-          null
-        }
-      >
+      <Suspense fallback={null}>
         <PaperPlane ref={plane} timeline={timeline} percentage={percentage} />
       </Suspense>
 
