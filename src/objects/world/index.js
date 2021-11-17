@@ -8,7 +8,7 @@ import {
 } from "react";
 import { Html, Stats } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
-import anime from "animejs/lib/anime.es";
+import anime from "animejs/lib/anime.es.js";
 
 import DirectionalLight from "../directionalLight";
 import Floor from "../floor";
@@ -18,7 +18,7 @@ import PaperPlane from "../paperPlane";
 import Effect from "../../postprocessing";
 
 const World = () => {
-  const { camera, scene, gl } = useThree();
+  const { camera } = useThree();
 
   const [timeline] = useState(() =>
     anime.timeline({
@@ -27,7 +27,6 @@ const World = () => {
       easing: "easeOutSine",
     })
   );
-  console.log("timeline: ", timeline);
 
   var percentage = 0;
   var scrollY = 0;
@@ -38,11 +37,9 @@ const World = () => {
 
   const divContainer = document.querySelector(".scrollContainer");
 
-  // let maxHeight =
-  //   (divContainer.clientHeight || divContainer.offsetHeight) -
-  //   window.innerHeight;
-  // console.log("maxHeight", divContainer, maxHeight);
-  let maxHeight = 0;
+  var maxHeight =
+    (divContainer.clientHeight || divContainer.offsetHeight) -
+    window.innerHeight;
 
   const plane = createRef();
   const floor = createRef();
@@ -55,7 +52,6 @@ const World = () => {
         y: 25,
         z: -500,
         duration: 2250,
-        update: camera.updateProjectionMatrix(),
       });
       timeline.add({
         targets: plane.current.position,
@@ -63,7 +59,6 @@ const World = () => {
         y: 0,
         z: 50,
         duration: 2250,
-        update: camera.updateProjectionMatrix(),
       });
     }
   }, [plane.current]);
@@ -77,13 +72,12 @@ const World = () => {
     maxHeight =
       (divContainer.clientHeight || divContainer.offsetHeight) -
       window.innerHeight;
-    camera.updateProjectionMatrix();
   };
 
   function onWheel(e) {
-    // for embedded demo
     e.stopImmediatePropagation();
-    e.cancelable && e.preventDefault();
+    e.preventDefault();
+
     e.stopPropagation();
 
     var evt = event;
@@ -112,7 +106,6 @@ const World = () => {
   useEffect(() => {
     divContainer.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("resize", onResize, { passive: true });
-    onResize();
 
     return function cleanUp() {
       divContainer.removeEventListener("wheel", onWheel);
@@ -124,7 +117,21 @@ const World = () => {
     <>
       <Floor ref={floor} />
       <Sky />
-      <Suspense fallback={null}>
+      <Suspense
+        fallback={
+          // <div
+          //   style={{
+          //     width: 50,
+          //     height: 50,
+          //     backgroundColor: "white",
+          //     color: "black",
+          //   }}
+          // >
+          //   Let's FLYYY
+          // </div>
+          null
+        }
+      >
         <PaperPlane ref={plane} timeline={timeline} percentage={percentage} />
       </Suspense>
 
