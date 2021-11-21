@@ -5,27 +5,27 @@ function DirectionalLight() {
   const { intensity, color, x, y, z } = useControls("DirectionalLight", {
     color: "#FFFFFF",
     intensity: {
-      min: 0.1,
+      min: 0.05,
       max: 100,
       step: 0.1,
-      value: 10,
+      value: 0.05,
     },
     x: {
       min: -1000,
       max: 1000,
-      value: 527.6,
+      value: 0,
       step: 0.1,
     },
     y: {
       min: -1000,
       max: 1000,
-      value: 138.7,
+      value: 0,
       step: 0.1,
     },
     z: {
       min: -1000,
       max: 1000,
-      value: 530.6,
+      value: 100,
       step: 0.1,
     },
   });

@@ -1,4 +1,4 @@
-import { useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 
@@ -23,7 +23,7 @@ const Sky = () => {
     x: {
       min: -1000,
       max: 1000,
-      value: 200,
+      value: 0,
       step: 0.1,
     },
     y: {
@@ -33,9 +33,9 @@ const Sky = () => {
       step: 0.1,
     },
     z: {
-      min: -1000,
-      max: 1000,
-      value: -1000,
+      min: -2000,
+      max: 2000,
+      value: -1500,
       step: 0.1,
     },
     radius: {
@@ -45,9 +45,9 @@ const Sky = () => {
       value: 500,
     },
     detail: {
-      min: 400,
+      min: 1,
       max: 1000,
-      value: 10,
+      value: 400,
       step: 1,
     },
     emissiveIntensity: {
@@ -58,7 +58,7 @@ const Sky = () => {
     },
     color: "#ffffff",
     emissiveColor: "#ffffff",
-    wireframe: true,
+    wireframe: false,
     flatShading: false,
     autoRotate: true,
   });
@@ -69,6 +69,14 @@ const Sky = () => {
       //   sky.current.rotation.y = Math.cos(clock.elapsedTime) * 0.2;
     }
   });
+
+  useEffect(() => {
+    if (sky.current) {
+      setTimeout(() => {
+        sky.current.material.opacity = 0.2;
+      }, 1000);
+    }
+  }, [sky.current]);
 
   return (
     <mesh

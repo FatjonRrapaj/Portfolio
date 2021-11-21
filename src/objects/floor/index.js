@@ -32,7 +32,7 @@ const Floor = forwardRef((props, sphericFloor) => {
       },
     },
     positionZ: {
-      value: 500,
+      value: 700,
       min: -2000,
       max: 2000,
       step: 0.01,
@@ -169,7 +169,7 @@ const Floor = forwardRef((props, sphericFloor) => {
       step: 0.001,
     },
     positionX: {
-      value: 200,
+      value: 0,
       min: -1000,
       max: 1000,
       step: 0.01,
@@ -181,8 +181,8 @@ const Floor = forwardRef((props, sphericFloor) => {
       step: 0.01,
     },
     positionZ: {
-      value: -1000,
-      min: -1000,
+      value: -2000,
+      min: -1500,
       max: 2000,
       step: 0.01,
     },

@@ -14,7 +14,7 @@ const Scene = () => {
       <Canvas
         shadows
         camera={{
-          far: 1500,
+          far: 2000,
           near: 0.01,
           fov: 45,
           aspect: window.innerWidth / window.innerHeight,
@@ -26,7 +26,7 @@ const Scene = () => {
         <World />
       </Canvas>
 
-      <Welcome />
+      {/* <Welcome /> */}
       <div className="scrollContainer"></div>
     </>
   );

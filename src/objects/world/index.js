@@ -1,24 +1,32 @@
-import {
-  Suspense,
-  createRef,
-  useRef,
-  useState,
-  useEffect,
-  useReducer,
-} from "react";
-import { Html, Stats } from "@react-three/drei";
-import { useThree, useFrame } from "@react-three/fiber";
+import { Suspense, createRef, useState, useEffect } from "react";
+import { Stats } from "@react-three/drei";
 import anime from "animejs/lib/anime.es.js";
 
-import DirectionalLight from "../directionalLight";
+import { lerp } from "../../helpers/animation";
+
+import DirectionalLight from "../components/directionalLight";
 import Floor from "../floor";
 import Sky from "../sky";
 import PaperPlane from "../paperPlane";
+import Hello from "../hello";
 
 import Effect from "../../postprocessing";
 
 const World = () => {
-  const { camera } = useThree();
+  const plane = createRef();
+  const floor = createRef();
+  const hello = createRef();
+
+  const divContainer = document.querySelector(".scrollContainer");
+  var percentage = 0;
+  var scrollY = 0;
+  var event = {
+    y: 0,
+    deltaY: 0,
+  };
+  var maxHeight =
+    (divContainer.clientHeight || divContainer.offsetHeight) -
+    window.innerHeight;
 
   const [timeline] = useState(() =>
     anime.timeline({
@@ -27,22 +35,6 @@ const World = () => {
       easing: "easeOutSine",
     })
   );
-
-  var percentage = 0;
-  var scrollY = 0;
-  var event = {
-    y: 0,
-    deltaY: 0,
-  };
-
-  const divContainer = document.querySelector(".scrollContainer");
-
-  var maxHeight =
-    (divContainer.clientHeight || divContainer.offsetHeight) -
-    window.innerHeight;
-
-  const plane = createRef();
-  const floor = createRef();
 
   useEffect(() => {
     if (plane.current !== null) {
@@ -63,11 +55,6 @@ const World = () => {
     }
   }, [plane.current]);
 
-  // linear interpolation function
-  function lerp(a, b, t) {
-    return (1 - t) * a + t * b;
-  }
-
   const onResize = () => {
     maxHeight =
       (divContainer.clientHeight || divContainer.offsetHeight) -
@@ -77,9 +64,7 @@ const World = () => {
   function onWheel(e) {
     e.stopImmediatePropagation();
     e.preventDefault();
-
     e.stopPropagation();
-
     var evt = event;
     evt.deltaY = e.wheelDeltaY || e.deltaY * -1;
     // reduce by half the delta amount otherwise it scroll too fast
@@ -117,28 +102,14 @@ const World = () => {
     <>
       <Floor ref={floor} />
       <Sky />
-      <Suspense
-        fallback={
-          // <div
-          //   style={{
-          //     width: 50,
-          //     height: 50,
-          //     backgroundColor: "white",
-          //     color: "black",
-          //   }}
-          // >
-          //   Let's FLYYY
-          // </div>
-          null
-        }
-      >
+      <Suspense fallback={null}>
         <PaperPlane ref={plane} timeline={timeline} percentage={percentage} />
       </Suspense>
-
+      <Hello ref={hello} />
       <DirectionalLight />
-      {/* <PointLight /> */}
       <Effect />
       <Stats />
+
       <axesHelper args={[1000000]} />
     </>
   );
