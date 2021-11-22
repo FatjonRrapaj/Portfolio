@@ -58,7 +58,7 @@ const Sky = () => {
     },
     color: "#ffffff",
     emissiveColor: "#ffffff",
-    wireframe: false,
+    wireframe: true,
     flatShading: false,
     autoRotate: true,
   });
@@ -69,14 +69,6 @@ const Sky = () => {
       //   sky.current.rotation.y = Math.cos(clock.elapsedTime) * 0.2;
     }
   });
-
-  useEffect(() => {
-    if (sky.current) {
-      setTimeout(() => {
-        sky.current.material.opacity = 0.2;
-      }, 1000);
-    }
-  }, [sky.current]);
 
   return (
     <mesh

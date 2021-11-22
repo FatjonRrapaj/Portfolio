@@ -1,7 +1,7 @@
-import React, { forwardRef, useEffect, useMemo } from "react";
+import React, { createRef, forwardRef, useEffect, useRef } from "react";
 import * as THREE from "three";
-import { useFrame } from "@react-three/fiber";
-import { useGLTF, useAnimations } from "@react-three/drei";
+import { useFrame, useLoader } from "@react-three/fiber";
+import { useGLTF, useAnimations, Html } from "@react-three/drei";
 
 import { useControls } from "leva";
 
@@ -62,7 +62,7 @@ export default forwardRef(({ ...props }, plane) => {
       max: 1000,
     },
     rotationZ: {
-      value: Math.PI,
+      value: Math.PI * 2,
       step: Math.PI / 10,
       min: -1000,
       max: 1000,
@@ -70,27 +70,37 @@ export default forwardRef(({ ...props }, plane) => {
     wireframe: false,
   });
 
-  useEffect(() => {
-    if (plane.current !== null) {
-      // plane.current.position.z = camera.position.z;
-
-      const { fold } = actions;
-      console.log("FOLD", fold);
-      fold.repetitions = 1;
-      fold.clampWhenFinished = true;
-
-      fold.setDuration(3);
-    }
-  }, [plane.current]);
-
-  const { nodes, materials, animations } = useGLTF("/plane.glb");
+  const { nodes, materials, animations, ...rest } = useGLTF("/plane.glb");
   const { actions } = useAnimations(animations, plane);
 
-  useFrame(({ clock }) => {
-    if (plane.current) {
-      plane.current.rotation.z = Math.sin(clock.getElapsedTime()) * 0.2;
-    }
-  });
+  const hello = useLoader(THREE.TextureLoader, "/hello.jpeg");
+  hello.flipY = false;
+
+  hello.rotation = -0.2;
+
+  const topR = useRef();
+  const m90R = useRef();
+  const tieR = useRef();
+  const straightR = useRef();
+  const straightL = useRef();
+  const tieL = useRef();
+  const m90L = useRef();
+  const topL = useRef();
+
+  // useFrame(({ clock }) => {
+  //   if (plane.current) {
+  //     // plane.current.rotation.z += 0.01;
+  //   }
+  // });
+
+  useEffect(() => {
+    const { fold } = actions;
+    fold.repetitions = 1;
+    fold.clampWhenFinished = true;
+    setTimeout(() => {
+      fold.play();
+    }, 1000);
+  }, []);
 
   return (
     <group
@@ -102,55 +112,149 @@ export default forwardRef(({ ...props }, plane) => {
       {...props}
       dispose={null}
     >
+      {/**TOP RIGHT */}
       <mesh
         name="topR"
+        ref={topR}
         layers={2}
         geometry={nodes.topR.geometry}
-        material={nodes.topR.material}
         morphTargetDictionary={nodes.topR.morphTargetDictionary}
         morphTargetInfluences={nodes.topR.morphTargetInfluences}
       >
         <meshStandardMaterial
-          {...materials.Material}
-          side={THREE.DoubleSide}
+          {...nodes.topR.material}
+          metalness={0}
+          roughness={0.8}
+          side={THREE.BackSide}
+          map={hello}
           wireframe={wireframe}
-          shadowSide={THREE.DoubleSide}
+          shadowSide={THREE.BackSide}
           color={color}
-          emissiveIntensity={emissiveIntensity}
           emissive={color}
+          emissiveIntensity={emissiveIntensity}
+        />
+      </mesh>
+      <mesh
+        name="topR"
+        ref={topR}
+        layers={2}
+        geometry={nodes.topR.geometry}
+        morphTargetDictionary={nodes.topR.morphTargetDictionary}
+        morphTargetInfluences={nodes.topR.morphTargetInfluences}
+      >
+        <meshStandardMaterial
+          {...nodes.topR.material}
+          metalness={0}
+          roughness={0.8}
+          side={THREE.FrontSide}
+          wireframe={wireframe}
+          shadowSide={THREE.FrontSide}
+          color={color}
+          emissive={color}
+          emissiveIntensity={emissiveIntensity}
+        />
+      </mesh>
+      {/**90 RIGHT */}
+      <mesh
+        layers={2}
+        name="90R"
+        ref={m90R}
+        geometry={nodes["90R"].geometry}
+        morphTargetDictionary={nodes["90R"].morphTargetDictionary}
+        morphTargetInfluences={nodes["90R"].morphTargetInfluences}
+      >
+        <meshStandardMaterial
+          {...nodes["90R"].material}
+          metalness={0}
+          roughness={0.8}
+          wireframe={wireframe}
+          side={THREE.BackSide}
+          map={hello}
+          shadowSide={THREE.BackSide}
+          color={color}
+          emissive={color}
+          emissiveIntensity={emissiveIntensity}
         />
       </mesh>
       <mesh
         layers={2}
         name="90R"
+        ref={m90R}
         geometry={nodes["90R"].geometry}
-        material={nodes["90R"].material}
         morphTargetDictionary={nodes["90R"].morphTargetDictionary}
         morphTargetInfluences={nodes["90R"].morphTargetInfluences}
       >
         <meshStandardMaterial
-          {...materials.Material}
-          side={THREE.DoubleSide}
+          {...nodes["90R"].material}
+          metalness={0}
+          roughness={0.8}
+          side={THREE.FrontSide}
           wireframe={wireframe}
-          shadowSide={THREE.DoubleSide}
+          shadowSide={THREE.FrontSide}
           color={color}
           emissive={color}
           emissiveIntensity={emissiveIntensity}
         />
       </mesh>
+      {/**TIE RIGHT */}
       <mesh
         layers={2}
         name="tieR"
+        ref={tieR}
         geometry={nodes.tieR.geometry}
-        material={nodes.tieR.material}
         morphTargetDictionary={nodes.tieR.morphTargetDictionary}
         morphTargetInfluences={nodes.tieR.morphTargetInfluences}
       >
         <meshStandardMaterial
-          {...materials.Material}
-          side={THREE.DoubleSide}
+          {...nodes.tieR.material}
+          metalness={0}
+          roughness={0.8}
+          side={THREE.BackSide}
+          map={hello}
           wireframe={wireframe}
-          shadowSide={THREE.DoubleSide}
+          shadowSide={THREE.BackSide}
+          color={color}
+          emissiveIntensity={emissiveIntensity}
+          emissive={color}
+        />
+      </mesh>
+      <mesh
+        layers={2}
+        name="tieR"
+        ref={tieR}
+        geometry={nodes.tieR.geometry}
+        morphTargetDictionary={nodes.tieR.morphTargetDictionary}
+        morphTargetInfluences={nodes.tieR.morphTargetInfluences}
+      >
+        <meshStandardMaterial
+          {...nodes.tieR.material}
+          metalness={0}
+          roughness={0.8}
+          side={THREE.FrontSide}
+          wireframe={wireframe}
+          shadowSide={THREE.FrontSide}
+          color={color}
+          emissiveIntensity={emissiveIntensity}
+          emissive={color}
+        />
+      </mesh>
+      {/**STRAIGHT RIGHT */}
+      <mesh
+        layers={2}
+        name="straightR"
+        ref={straightR}
+        geometry={nodes.straightR.geometry}
+        morphTargetDictionary={nodes.straightR.morphTargetDictionary}
+        morphTargetInfluences={nodes.straightR.morphTargetInfluences}
+      >
+        <meshStandardMaterial
+          {...nodes.straightR.material}
+          metalness={0}
+          side={THREE.BackSide}
+          shadowSide={THREE.BackSide}
+          map={hello}
+          roughness={0.8}
+          wireframe={wireframe}
           color={color}
           emissiveIntensity={emissiveIntensity}
           emissive={color}
@@ -159,16 +263,43 @@ export default forwardRef(({ ...props }, plane) => {
       <mesh
         layers={2}
         name="straightR"
+        ref={straightR}
         geometry={nodes.straightR.geometry}
-        material={nodes.straightR.material}
         morphTargetDictionary={nodes.straightR.morphTargetDictionary}
         morphTargetInfluences={nodes.straightR.morphTargetInfluences}
       >
         <meshStandardMaterial
+          {...nodes.straightR.material}
           {...materials.Material}
-          side={THREE.DoubleSide}
+          metalness={0}
+          side={THREE.FrontSide}
+          shadowSide={THREE.BackSide}
+          roughness={0.8}
           wireframe={wireframe}
-          shadowSide={THREE.DoubleSide}
+          color={color}
+          emissiveIntensity={emissiveIntensity}
+          emissive={color}
+        />
+      </mesh>
+
+      {/**STRAIGHT LEFT */}
+
+      <mesh
+        layers={2}
+        name="straightL"
+        ref={straightL}
+        geometry={nodes.straightL.geometry}
+        morphTargetDictionary={nodes.straightL.morphTargetDictionary}
+        morphTargetInfluences={nodes.straightL.morphTargetInfluences}
+      >
+        <meshStandardMaterial
+          {...nodes.straightL.material}
+          metalness={0}
+          roughness={0.8}
+          wireframe={wireframe}
+          side={THREE.BackSide}
+          map={hello}
+          shadowSide={THREE.BackSide}
           color={color}
           emissiveIntensity={emissiveIntensity}
           emissive={color}
@@ -177,16 +308,40 @@ export default forwardRef(({ ...props }, plane) => {
       <mesh
         layers={2}
         name="straightL"
+        ref={straightL}
         geometry={nodes.straightL.geometry}
-        material={nodes.straightL.material}
         morphTargetDictionary={nodes.straightL.morphTargetDictionary}
         morphTargetInfluences={nodes.straightL.morphTargetInfluences}
       >
         <meshStandardMaterial
-          {...materials.Material}
-          side={THREE.DoubleSide}
+          {...nodes.straightL.material}
+          metalness={0}
+          roughness={0.8}
           wireframe={wireframe}
-          shadowSide={THREE.DoubleSide}
+          side={THREE.FrontSide}
+          shadowSide={THREE.FrontSide}
+          color={color}
+          emissiveIntensity={emissiveIntensity}
+          emissive={color}
+        />
+      </mesh>
+      {/**TIE LEFT */}
+      <mesh
+        layers={2}
+        name="tieL"
+        ref={tieL}
+        geometry={nodes.tieL.geometry}
+        morphTargetDictionary={nodes.tieL.morphTargetDictionary}
+        morphTargetInfluences={nodes.tieL.morphTargetInfluences}
+      >
+        <meshStandardMaterial
+          {...nodes.tieL.material}
+          metalness={0}
+          roughness={0.8}
+          side={THREE.BackSide}
+          map={hello}
+          wireframe={wireframe}
+          shadowSide={THREE.BackSide}
           color={color}
           emissiveIntensity={emissiveIntensity}
           emissive={color}
@@ -195,16 +350,40 @@ export default forwardRef(({ ...props }, plane) => {
       <mesh
         layers={2}
         name="tieL"
+        ref={tieL}
         geometry={nodes.tieL.geometry}
-        material={nodes.tieL.material}
         morphTargetDictionary={nodes.tieL.morphTargetDictionary}
         morphTargetInfluences={nodes.tieL.morphTargetInfluences}
       >
         <meshStandardMaterial
-          {...materials.Material}
-          side={THREE.DoubleSide}
+          {...nodes.tieL.material}
+          metalness={0}
+          roughness={0.8}
+          side={THREE.FrontSide}
           wireframe={wireframe}
-          shadowSide={THREE.DoubleSide}
+          shadowSide={THREE.FrontSide}
+          color={color}
+          emissiveIntensity={emissiveIntensity}
+          emissive={color}
+        />
+      </mesh>
+      {/**90 LEFT */}
+      <mesh
+        layers={2}
+        name="90L"
+        ref={m90L}
+        geometry={nodes["90L"].geometry}
+        morphTargetDictionary={nodes["90L"].morphTargetDictionary}
+        morphTargetInfluences={nodes["90L"].morphTargetInfluences}
+      >
+        <meshStandardMaterial
+          {...nodes["90L"].material}
+          metalness={0}
+          roughness={0.8}
+          side={THREE.BackSide}
+          map={hello}
+          wireframe={wireframe}
+          shadowSide={THREE.BackSide}
           color={color}
           emissiveIntensity={emissiveIntensity}
           emissive={color}
@@ -213,16 +392,40 @@ export default forwardRef(({ ...props }, plane) => {
       <mesh
         layers={2}
         name="90L"
+        ref={m90L}
         geometry={nodes["90L"].geometry}
-        material={nodes["90L"].material}
         morphTargetDictionary={nodes["90L"].morphTargetDictionary}
         morphTargetInfluences={nodes["90L"].morphTargetInfluences}
       >
         <meshStandardMaterial
-          {...materials.Material}
-          side={THREE.DoubleSide}
+          {...nodes["90L"].material}
+          metalness={0}
+          roughness={0.8}
+          side={THREE.FrontSide}
           wireframe={wireframe}
-          shadowSide={THREE.DoubleSide}
+          shadowSide={THREE.FrontSide}
+          color={color}
+          emissiveIntensity={emissiveIntensity}
+          emissive={color}
+        />
+      </mesh>
+      {/**TOP LEFT */}
+      <mesh
+        layers={2}
+        name="topL"
+        ref={topL}
+        geometry={nodes.topL.geometry}
+        morphTargetDictionary={nodes.topL.morphTargetDictionary}
+        morphTargetInfluences={nodes.topL.morphTargetInfluences}
+      >
+        <meshStandardMaterial
+          {...nodes.topL.material}
+          metalness={0}
+          roughness={0.8}
+          side={THREE.BackSide}
+          map={hello}
+          wireframe={wireframe}
+          shadowSide={THREE.BackSide}
           color={color}
           emissiveIntensity={emissiveIntensity}
           emissive={color}
@@ -231,16 +434,18 @@ export default forwardRef(({ ...props }, plane) => {
       <mesh
         layers={2}
         name="topL"
+        ref={topL}
         geometry={nodes.topL.geometry}
-        material={nodes.topL.material}
         morphTargetDictionary={nodes.topL.morphTargetDictionary}
         morphTargetInfluences={nodes.topL.morphTargetInfluences}
       >
         <meshStandardMaterial
-          {...materials.Material}
-          side={THREE.DoubleSide}
+          {...nodes.topL.material}
+          metalness={0}
+          roughness={0.8}
+          side={THREE.FrontSide}
           wireframe={wireframe}
-          shadowSide={THREE.DoubleSide}
+          shadowSide={THREE.FrontSide}
           color={color}
           emissiveIntensity={emissiveIntensity}
           emissive={color}

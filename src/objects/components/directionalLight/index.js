@@ -8,7 +8,7 @@ function DirectionalLight() {
       min: 0.05,
       max: 100,
       step: 0.1,
-      value: 0.05,
+      value: 2,
     },
     x: {
       min: -1000,
