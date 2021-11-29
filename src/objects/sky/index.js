@@ -19,6 +19,7 @@ const Sky = () => {
     radius,
     detail,
     autoRotate,
+    scaleFactor,
   } = useControls("Sky", {
     x: {
       min: -1000,
@@ -61,6 +62,12 @@ const Sky = () => {
     wireframe: true,
     flatShading: false,
     autoRotate: true,
+    scaleFactor: {
+      min: 0.1,
+      max: 2,
+      value: 0.8,
+      step: 0.01,
+    },
   });
 
   useFrame(({ clock }) => {
@@ -72,6 +79,7 @@ const Sky = () => {
 
   return (
     <mesh
+      scale={[scaleFactor, scaleFactor, scaleFactor]}
       onPointerDown={() => console.log("SKYY CLICKED")}
       layers={1}
       ref={sky}

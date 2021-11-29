@@ -1,21 +1,17 @@
-import { Suspense, createRef, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import { Stats } from "@react-three/drei";
 import anime from "animejs/lib/anime.es.js";
 
 import { lerp } from "../../helpers/animation";
-
 import DirectionalLight from "../components/directionalLight";
 import Floor from "../floor";
 import Sky from "../sky";
 import PaperPlane from "../paperPlane";
-import Hello from "../hello";
-
 import Effect from "../../postprocessing";
 
 const World = () => {
-  const plane = createRef();
-  const floor = createRef();
-  const hello = createRef();
+  const floor = useRef();
+  const plane = useRef();
 
   const divContainer = document.querySelector(".scrollContainer");
   var percentage = 0;
@@ -31,29 +27,30 @@ const World = () => {
   const [timeline] = useState(() =>
     anime.timeline({
       autoplay: false,
-      duration: 4500,
-      easing: "easeOutSine",
+      duration: 22000,
+      delay: 10000,
     })
   );
 
   useEffect(() => {
-    if (plane.current !== null) {
+    if (floor.current != null) {
       timeline.add({
-        targets: plane.current.position,
-        x: 100,
+        targets: floor.current.position,
+        x: 0,
         y: 25,
-        z: -500,
-        duration: 2250,
+        z: 400,
+        duration: 10000,
       });
       timeline.add({
-        targets: plane.current.position,
+        targets: floor.current.position,
         x: 0,
         y: 0,
-        z: 50,
-        duration: 2250,
+        z: 800,
+        duration: 10000,
       });
+      console.log(timeline);
     }
-  }, [plane.current]);
+  }, []);
 
   const onResize = () => {
     maxHeight =
@@ -73,6 +70,7 @@ const World = () => {
   }
 
   function scroll(e) {
+    console.log("Here");
     var evt = event;
     // limit scroll top
     if (evt.y + evt.deltaY > 0) {
@@ -83,16 +81,19 @@ const World = () => {
     } else {
       evt.y += evt.deltaY;
     }
+
     scrollY = -evt.y;
+
     percentage = lerp(percentage, scrollY, 0.08);
-    timeline.seek(percentage * (4500 / maxHeight));
+
+    timeline.seek(percentage * (32000 / maxHeight));
   }
 
   useEffect(() => {
-    divContainer.addEventListener("wheel", onWheel, { passive: false });
+    divContainer.addEventListener("wheel", onWheel, false);
     window.addEventListener("resize", onResize, { passive: true });
 
-    return function cleanUp() {
+    return () => {
       divContainer.removeEventListener("wheel", onWheel);
       window.removeEventListener("resize", onResize);
     };
@@ -103,9 +104,8 @@ const World = () => {
       <Floor ref={floor} />
       <Sky />
       <Suspense fallback={null}>
-        <PaperPlane ref={plane} timeline={timeline} percentage={percentage} />
+        <PaperPlane />
       </Suspense>
-      <Hello ref={hello} />
       <DirectionalLight />
       <Effect />
       <Stats />

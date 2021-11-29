@@ -77,8 +77,14 @@ const Floor = forwardRef((props, sphericFloor) => {
   /**
    * SphericFloor controls
    */
-  const { autoRotate } = useControls("sphericFloor", {
+  const { autoRotate, scaleFactor } = useControls("sphericFloor", {
     autoRotate: false,
+    scaleFactor: {
+      min: 0.1,
+      max: 2,
+      value: 0.8,
+      step: 0.01,
+    },
   });
 
   const {
@@ -220,7 +226,11 @@ const Floor = forwardRef((props, sphericFloor) => {
   useEffect(() => console.log("SPHERE RE RENDERED"));
 
   return (
-    <group layers={1} ref={sphericFloor}>
+    <group
+      scale={[scaleFactor, scaleFactor, scaleFactor]}
+      layers={1}
+      ref={sphericFloor}
+    >
       <Sphere
         radius={radius}
         detail={detail}
