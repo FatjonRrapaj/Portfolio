@@ -1,4 +1,5 @@
-import { Suspense, useState, useEffect, useRef } from "react";
+import { Suspense, useState, useEffect, useRef, useMemo } from "react";
+import * as THREE from "three";
 import { Stats } from "@react-three/drei";
 import anime from "animejs/lib/anime.es.js";
 
@@ -9,11 +10,13 @@ import Sky from "../sky";
 import PaperPlane from "../paperPlane";
 import Effect from "../../postprocessing";
 
+import useStore from "../../store";
+
 const World = () => {
   const floor = useRef();
-  const plane = useRef();
 
-  const divContainer = document.querySelector(".scrollContainer");
+  const divContainer = document.getElementById("fly");
+
   var percentage = 0;
   var scrollY = 0;
   var event = {
@@ -59,9 +62,7 @@ const World = () => {
   };
 
   function onWheel(e) {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    e.stopPropagation();
+    console.log("PLANE FLY SCROLL CONTAINER: ", e);
     var evt = event;
     evt.deltaY = e.wheelDeltaY || e.deltaY * -1;
     // reduce by half the delta amount otherwise it scroll too fast
@@ -98,6 +99,60 @@ const World = () => {
       window.removeEventListener("resize", onResize);
     };
   }, []);
+
+  /** Line */
+
+  const points = useMemo(() => {
+    return [
+      new THREE.Vector3(4, 1, 0.2),
+      new THREE.Vector3(3, 0.5, 0.5),
+      new THREE.Vector3(0, 2, 0),
+      new THREE.Vector3(2, -2, -8),
+      new THREE.Vector3(-3, -2, -10),
+    ];
+  });
+
+  let linePosition = 0;
+  let lineAnlge = 0;
+
+  const line = useMemo(() => {
+    const c = new THREE.CatmullRomCurve3(points);
+    c.tension = 1;
+    c.arcLengthDivisions = 2000;
+    c.curveType = "catmullrom";
+    return c;
+  });
+
+  const lineGeometry = new THREE.BufferGeometry().setFromPoints(
+    line.getSpacedPoints(2000)
+  );
+
+  // useFrame(({ clock }) => {
+  //   // mesh.current && mesh.current.position.set(...pos.current);
+  //   // mesh.current && mesh.current.rotation.set(...rot.current);
+  //   if (mesh.current) {
+  //     position += 0.001;
+  //     var point = line.getPoint(position);
+  //     const { x, y, z } = point;
+  //     mesh.current.position.set(...[x, y, z]);
+  //     const angle = getAngle(position);
+  //     camera.position.z = z + 2;
+  //     mesh.current.quaternion.setFromAxisAngle(
+  //       new THREE.Vector3(0, 0, 1),
+  //       angle
+  //     );
+  //   }
+  // });
+
+  function getAngle(position) {
+    // get the 2Dtangent to the curve
+    var tangent = line.getTangent(position).normalize();
+
+    // change tangent to 3D
+    lineAnlge = -Math.atan(tangent.x / tangent.y);
+
+    return lineAnlge;
+  }
 
   return (
     <>

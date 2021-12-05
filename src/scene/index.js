@@ -10,25 +10,27 @@ const Scene = () => {
   const canvas = useRef();
 
   return (
-    <>
-      <Canvas
-        shadows
-        camera={{
-          far: 1500,
-          near: 1,
-          fov: 45,
-          aspect: window.innerWidth / window.innerHeight,
-        }}
-        antialias
-        ref={canvas}
-        className="webgl"
-      >
-        <World />
-      </Canvas>
+    <div id="wrapper">
+      <div id="webgl" className="container">
+        <Canvas
+          shadows
+          camera={{
+            far: 1500,
+            near: 1,
+            fov: 45,
+            aspect: window.innerWidth / window.innerHeight,
+          }}
+          antialias
+          ref={canvas}
+        >
+          <World />
+        </Canvas>
+      </div>
 
       {/* <Welcome /> */}
-      <div className="scrollContainer"></div>
-    </>
+      <div id="fold" className="container"></div>
+      <div id="fly" className="container"></div>
+    </div>
   );
 };
 

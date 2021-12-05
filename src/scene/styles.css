@@ -1,17 +1,31 @@
-.webgl {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
+#wrapper {
+  position: absolute;
+  height: 100%;
+  width: 100%;
 }
 
-.scrollContainer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 1200vh;
-  margin: 0;
+.container {
+  position: relative;
+  height: 100%;
+  min-height: 100%;
   width: 100%;
+  z-index: 1000;
+}
+
+#webgl {
+  background: #eee;
+  position: fixed;
+  color: red;
+  top: 0;
+  z-index: -99;
+}
+
+#fold {
+  opacity: 0.2;
+  background: yellow;
+}
+
+#fly {
+  opacity: 0.2;
+  background: pink;
 }

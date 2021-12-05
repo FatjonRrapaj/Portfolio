@@ -75,7 +75,8 @@ export default function Model({ ...props }) {
     wireframe: false,
   });
 
-  const divContainer = document.querySelector(".scrollContainer");
+  const divContainer = document.getElementById("fold");
+
   var percentage = 0;
   var scrollY = 0;
   var event = {
@@ -88,9 +89,7 @@ export default function Model({ ...props }) {
     window.innerHeight;
 
   function onWheel(e) {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    e.stopPropagation();
+    console.log("PLANE FOLD SCROLL EVENT", e);
     var evt = event;
     evt.deltaY = e.wheelDeltaY || e.deltaY * -1;
     // reduce by half the delta amount otherwise it scroll too fast
@@ -117,7 +116,7 @@ export default function Model({ ...props }) {
   }
 
   useEffect(() => {
-    // divContainer.addEventListener("wheel", onWheel, true);
+    divContainer.addEventListener("wheel", onWheel, true);
   }, []);
 
   const test = useLoader(THREE.TextureLoader, "/test.jpg");
