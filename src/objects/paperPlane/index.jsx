@@ -89,7 +89,6 @@ export default function Model({ ...props }) {
     window.innerHeight;
 
   function onWheel(e) {
-    console.log("PLANE FOLD SCROLL EVENT", e);
     var evt = event;
     evt.deltaY = e.wheelDeltaY || e.deltaY * -1;
     // reduce by half the delta amount otherwise it scroll too fast
@@ -108,15 +107,32 @@ export default function Model({ ...props }) {
     } else {
       evt.y += evt.deltaY;
     }
-
     scrollY = -evt.y;
-
-    percentage = lerp(percentage, scrollY, 0.08);
-    actions?.fold?._mixer.setTime(percentage / 2);
+    percentage = lerp(percentage, scrollY, 0.07);
+    if (percentage >= 0 && percentage <= 15000) {
+      actions?.fold?._mixer.setTime(percentage);
+    } else {
+      if (percentage > 15000) {
+        divContainer.scroll(0, 17000);
+      }
+    }
   }
 
+  const onResize = () => {
+    maxHeight =
+      (divContainer.clientHeight || divContainer.offsetHeight) -
+      window.innerHeight;
+  };
+
   useEffect(() => {
-    divContainer.addEventListener("wheel", onWheel, true);
+    divContainer.scrollIntoView();
+    divContainer.addEventListener("wheel", onWheel, false);
+    window.addEventListener("resize", onResize, { passive: true });
+
+    return () => {
+      divContainer.removeEventListener("wheel", onWheel);
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
 
   const test = useLoader(THREE.TextureLoader, "/test.jpg");
@@ -127,12 +143,15 @@ export default function Model({ ...props }) {
   const group = useRef();
   const { nodes, materials, animations } = useGLTF("/ekzotik.glb");
   const { actions } = useAnimations(animations, group);
+
   useEffect(() => {
-    console.log("ACTIONS", actions);
     const { fold } = actions;
+    fold.clampWhenFinished = true;
+    fold.repetitions = 1;
+    fold.setDuration(15000);
     fold.play();
   }, []);
-  console.log("nodes: ", nodes);
+
   return (
     <group
       scale={[scaleFactor, scaleFactor, scaleFactor]}

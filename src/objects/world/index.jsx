@@ -59,6 +59,7 @@ const World = () => {
     maxHeight =
       (divContainer.clientHeight || divContainer.offsetHeight) -
       window.innerHeight;
+    console.log("MAX HEIGHT", maxHeight);
   };
 
   function onWheel(e) {
