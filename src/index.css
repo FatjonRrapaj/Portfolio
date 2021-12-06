@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  overscroll-behavior: none;
 }
 
 body > #root {
@@ -14,8 +15,17 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #fff;
+  background-color: #000;
   display: block;
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
 }
 
 code {
