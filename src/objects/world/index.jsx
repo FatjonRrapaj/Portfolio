@@ -11,6 +11,7 @@ import PaperPlane from "../paperPlane";
 import Effect from "../../postprocessing";
 
 import useStore from "../../store";
+import { useFrame } from "@react-three/fiber";
 
 const World = () => {
   const floor = useRef();
@@ -23,47 +24,27 @@ const World = () => {
     y: 0,
     deltaY: 0,
   };
-  var maxHeight =
-    (divContainer.clientHeight || divContainer.offsetHeight) -
-    window.innerHeight;
 
   const [timeline] = useState(() =>
     anime.timeline({
       autoplay: false,
-      duration: 22000,
-      delay: 10000,
+      duration: 1000,
     })
   );
 
-  useEffect(() => {
-    if (floor.current != null) {
-      timeline.add({
-        targets: floor.current.position,
-        x: 0,
-        y: 25,
-        z: 400,
-        duration: 10000,
-      });
-      timeline.add({
-        targets: floor.current.position,
-        x: 0,
-        y: 0,
-        z: 800,
-        duration: 10000,
-      });
-      console.log(timeline);
-    }
-  }, []);
-
   const onResize = () => {
-    maxHeight =
-      (divContainer.clientHeight || divContainer.offsetHeight) -
-      window.innerHeight;
-    console.log("MAX HEIGHT", maxHeight);
+    maxHeight = divContainer.clientHeight - window.innerHeight;
   };
 
+  var maxHeight = divContainer.clientHeight - window.innerHeight;
+  console.log("window.innerHeight: ", window.innerHeight);
+  console.log("scrollHeight", divContainer.scrollHeight);
+  console.log("clientHeight", divContainer.clientHeight);
+  console.log("offsetHeight", divContainer.offsetHeight);
+  console.log("maxHeight", maxHeight);
+
   function onWheel(e) {
-    console.log("PLANE FLY SCROLL CONTAINER: ", e);
+    console.log(e);
     var evt = event;
     evt.deltaY = e.wheelDeltaY || e.deltaY * -1;
     // reduce by half the delta amount otherwise it scroll too fast
@@ -71,9 +52,10 @@ const World = () => {
     scroll(e);
   }
 
-  function scroll(e) {
-    console.log("Here");
+  function scroll() {
     var evt = event;
+    console.log("yellow", evt);
+
     // limit scroll top
     if (evt.y + evt.deltaY > 0) {
       evt.y = 0;
@@ -83,13 +65,14 @@ const World = () => {
     } else {
       evt.y += evt.deltaY;
     }
-
     scrollY = -evt.y;
-
-    percentage = lerp(percentage, scrollY, 0.08);
-
-    timeline.seek(percentage * (32000 / maxHeight));
+    percentage = lerp(percentage, scrollY, 0.07);
+    console.log("percentage: ", percentage);
   }
+
+  useFrame(() => {
+    timeline.seek(percentage * (1000 / maxHeight));
+  });
 
   useEffect(() => {
     divContainer.addEventListener("wheel", onWheel, false);
@@ -103,7 +86,7 @@ const World = () => {
 
   /** Line */
 
-  const points = useMemo(() => {
+  const [points] = useState(() => {
     return [
       new THREE.Vector3(4, 1, 0.2),
       new THREE.Vector3(3, 0.5, 0.5),
@@ -116,13 +99,40 @@ const World = () => {
   let linePosition = 0;
   let lineAnlge = 0;
 
-  const line = useMemo(() => {
+  const [line] = useState(() => {
     const c = new THREE.CatmullRomCurve3(points);
     c.tension = 1;
     c.arcLengthDivisions = 2000;
     c.curveType = "catmullrom";
     return c;
   });
+
+  const plane = {
+    position: {
+      x: 0,
+      y: 0,
+      z: 0,
+    },
+    rotation: {
+      x: 0,
+      y: 0,
+      z: 0,
+    },
+  };
+
+  useEffect(() => {
+    timeline.add({
+      targets: null,
+      translateX: line.x,
+      translateY: line.y,
+      translateZ: line.z,
+      onchange(e) {
+        console.log("E", e);
+      },
+      duration: 1000,
+    });
+    console.log(timeline);
+  }, []);
 
   const lineGeometry = new THREE.BufferGeometry().setFromPoints(
     line.getSpacedPoints(2000)

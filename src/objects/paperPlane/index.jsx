@@ -84,20 +84,21 @@ export default function Model({ ...props }) {
     deltaY: 0,
   };
 
-  var maxHeight =
-    (divContainer.clientHeight || divContainer.offsetHeight) -
-    window.innerHeight;
+  var maxHeight = divContainer.clientHeight - window.innerHeight;
 
   function onWheel(e) {
     var evt = event;
     evt.deltaY = e.wheelDeltaY || e.deltaY * -1;
     // reduce by half the delta amount otherwise it scroll too fast
     evt.deltaY *= 0.5;
+
     scroll(e);
   }
 
   function scroll(e) {
     var evt = event;
+    console.log("yellow", evt);
+
     // limit scroll top
     if (evt.y + evt.deltaY > 0) {
       evt.y = 0;
@@ -110,7 +111,7 @@ export default function Model({ ...props }) {
     scrollY = -evt.y;
     percentage = lerp(percentage, scrollY, 0.07);
     if (percentage >= 0 && percentage <= 15000) {
-      actions?.fold?._mixer.setTime(percentage);
+      actions?.fold?._mixer.setTime(percentage * (15000 / maxHeight));
     } else {
       if (percentage > 15000) {
         divContainer.scroll(0, 17000);

@@ -15,7 +15,6 @@
 #webgl {
   background: #eee;
   position: fixed;
-  color: red;
   top: 0;
   z-index: -99;
 }
@@ -27,7 +26,7 @@
 }
 
 #fly {
-  opacity: 0.2;
-  height: 100%;
-  background: rgb(168, 168, 168);
+  opacity: 0.5;
+  height: 2000px;
+  background: blue;
 }
