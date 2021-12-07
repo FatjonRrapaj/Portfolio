@@ -12,9 +12,7 @@ extend({ EffectComposer, ShaderPass, RenderPass });
 function Effect() {
   const { gl, scene, camera, size } = useThree();
 
-  useEffect(() => {
-    console.log("camera", camera);
-  }, []);
+  useEffect(() => {}, []);
 
   /**
    * Bloom Pass controls

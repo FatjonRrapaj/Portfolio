@@ -84,7 +84,6 @@ export default function Model({ ...props }) {
   const group = useRef();
   const { nodes, materials, animations } = useGLTF("/ekzotik.glb");
   const { actions } = useAnimations(animations, group);
-  console.log("actions: ", actions);
 
   /** GLTF PaperPlane textures */
   const test = useLoader(THREE.TextureLoader, "/test.jpg");
@@ -161,7 +160,7 @@ export default function Model({ ...props }) {
       (state) => state.paperPlane,
       ({ animationTime }) => {
         if (animationTime != null) {
-          if (animationTime < 15000) {
+          if (animationTime <= 15000) {
             fold._mixer.setTime(animationTime);
           }
         }
@@ -219,8 +218,6 @@ export default function Model({ ...props }) {
       easing: "easeOutSine",
     })
   );
-
-  console.log("TIMELINE", timeline);
 
   useEffect(() => {
     if (group.current) {

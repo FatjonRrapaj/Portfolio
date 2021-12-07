@@ -57,10 +57,6 @@ const Sphere = forwardRef(
       },
     });
 
-    useEffect(() => {
-      console.log("material", material.current);
-    });
-
     return (
       <mesh
         // receiveShadow={true}
@@ -68,9 +64,6 @@ const Sphere = forwardRef(
         layers={1}
         position={[positionX, positionY, positionZ]}
         ref={sphere}
-        onPointerDown={() => {
-          console.log("SPHERE CLICKEDD");
-        }}
       >
         <icosahedronBufferGeometry
           attach="geometry"
@@ -85,8 +78,6 @@ const Sphere = forwardRef(
           // map={texture}
           opacity={opacity}
           onBeforeCompile={(shader) => {
-            console.log("SHADEr", shader);
-
             // The perlin noise code goes here, above the main() function in the shader.
             // Noise shader from https://github.com/ashima/webgl-noise.
             shader.vertexShader = shader.vertexShader.replace(

@@ -59,6 +59,8 @@ const World = () => {
   // const initalTPOffset = 2000 - window.innerHeight;
   // const initialTPDuration = 1000;
 
+  let previousPercentage = -Infinity;
+
   function scroll() {
     var evt = event;
     if (evt.y + evt.deltaY > 0) {
@@ -70,17 +72,14 @@ const World = () => {
     }
     scrollY = -evt.y;
     percentage = lerp(percentage, scrollY, 0.07);
-    console.log("PERCENTAGE", percentage);
     if (percentage <= 15000) {
       animatePlane(percentage);
     } else if (percentage > 15000 && percentage <= 17000) {
       const fraction = percentage - 15000;
-      console.log("ENTERED HERE", fraction);
       animatePlaneToInitialTrajectoryPoint(fraction / 100);
-    } else if (percentage > 17000 && percentage <= 31000) {
+    } else if (percentage > 17000) {
       const fraction = (percentage - 17000) / 20000;
       movePlane(fraction);
-    } else {
     }
   }
 
@@ -88,6 +87,7 @@ const World = () => {
     coodinate = [0, 0, 0],
     radius = 1,
     spirals = 5,
+    direction = -1,
   }) {
     let vector3Array = [];
 
@@ -96,16 +96,13 @@ const World = () => {
     const z = coodinate[2];
 
     for (let i = 0; i < spirals; i++) {
-      const yCord = y - (radius / 2) * i;
+      const yCord = y + (radius / 2) * direction * i;
       vector3Array.push(new THREE.Vector3(x, yCord, z));
       vector3Array.push(new THREE.Vector3(x - radius, yCord, z + radius));
       vector3Array.push(new THREE.Vector3(x, yCord, z + radius * 2));
       vector3Array.push(new THREE.Vector3(x + radius, yCord, z + radius));
     }
-    console.log(
-      "LAST COORD CREATED FROM SPIRAL: ",
-      vector3Array[vector3Array.length - 1]
-    );
+    console.log(vector3Array[vector3Array.length - 1]);
     return vector3Array;
   }
 
@@ -125,8 +122,14 @@ const World = () => {
   function movePlane(fraction) {
     const point = line.getPoint(fraction);
     const { x, y, z } = point;
-    console.log("POINT", point);
     useStore.getState().paperPlane.move([x, y, z]);
+
+    if (previousPercentage > percentage) {
+      up.z = 1;
+    } else {
+      up.z = -1;
+      previousPercentage = percentage;
+    }
 
     const tangent = line.getTangent(fraction);
     axis.crossVectors(up, tangent).normalize();
@@ -153,6 +156,12 @@ const World = () => {
       new THREE.Vector3(2, 2, 195.0),
       new THREE.Vector3(-2, -2, 95.0),
       new THREE.Vector3(4, 1, 5.0),
+      ...createSpiralPathFromCoordinateWithRadius({
+        coodinate: [4, 1, 5],
+        radius: 10,
+        spirals: 10,
+        direction: 1,
+      }),
     ];
   });
 

@@ -80,7 +80,6 @@ const Sky = () => {
   return (
     <mesh
       scale={[scaleFactor, scaleFactor, scaleFactor]}
-      onPointerDown={() => console.log("SKYY CLICKED")}
       layers={1}
       ref={sky}
       position={[x, y, z]}

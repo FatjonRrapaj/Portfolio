@@ -223,8 +223,6 @@ const Floor = forwardRef((props, sphericFloor) => {
     if (autoRotate) sphericFloor.current.rotation.x += 0.0001;
   });
 
-  useEffect(() => console.log("SPHERE RE RENDERED"));
-
   return (
     <group
       scale={[scaleFactor, scaleFactor, scaleFactor]}
