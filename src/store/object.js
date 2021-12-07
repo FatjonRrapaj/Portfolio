@@ -1,15 +1,21 @@
+import { nameOf } from "../helpers/string";
+
 const useObject = (set, get, key) => {
   return {
     [key]: {
       position: null,
       rotation: null,
-      rotationAngle: { axis: null, angle: null },
+      rotationAngle: null,
       animationTime: null,
       initialTrajectoryPointAnimationTime: null,
+      lastChanged: null,
+      progress: null,
+      scaleFactor: null,
       move(position) {
         set((state) => ({
           [key]: {
             ...state[key],
+            lastChanged: nameOf(position),
             position,
           },
         }));
@@ -18,16 +24,26 @@ const useObject = (set, get, key) => {
         set((state) => ({
           [key]: {
             ...state[key],
+            lastChanged: nameOf(rotation),
             rotation,
           },
         }));
       },
-      setRotationAngle(axis, angle) {
+      setRotationAngle(rotationAngle) {
         set((state) => ({
           [key]: {
             ...state[key],
-            axis,
-            angle,
+            lastChanged: nameOf(rotationAngle),
+            rotationAngle,
+          },
+        }));
+      },
+      setScaleFactor(scaleFactor) {
+        set((state) => ({
+          [key]: {
+            ...state[key],
+            lastChanged: nameOf(scaleFactor),
+            scaleFactor,
           },
         }));
       },
@@ -35,6 +51,7 @@ const useObject = (set, get, key) => {
         set((state) => ({
           [key]: {
             ...state[key],
+            lastChanged: nameOf(animationTime),
             animationTime,
           },
         }));
@@ -45,7 +62,17 @@ const useObject = (set, get, key) => {
         set((state) => ({
           [key]: {
             ...state[key],
+            lastChanged: nameOf(initialTrajectoryPointAnimationTime),
             initialTrajectoryPointAnimationTime,
+          },
+        }));
+      },
+      setProgress(progress) {
+        set((state) => ({
+          [key]: {
+            ...state[key],
+            lastChanged: nameOf(progress),
+            progress,
           },
         }));
       },

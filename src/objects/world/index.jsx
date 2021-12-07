@@ -9,6 +9,7 @@ import DirectionalLight from "../components/directionalLight";
 import Floor from "../floor";
 import Sky from "../sky";
 import PaperPlane from "../paperPlane";
+import Fatstronaut from "../fatstronaut";
 import Effect from "../../postprocessing";
 
 import useStore from "../../store";
@@ -59,8 +60,6 @@ const World = () => {
   // const initalTPOffset = 2000 - window.innerHeight;
   // const initialTPDuration = 1000;
 
-  let previousPercentage = -Infinity;
-
   function scroll() {
     var evt = event;
     if (evt.y + evt.deltaY > 0) {
@@ -72,15 +71,7 @@ const World = () => {
     }
     scrollY = -evt.y;
     percentage = lerp(percentage, scrollY, 0.07);
-    if (percentage <= 15000) {
-      animatePlane(percentage);
-    } else if (percentage > 15000 && percentage <= 17000) {
-      const fraction = percentage - 15000;
-      animatePlaneToInitialTrajectoryPoint(fraction / 100);
-    } else if (percentage > 17000) {
-      const fraction = (percentage - 17000) / 20000;
-      movePlane(fraction);
-    }
+    useStore.getState().world.setProgress(percentage);
   }
 
   function createSpiralPathFromCoordinateWithRadius({
@@ -119,24 +110,19 @@ const World = () => {
       .paperPlane.setInitialTrajectoryPointAnimationTime(fraction);
   }
 
-  function movePlane(fraction) {
+  function movePlane(fraction, isBackward) {
     const point = line.getPoint(fraction);
     const { x, y, z } = point;
     useStore.getState().paperPlane.move([x, y, z]);
-
-    if (previousPercentage > percentage) {
+    if (isBackward) {
       up.z = 1;
     } else {
       up.z = -1;
-      previousPercentage = percentage;
     }
-
     const tangent = line.getTangent(fraction);
     axis.crossVectors(up, tangent).normalize();
     const radians = Math.acos(up.dot(tangent));
-
-    useStore.getState().paperPlane.setRotationAngle(axis, radians);
-
+    useStore.getState().paperPlane.setRotationAngle({ axis, angle: radians });
     camera.position.set(...[x, y + 3, z + 10]);
   }
 
@@ -160,7 +146,7 @@ const World = () => {
         coodinate: [4, 1, 5],
         radius: 10,
         spirals: 10,
-        direction: 1,
+        direction: -1,
       }),
     ];
   });
@@ -173,14 +159,47 @@ const World = () => {
     return c;
   });
 
+  let oldProgress = -Infinity;
+
+  function handleProgress(progress) {
+    let isBackward = false;
+    if (oldProgress > progress) {
+      isBackward = true;
+    } else {
+      isBackward = false;
+    }
+    oldProgress = progress;
+    if (progress <= 15000) {
+      animatePlane(progress);
+    } else if (progress > 15000 && progress <= 17000) {
+      const fraction = progress - 15000;
+      animatePlaneToInitialTrajectoryPoint(fraction);
+    } else if (progress > 17000) {
+      const fraction = (progress - 17000) / 20000;
+      movePlane(fraction, isBackward);
+    }
+  }
+
   useEffect(() => {
+    //TODO: KEEP AN EYE ON THE PROGRESS WITH THIS.
+    divContainer.scrollIntoView();
     //Scroll & resize event listeners
     divContainer.addEventListener("wheel", onWheel, false);
     window.addEventListener("resize", onResize, { passive: true });
 
+    //Scroll Progress Subscription
+    const unsubscribeProgress = useStore.subscribe(
+      (state) => state.world,
+      ({ progress }) => {
+        handleProgress(progress);
+      }
+    );
+
     return () => {
       divContainer.removeEventListener("wheel", onWheel);
       window.removeEventListener("resize", onResize);
+      useStore.getState().world.setProgress(0);
+      unsubscribeProgress();
     };
   }, []);
 
@@ -205,6 +224,9 @@ const World = () => {
       <Sky />
       <Suspense fallback={null}>
         <PaperPlane />
+      </Suspense>
+      <Suspense fallback={null}>
+        <Fatstronaut />
       </Suspense>
       <DirectionalLight />
       <Effect />
