@@ -1,14 +1,14 @@
 import React from "react";
 import { useControls } from "leva";
 
-function DirectionalLight() {
-  const { intensity, color, x, y, z } = useControls("DirectionalLight", {
+function DirectionalLight({ layers = 2, name = "DirectionalLight" }) {
+  const { intensity, color, x, y, z } = useControls(name, {
     color: "#FFFFFF",
     intensity: {
       min: 0.05,
       max: 100,
       step: 0.1,
-      value: 2,
+      value: 1,
     },
     x: {
       min: -1000,
@@ -35,7 +35,7 @@ function DirectionalLight() {
       position={[x, y, z]}
       color={color}
       castShadow={true}
-      layers={2}
+      layers={layers}
       intensity={intensity}
     />
   );

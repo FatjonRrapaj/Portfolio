@@ -175,7 +175,7 @@ const World = () => {
       const fraction = progress - 15000;
       animatePlaneToInitialTrajectoryPoint(fraction);
     } else if (progress > 17000) {
-      const fraction = (progress - 17000) / 20000;
+      const fraction = (progress - 17000) / 50000;
       movePlane(fraction, isBackward);
     }
   }
@@ -225,10 +225,12 @@ const World = () => {
       <Suspense fallback={null}>
         <PaperPlane />
       </Suspense>
+      <DirectionalLight />
+
       <Suspense fallback={null}>
         <Fatstronaut />
       </Suspense>
-      <DirectionalLight />
+      <DirectionalLight name="DirLight2" layers={3} />
       <Effect />
       <Stats />
 

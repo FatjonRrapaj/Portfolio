@@ -88,6 +88,10 @@ function Effect() {
     gl.render(scene, camera);
 
     gl.clearDepth();
+    camera.layers.set(3);
+    gl.render(scene, camera);
+
+    gl.clearDepth();
     camera.layers.set(0);
     gl.render(scene, camera);
   }, 1);
