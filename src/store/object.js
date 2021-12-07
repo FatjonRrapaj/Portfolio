@@ -1,9 +1,11 @@
 const useObject = (set, get, key) => {
   return {
     [key]: {
-      position: { x: 0, y: 0, z: 0 },
-      rotation: { x: 0, y: 0, z: 0 },
+      position: null,
+      rotation: null,
       rotationAngle: { axis: null, angle: null },
+      animationTime: null,
+      initialTrajectoryPointAnimationTime: null,
       move(position) {
         set((state) => ({
           [key]: {
@@ -26,6 +28,24 @@ const useObject = (set, get, key) => {
             ...state[key],
             axis,
             angle,
+          },
+        }));
+      },
+      setAnimationTime(animationTime) {
+        set((state) => ({
+          [key]: {
+            ...state[key],
+            animationTime,
+          },
+        }));
+      },
+      setInitialTrajectoryPointAnimationTime(
+        initialTrajectoryPointAnimationTime
+      ) {
+        set((state) => ({
+          [key]: {
+            ...state[key],
+            initialTrajectoryPointAnimationTime,
           },
         }));
       },

@@ -17,7 +17,7 @@ const World = () => {
   const { camera } = useThree();
 
   /** Window event listener handlers */
-  const divContainer = document.getElementById("fly");
+  const divContainer = document.getElementById("fold");
   var maxHeight = divContainer.clientHeight - window.innerHeight;
   var percentage = 0;
   var scrollY = 0;
@@ -33,7 +33,7 @@ const World = () => {
   function onWheel(e) {
     var evt = event;
     evt.deltaY = e.wheelDeltaY || e.deltaY * -1;
-    evt.deltaY *= 0.0001;
+    evt.deltaY *= 0.5;
     scroll(e);
   }
   // useFrame(({ clock }) => {
@@ -52,6 +52,13 @@ const World = () => {
   //     );
   //   }
   // });
+
+  // const foldOffset = 15000 - window.innerHeight;
+  // const foldDuration = 15000;
+
+  // const initalTPOffset = 2000 - window.innerHeight;
+  // const initialTPDuration = 1000;
+
   function scroll() {
     var evt = event;
     if (evt.y + evt.deltaY > 0) {
@@ -63,10 +70,19 @@ const World = () => {
     }
     scrollY = -evt.y;
     percentage = lerp(percentage, scrollY, 0.07);
-    animatePlane(percentage);
+    console.log("PERCENTAGE", percentage);
+    if (percentage <= 15000) {
+      animatePlane(percentage);
+    } else if (percentage > 15000 && percentage <= 17000) {
+      const fraction = percentage - 15000;
+      console.log("ENTERED HERE", fraction);
+      animatePlaneToInitialTrajectoryPoint(fraction / 100);
+    } else if (percentage > 17000 && percentage <= 31000) {
+      const fraction = (percentage - 17000) / 20000;
+      movePlane(fraction);
+    } else {
+    }
   }
-
-  let planeRotationAngle = 0;
 
   function createSpiralPathFromCoordinateWithRadius({
     coodinate = [0, 0, 0],
@@ -97,30 +113,28 @@ const World = () => {
   const axis = new THREE.Vector3();
 
   function animatePlane(percentage) {
-    const point = line.getPoint(percentage);
+    useStore.getState().paperPlane.setAnimationTime(percentage);
+  }
+
+  function animatePlaneToInitialTrajectoryPoint(fraction) {
+    useStore
+      .getState()
+      .paperPlane.setInitialTrajectoryPointAnimationTime(fraction);
+  }
+
+  function movePlane(fraction) {
+    const point = line.getPoint(fraction);
     const { x, y, z } = point;
+    console.log("POINT", point);
     useStore.getState().paperPlane.move([x, y, z]);
 
-    const tangent = line.getTangent(percentage);
+    const tangent = line.getTangent(fraction);
     axis.crossVectors(up, tangent).normalize();
     const radians = Math.acos(up.dot(tangent));
 
     useStore.getState().paperPlane.setRotationAngle(axis, radians);
 
-    //move plane x,y,z
-    //move camera z
-    //move angle
     camera.position.set(...[x, y + 3, z + 10]);
-  }
-
-  function getAngle(percentage) {
-    // get the 2Dtangent to the curve
-    var tangent = line.getTangent(percentage).normalize();
-
-    // change tangent to 3D
-    planeRotationAngle = -Math.atan(tangent.x / tangent.y);
-
-    return planeRotationAngle;
   }
 
   /** Line */
@@ -160,27 +174,6 @@ const World = () => {
       window.removeEventListener("resize", onResize);
     };
   }, []);
-
-  //   const [timeline] = useState(() =>
-  //   anime.timeline({
-  //     autoplay: false,
-  //     duration: 1000,
-  //   })
-  // );
-
-  //   useEffect(() => {
-  //     timeline.add({
-  //       targets: null,
-  //       translateX: line.x,
-  //       translateY: line.y,
-  //       translateZ: line.z,
-  //       onchange(e) {
-  //         console.log("E", e);
-  //       },
-  //       duration: 1000,
-  //     });
-  //     console.log(timeline);
-  //   }, []);
 
   const floor = useRef();
 
