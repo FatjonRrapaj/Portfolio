@@ -21,6 +21,7 @@
 
 #fold {
   height: 100000px;
+  scroll-behavior: smooth;
 }
 
 #fly {

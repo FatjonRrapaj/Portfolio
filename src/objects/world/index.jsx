@@ -75,19 +75,22 @@ const World = () => {
   }
 
   function createSpiralPathFromCoordinateWithRadius({
-    coodinate = [0, 0, 0],
+    coordinate = [0, 0, 0],
     radius = 1,
     spirals = 5,
+    heightDivider = 2,
     direction = -1,
   }) {
     let vector3Array = [];
 
-    const x = coodinate[0];
-    const y = coodinate[1];
-    const z = coodinate[2];
+    const x = coordinate[0];
+    const y = coordinate[1];
+    const z = coordinate[2];
+
+    console.log("XCORD", x);
 
     for (let i = 0; i < spirals; i++) {
-      const yCord = y + (radius / 2) * direction * i;
+      const yCord = y + (radius / heightDivider) * direction * i;
       vector3Array.push(new THREE.Vector3(x, yCord, z));
       vector3Array.push(new THREE.Vector3(x - radius, yCord, z + radius));
       vector3Array.push(new THREE.Vector3(x, yCord, z + radius * 2));
@@ -110,7 +113,7 @@ const World = () => {
       .paperPlane.setInitialTrajectoryPointAnimationTime(fraction);
   }
 
-  function movePlane(fraction, isBackward) {
+  function movePlane({ fraction, isBackward, cameraFollow }) {
     const point = line.getPoint(fraction);
     const { x, y, z } = point;
     useStore.getState().paperPlane.move([x, y, z]);
@@ -123,31 +126,39 @@ const World = () => {
     axis.crossVectors(up, tangent).normalize();
     const radians = Math.acos(up.dot(tangent));
     useStore.getState().paperPlane.setRotationAngle({ axis, angle: radians });
-    camera.position.set(...[x, y + 3, z + 10]);
+    if (cameraFollow) {
+      camera.position.set(...[x, y + 3, z + 10]);
+    }
   }
+
+  //position={[-200, 0, 500]}
+
+  //   x: -170
+  // y: 0
+  // z: 510
 
   /** Line */
   const [points] = useState(() => {
     return [
       new THREE.Vector3(0, 0, 695.0),
-      new THREE.Vector3(0, 0, 690),
-      new THREE.Vector3(2, 1, 690),
-      new THREE.Vector3(2, 2, 685),
+      new THREE.Vector3(10, 5, 640.0),
+      new THREE.Vector3(-40, -20, 580),
+      new THREE.Vector3(-100, 5, 550),
+      new THREE.Vector3(-200, 10, 500),
       ...createSpiralPathFromCoordinateWithRadius({
-        coodinate: [2, 2, 680],
-        radius: 4,
-        spirals: 10,
+        coordinate: [-200, 15, 500],
+        radius: 12,
+        spirals: 4,
+        heightDivider: 5,
       }),
-      new THREE.Vector3(2, -2, 595.0),
-      new THREE.Vector3(2, 2, 195.0),
-      new THREE.Vector3(-2, -2, 95.0),
-      new THREE.Vector3(4, 1, 5.0),
-      ...createSpiralPathFromCoordinateWithRadius({
-        coodinate: [4, 1, 5],
-        radius: 10,
-        spirals: 10,
-        direction: -1,
-      }),
+
+      new THREE.Vector3(-100, 0, 450),
+      new THREE.Vector3(-50, 10, 400),
+
+      // new THREE.Vector3(10, 0, 650),
+      // new THREE.Vector3(-20, 5, 600),
+      // new THREE.Vector3(-80, -10, 550),
+      // new THREE.Vector3(-200, 50, 505),
     ];
   });
 
@@ -175,8 +186,13 @@ const World = () => {
       const fraction = progress - 15000;
       animatePlaneToInitialTrajectoryPoint(fraction);
     } else if (progress > 17000) {
-      const fraction = (progress - 17000) / 50000;
-      movePlane(fraction, isBackward);
+      const fraction = (progress - 17000) / 20000;
+      if (progress > 20000 && progress < 35000) {
+        movePlane({ fraction, isBackward, cameraFollow: false });
+        camera.position.set(...[-190, 13, 550]);
+      } else {
+        movePlane({ fraction, isBackward, cameraFollow: true });
+      }
     }
   }
 
@@ -191,6 +207,7 @@ const World = () => {
     const unsubscribeProgress = useStore.subscribe(
       (state) => state.world,
       ({ progress }) => {
+        console.log("PROG", progress);
         handleProgress(progress);
       }
     );
