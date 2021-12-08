@@ -10,9 +10,14 @@ import Floor from "../floor";
 import Sky from "../sky";
 import PaperPlane from "../paperPlane";
 import Fatstronaut from "../fatstronaut";
+import Stars from "../stars";
 import Effect from "../../postprocessing";
 
+//Paragraphs
+import TimeDefinition from "../paragraphs/TimeDefinition";
+
 import useStore from "../../store";
+import { timeline } from "animejs";
 
 const World = () => {
   const { camera } = useThree();
@@ -87,8 +92,6 @@ const World = () => {
     const y = coordinate[1];
     const z = coordinate[2];
 
-    console.log("XCORD", x);
-
     for (let i = 0; i < spirals; i++) {
       const yCord = y + (radius / heightDivider) * direction * i;
       vector3Array.push(new THREE.Vector3(x, yCord, z));
@@ -96,7 +99,6 @@ const World = () => {
       vector3Array.push(new THREE.Vector3(x, yCord, z + radius * 2));
       vector3Array.push(new THREE.Vector3(x + radius, yCord, z + radius));
     }
-    console.log(vector3Array[vector3Array.length - 1]);
     return vector3Array;
   }
 
@@ -113,7 +115,7 @@ const World = () => {
       .paperPlane.setInitialTrajectoryPointAnimationTime(fraction);
   }
 
-  function movePlane({ fraction, isBackward, cameraFollow }) {
+  function movePlane({ fraction, isBackward, moveCamera }) {
     const point = line.getPoint(fraction);
     const { x, y, z } = point;
     useStore.getState().paperPlane.move([x, y, z]);
@@ -126,7 +128,7 @@ const World = () => {
     axis.crossVectors(up, tangent).normalize();
     const radians = Math.acos(up.dot(tangent));
     useStore.getState().paperPlane.setRotationAngle({ axis, angle: radians });
-    if (cameraFollow) {
+    if (moveCamera) {
       camera.position.set(...[x, y + 3, z + 10]);
     }
   }
@@ -144,11 +146,10 @@ const World = () => {
       new THREE.Vector3(10, 5, 640.0),
       new THREE.Vector3(-40, -20, 580),
       new THREE.Vector3(-100, 5, 550),
-      new THREE.Vector3(-200, 10, 500),
       ...createSpiralPathFromCoordinateWithRadius({
-        coordinate: [-200, 15, 500],
-        radius: 12,
-        spirals: 4,
+        coordinate: [-200, 15, 490],
+        radius: 15,
+        spirals: 5,
         heightDivider: 5,
       }),
 
@@ -172,6 +173,8 @@ const World = () => {
 
   let oldProgress = -Infinity;
 
+  let prevCameraPosition = camera.position;
+
   function handleProgress(progress) {
     let isBackward = false;
     if (oldProgress > progress) {
@@ -186,12 +189,52 @@ const World = () => {
       const fraction = progress - 15000;
       animatePlaneToInitialTrajectoryPoint(fraction);
     } else if (progress > 17000) {
-      const fraction = (progress - 17000) / 20000;
-      if (progress > 20000 && progress < 35000) {
-        movePlane({ fraction, isBackward, cameraFollow: false });
-        camera.position.set(...[-190, 13, 550]);
+      const localProgress = progress - 17000;
+      const fraction = localProgress / 20000;
+      prevCameraPosition = camera.position;
+      //FATSCRONAUT & TIME TEXT
+      if (progress > 22000 && progress < 35000) {
+        movePlane({
+          fraction,
+          isBackward,
+          moveCamera: false,
+        });
+
+        const xFactor = isBackward ? 1 : -1;
+        const yFactor = 1;
+        const zFactor = 1;
+
+        let cameraX;
+        let cameraY;
+        let cameraZ;
+
+        if (isBackward) {
+          cameraX = Math.min(
+            -190,
+            prevCameraPosition.x + (localProgress / 1000) * xFactor
+          );
+        } else {
+          cameraX = Math.max(
+            -190,
+            prevCameraPosition.x + (localProgress / 1000) * xFactor
+          );
+        }
+        cameraY = Math.min(
+          13,
+          prevCameraPosition.y + (localProgress / 1000) * yFactor
+        );
+        cameraZ = Math.min(
+          550,
+          prevCameraPosition.z + (localProgress / 1000) * zFactor
+        );
+        camera.position.set(...[cameraX, cameraY, cameraZ]);
       } else {
-        movePlane({ fraction, isBackward, cameraFollow: true });
+        prevCameraPosition = camera.position;
+        movePlane({
+          fraction,
+          isBackward,
+          moveCamera: true,
+        });
       }
     }
   }
@@ -207,7 +250,6 @@ const World = () => {
     const unsubscribeProgress = useStore.subscribe(
       (state) => state.world,
       ({ progress }) => {
-        console.log("PROG", progress);
         handleProgress(progress);
       }
     );
@@ -231,8 +273,7 @@ const World = () => {
       <line geometry={lineGeometry}>
         <lineBasicMaterial
           attach="material"
-          color={"#9c88ff"}
-          linewidth={10}
+          color="red"
           linecap={"round"}
           linejoin={"round"}
         />
@@ -247,7 +288,12 @@ const World = () => {
       <Suspense fallback={null}>
         <Fatstronaut />
       </Suspense>
-      <DirectionalLight name="DirLight2" layers={3} />
+
+      <TimeDefinition />
+      <Suspense fallback={null}>
+        <Stars />
+      </Suspense>
+
       <Effect />
       <Stats />
 

@@ -46,9 +46,8 @@ export default function Fatstronaut({ ...props }) {
 
   useFrame(({ clock }) => {
     if (group.current) {
-      group.current.rotation.y = group.current.rotation.z = Math.sin(
-        clock.getElapsedTime() * 0.01
-      );
+      group.current.rotation.y = group.current.rotation.z =
+        Math.sin(clock.getElapsedTime() * 0.05) * 0.7;
     }
   });
 
@@ -62,7 +61,7 @@ export default function Fatstronaut({ ...props }) {
       dispose={null}
     >
       <mesh
-        layers={3}
+        layers={2}
         geometry={nodes.body.geometry}
         material={materials["Material.001"]}
       />
@@ -72,23 +71,23 @@ export default function Fatstronaut({ ...props }) {
         scale={0.92}
       >
         <mesh
-          layers={3}
+          layers={2}
           geometry={nodes.Sphere008.geometry}
           material={nodes.Sphere008.material}
         />
         <mesh
-          layers={3}
+          layers={2}
           geometry={nodes.Sphere008_1.geometry}
           material={materials.specchio}
         />
       </group>
       <mesh
-        layers={3}
+        layers={2}
         geometry={nodes.feet.geometry}
         material={nodes.feet.material}
       />
       <mesh
-        layers={3}
+        layers={2}
         geometry={nodes._tubes.geometry}
         material={nodes._tubes.material}
         position={[0.63, 4.16, -0.09]}
@@ -96,7 +95,7 @@ export default function Fatstronaut({ ...props }) {
         scale={0.36}
       />
       <mesh
-        layers={3}
+        layers={2}
         geometry={nodes.wearableTubes.geometry}
         material={nodes.wearableTubes.material}
         position={[0.11, 3.31, -1.5]}
@@ -104,7 +103,7 @@ export default function Fatstronaut({ ...props }) {
         scale={0.87}
       />
       <mesh
-        layers={3}
+        layers={2}
         geometry={nodes.jet.geometry}
         material={nodes.jet.material}
         position={[0.1, 3.08, -2.15]}
@@ -112,7 +111,7 @@ export default function Fatstronaut({ ...props }) {
         scale={[0.79, 1.01, 1.01]}
       />
       <mesh
-        layers={3}
+        layers={2}
         geometry={nodes.triangulatedTubes.geometry}
         material={materials["tuta metallico.001"]}
         position={[0.63, 4.16, -0.09]}
@@ -120,7 +119,7 @@ export default function Fatstronaut({ ...props }) {
         scale={0.36}
       />
       <mesh
-        layers={3}
+        layers={2}
         geometry={nodes.leftHand.geometry}
         material={nodes.leftHand.material}
       />

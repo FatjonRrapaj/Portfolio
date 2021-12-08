@@ -2,8 +2,6 @@ import React, { useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import World from "../objects/world";
 
-import { Welcome } from "../modules";
-
 import "./styles.css";
 
 const Scene = () => {

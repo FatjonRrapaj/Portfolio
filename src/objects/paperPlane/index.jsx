@@ -86,10 +86,8 @@ export default function PaperPlane({ ...props }) {
   const { actions } = useAnimations(animations, group);
 
   /** GLTF PaperPlane textures */
-  const test = useLoader(THREE.TextureLoader, "/test.jpg");
-  const hello = useLoader(THREE.TextureLoader, "/hello.jpeg");
-  hello.flipY = false;
-  test.flipY = false;
+  // const test = useLoader(THREE.TextureLoader, "/test.jpg");
+  // test.flipY = false;
 
   /** Store subscription handling */
   const positionRef = useRef([0, 0, 695]);

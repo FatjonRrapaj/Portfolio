@@ -14,9 +14,9 @@ function Welcome(_, ref) {
   useEffect(() => {
     if (ref.current) {
       ref.current.position.set([
-        -(visibleWidthAtZDepth(0, camera) / 2),
-        -(visibleHeightAtZDepth(0, camera) / 2),
-        0,
+        visibleWidthAtZDepth(0, camera) / 2,
+        visibleHeightAtZDepth(0, camera) / 2,
+        500,
       ]);
     }
   }, [ref.current]);
