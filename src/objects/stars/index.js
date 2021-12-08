@@ -30,8 +30,8 @@ function Stars() {
 
     // Material
     const particlesMaterial = new THREE.PointsMaterial();
-    particlesMaterial.size = 0.2;
-    // particlesMaterial.sizeAttenuation = true;
+    particlesMaterial.size = 0.3;
+    particlesMaterial.sizeAttenuation = true;
     particlesMaterial.color = new THREE.Color("#ff88cc");
     particlesMaterial.transparent = true;
     particlesMaterial.alphaMap = starTexture;
@@ -44,7 +44,13 @@ function Stars() {
     return { particlesGeometry, particlesMaterial };
   });
 
-  return <points material={particlesMaterial} geometry={particlesGeometry} />;
+  return (
+    <points
+      layers={2}
+      material={particlesMaterial}
+      geometry={particlesGeometry}
+    />
+  );
 }
 
 export default Stars;
