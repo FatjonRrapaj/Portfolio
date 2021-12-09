@@ -23,7 +23,7 @@ export default function Brain({ ...props }) {
     scene.position.z += scene.position.z - center.z;
   }, []);
 
-  let prevTime;
+  // let prevTime;
   useFrame(({ clock }) => {
     if (brain.current) {
       brain.current.rotation.y += 0.003;
