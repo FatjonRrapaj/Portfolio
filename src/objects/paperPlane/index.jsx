@@ -54,7 +54,7 @@ export default function PaperPlane({ ...props }) {
       step: 0.1,
     },
     positionZ: {
-      value: 695,
+      value: 697,
       min: -1000,
       max: 1000,
       step: 0.1,
@@ -90,7 +90,7 @@ export default function PaperPlane({ ...props }) {
   // test.flipY = false;
 
   /** Store subscription handling */
-  const positionRef = useRef([0, 0, 695]);
+  const positionRef = useRef([0, 0, 697]);
 
   useEffect(() => {
     //Scroll & resize event listeners
@@ -101,8 +101,8 @@ export default function PaperPlane({ ...props }) {
     const { fold } = actions;
     fold.reset();
     fold.setLoop(THREE.LoopOnce, 1);
-    fold.setDuration(15000);
-    fold._mixer.time = 15000;
+    fold.setDuration(18000);
+    fold._mixer.time = 18000;
     fold.clampWhenFinished = true;
     fold.play();
 
@@ -119,7 +119,7 @@ export default function PaperPlane({ ...props }) {
       }) => {
         switch (lastChanged) {
           case nameOf(animationTime):
-            if (animationTime <= 15000) {
+            if (animationTime <= 18000) {
               fold._mixer.setTime(animationTime);
             }
             break;

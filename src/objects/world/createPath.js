@@ -18,6 +18,12 @@ function createSpiralPathFromCoordinateWithRadius({
     vector3Array.push(new THREE.Vector3(x, yCord, z + radius * 2));
     vector3Array.push(new THREE.Vector3(x + radius, yCord, z + radius));
   }
+
+  console.log(
+    "LAST POSITION OF THE SPIRAL PATH",
+    vector3Array[vector3Array.length - 1]
+  );
+
   return vector3Array;
 }
 

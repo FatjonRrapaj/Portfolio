@@ -59,7 +59,7 @@ export default function Brain({ ...props }) {
     <group
       ref={brain}
       position={[200, 0, 450]}
-      scale={[6, 6, 6]}
+      scale={[5, 5, 5]}
       {...props}
       dispose={null}
     >

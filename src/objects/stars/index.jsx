@@ -11,7 +11,7 @@ function Stars() {
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     for (let i = 0; i < count * 3; i++) {
-      positions[i] = (Math.random() - 0.3) * distance;
+      positions[i] = (Math.random() - 0.2) * distance;
       colors[i] = Math.random();
     }
     const particlesGeometry = new THREE.BufferGeometry();

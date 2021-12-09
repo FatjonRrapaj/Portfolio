@@ -28,25 +28,28 @@ const World = () => {
   /** Line */
   const [points] = useState(() => {
     return [
-      new THREE.Vector3(0, 0, 695.0),
+      new THREE.Vector3(0, 0, 697),
       new THREE.Vector3(10, 2, 640.0),
+      new THREE.Vector3(-10, -1, 600.0),
       new THREE.Vector3(-40, -5, 580),
       new THREE.Vector3(-100, 12, 550),
       ...createSpiralPathFromCoordinateWithRadius({
         coordinate: [-200, 15, 490],
         radius: 15,
-        spirals: 5,
+        spirals: 4,
         heightDivider: 5,
       }),
-      new THREE.Vector3(-50, 0, 500),
-      new THREE.Vector3(50, -10, 480),
+      new THREE.Vector3(-100, 3, 500),
+      new THREE.Vector3(50, -3, 450),
       ...createSpiralPathFromCoordinateWithRadius({
-        coordinate: [200, -5, 480],
+        coordinate: [200, 4, 430],
         direction: 1,
-        radius: 15,
-        spirals: 5,
-        heightDivider: 5,
+        radius: 18,
+        spirals: 3,
+        heightDivider: 3,
       }),
+      new THREE.Vector3(100, 4, 400),
+      new THREE.Vector3(50, 0, 300),
     ];
   });
 
@@ -137,43 +140,46 @@ const World = () => {
       isBackward = false;
     }
     oldProgress = progress;
-    if (progress <= 15000) {
+    if (progress <= 18000) {
       animatePlane(progress);
-    } else if (progress > 15000 && progress <= 17000) {
-      const fraction = progress - 15000;
+    } else if (progress > 18000 && progress <= 20000) {
+      const fraction = progress - 18000;
       animatePlaneToInitialTrajectoryPoint(fraction);
-    } else if (progress > 17000) {
-      const localProgress = progress - 17000;
+    } else if (progress > 20000) {
+      const localProgress = progress - 20000;
       const fraction = localProgress / 20000;
       prevCameraPosition = camera.position;
       //FATSCRONAUT & TIME TEXT
-      if (progress > 22000 && progress < 35000) {
+      if (progress > 21000 && progress < 30000) {
         movePlane({
           fraction,
           isBackward,
-          moveCamera: false,
+          moveCamera: true,
         });
-        const xFactor = isBackward ? 1 : -1;
-        // const yFactor = 1;
-        const zFactor = 1;
-        let cameraX;
-        let cameraY;
-        let cameraZ;
-        const zoomProgress = localProgress / 50000;
-        if (isBackward) {
-          cameraX = Math.min(
-            -190,
-            prevCameraPosition.x + zoomProgress * xFactor
-          );
-        } else {
-          cameraX = Math.max(
-            -190,
-            prevCameraPosition.x + zoomProgress * xFactor
-          );
-        }
-        cameraY = camera.position.y;
-        cameraZ = Math.min(550, prevCameraPosition.z + zoomProgress * zFactor);
-        camera.position.set(...[cameraX, cameraY, cameraZ]);
+
+        //COMMENTED OUT FOR NOW, DO NOT DELETE
+
+        // const xFactor = isBackward ? 1 : -1;
+        // // const yFactor = 1;
+        // const zFactor = 1;
+        // let cameraX;
+        // let cameraY;
+        // let cameraZ;
+        // const zoomProgress = localProgress / 50000;
+        // if (isBackward) {
+        //   cameraX = Math.min(
+        //     -190,
+        //     prevCameraPosition.x + zoomProgress * xFactor
+        //   );
+        // } else {
+        //   cameraX = Math.max(
+        //     -190,
+        //     prevCameraPosition.x + zoomProgress * xFactor
+        //   );
+        // }
+        // cameraY = camera.position.y;
+        // cameraZ = Math.min(550, prevCameraPosition.z + zoomProgress * zFactor);
+        // camera.position.set(...[cameraX, cameraY, cameraZ]);
       } else {
         prevCameraPosition = camera.position;
         movePlane({
