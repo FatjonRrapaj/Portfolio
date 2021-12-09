@@ -187,7 +187,7 @@ const Floor = forwardRef((props, sphericFloor) => {
       step: 0.01,
     },
     positionZ: {
-      value: -2000,
+      value: -500,
       min: -1500,
       max: 2000,
       step: 0.01,
@@ -226,6 +226,7 @@ const Floor = forwardRef((props, sphericFloor) => {
   return (
     <group
       scale={[scaleFactor, scaleFactor, scaleFactor]}
+      position={[positionX, positionY, positionZ]}
       layers={1}
       ref={sphericFloor}
     >

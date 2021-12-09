@@ -6,12 +6,12 @@ function Stars() {
   const starTexture = useLoader(THREE.TextureLoader, "/star.png");
 
   const { particlesMaterial, particlesGeometry } = useMemo(() => {
-    const count = 5000;
+    const count = 10000;
     const distance = 1000;
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     for (let i = 0; i < count * 3; i++) {
-      positions[i] = (Math.random() - 0.2) * distance;
+      positions[i] = (Math.random() - 0.3) * distance;
       colors[i] = Math.random();
     }
     const particlesGeometry = new THREE.BufferGeometry();
