@@ -1,15 +1,17 @@
-import { Suspense, useState, useEffect, useRef, useMemo } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
 import { Stats } from "@react-three/drei";
-import anime from "animejs/lib/anime.es.js";
 
 import { lerp } from "../../helpers/animation";
+import createSpiralPathFromCoordinateWithRadius from "./createPath";
+
 import DirectionalLight from "../components/directionalLight";
 import Floor from "../floor";
 import Sky from "../sky";
 import PaperPlane from "../paperPlane";
 import Fatstronaut from "../fatstronaut";
+import Brain from "../brain";
 import Stars from "../stars";
 import Effect from "../../postprocessing";
 
@@ -17,10 +19,48 @@ import Effect from "../../postprocessing";
 import TimeDefinition from "../paragraphs/TimeDefinition";
 
 import useStore from "../../store";
-import { timeline } from "animejs";
 
 const World = () => {
   const { camera } = useThree();
+
+  const floor = useRef();
+
+  /** Line */
+  const [points] = useState(() => {
+    return [
+      new THREE.Vector3(0, 0, 695.0),
+      new THREE.Vector3(10, 2, 640.0),
+      new THREE.Vector3(-40, -5, 580),
+      new THREE.Vector3(-100, 12, 550),
+      ...createSpiralPathFromCoordinateWithRadius({
+        coordinate: [-200, 15, 490],
+        radius: 15,
+        spirals: 5,
+        heightDivider: 5,
+      }),
+      new THREE.Vector3(-50, 0, 500),
+      new THREE.Vector3(50, -10, 480),
+      ...createSpiralPathFromCoordinateWithRadius({
+        coordinate: [200, -5, 480],
+        direction: 1,
+        radius: 15,
+        spirals: 5,
+        heightDivider: 5,
+      }),
+    ];
+  });
+
+  const [line] = useState(() => {
+    const c = new THREE.CatmullRomCurve3(points);
+    c.tension = 1;
+    c.arcLengthDivisions = 20000;
+    c.curveType = "catmullrom";
+    return c;
+  });
+
+  const [lineGeometry] = useState(() =>
+    new THREE.BufferGeometry().setFromPoints(line.getSpacedPoints(20000))
+  );
 
   /** Window event listener handlers */
   const divContainer = document.getElementById("fold");
@@ -42,28 +82,6 @@ const World = () => {
     evt.deltaY *= 0.5;
     scroll(e);
   }
-  // useFrame(({ clock }) => {
-  //   // mesh.current && mesh.current.position.set(...pos.current);
-  //   // mesh.current && mesh.current.rotation.set(...rot.current);
-  //   if (mesh.current) {
-  //     position += 0.001;
-  //     var point = line.getPoint(position);
-  //     const { x, y, z } = point;
-  //     mesh.current.position.set(...[x, y, z]);
-  //     const angle = getAngle(position);
-  //     camera.position.z = z + 2;
-  //     mesh.current.quaternion.setFromAxisAngle(
-  //       new THREE.Vector3(0, 0, 1),
-  //       angle
-  //     );
-  //   }
-  // });
-
-  // const foldOffset = 15000 - window.innerHeight;
-  // const foldDuration = 15000;
-
-  // const initalTPOffset = 2000 - window.innerHeight;
-  // const initialTPDuration = 1000;
 
   function scroll() {
     var evt = event;
@@ -79,32 +97,6 @@ const World = () => {
     useStore.getState().world.setProgress(percentage);
   }
 
-  function createSpiralPathFromCoordinateWithRadius({
-    coordinate = [0, 0, 0],
-    radius = 1,
-    spirals = 5,
-    heightDivider = 2,
-    direction = -1,
-  }) {
-    let vector3Array = [];
-
-    const x = coordinate[0];
-    const y = coordinate[1];
-    const z = coordinate[2];
-
-    for (let i = 0; i < spirals; i++) {
-      const yCord = y + (radius / heightDivider) * direction * i;
-      vector3Array.push(new THREE.Vector3(x, yCord, z));
-      vector3Array.push(new THREE.Vector3(x - radius, yCord, z + radius));
-      vector3Array.push(new THREE.Vector3(x, yCord, z + radius * 2));
-      vector3Array.push(new THREE.Vector3(x + radius, yCord, z + radius));
-    }
-    return vector3Array;
-  }
-
-  const up = new THREE.Vector3(0, 0, -1);
-  const axis = new THREE.Vector3();
-
   function animatePlane(percentage) {
     useStore.getState().paperPlane.setAnimationTime(percentage);
   }
@@ -115,6 +107,8 @@ const World = () => {
       .paperPlane.setInitialTrajectoryPointAnimationTime(fraction);
   }
 
+  const up = new THREE.Vector3(0, 0, -1);
+  const axis = new THREE.Vector3();
   function movePlane({ fraction, isBackward, moveCamera }) {
     const point = line.getPoint(fraction);
     const { x, y, z } = point;
@@ -133,48 +127,8 @@ const World = () => {
     }
   }
 
-  //position={[-200, 0, 500]}
-
-  //   x: -170
-  // y: 0
-  // z: 510
-
-  /** Line */
-  const [points] = useState(() => {
-    return [
-      new THREE.Vector3(0, 0, 695.0),
-      new THREE.Vector3(10, 5, 640.0),
-      new THREE.Vector3(-40, -20, 580),
-      new THREE.Vector3(-100, 5, 550),
-      ...createSpiralPathFromCoordinateWithRadius({
-        coordinate: [-200, 15, 490],
-        radius: 15,
-        spirals: 5,
-        heightDivider: 5,
-      }),
-
-      new THREE.Vector3(-100, 0, 450),
-      new THREE.Vector3(-50, 10, 400),
-
-      // new THREE.Vector3(10, 0, 650),
-      // new THREE.Vector3(-20, 5, 600),
-      // new THREE.Vector3(-80, -10, 550),
-      // new THREE.Vector3(-200, 50, 505),
-    ];
-  });
-
-  const [line] = useState(() => {
-    const c = new THREE.CatmullRomCurve3(points);
-    c.tension = 1;
-    c.arcLengthDivisions = 20000;
-    c.curveType = "catmullrom";
-    return c;
-  });
-
   let oldProgress = -Infinity;
-
   let prevCameraPosition = camera.position;
-
   function handleProgress(progress) {
     let isBackward = false;
     if (oldProgress > progress) {
@@ -199,34 +153,26 @@ const World = () => {
           isBackward,
           moveCamera: false,
         });
-
         const xFactor = isBackward ? 1 : -1;
-        const yFactor = 1;
+        // const yFactor = 1;
         const zFactor = 1;
-
         let cameraX;
         let cameraY;
         let cameraZ;
-
+        const zoomProgress = localProgress / 50000;
         if (isBackward) {
           cameraX = Math.min(
             -190,
-            prevCameraPosition.x + (localProgress / 1000) * xFactor
+            prevCameraPosition.x + zoomProgress * xFactor
           );
         } else {
           cameraX = Math.max(
             -190,
-            prevCameraPosition.x + (localProgress / 1000) * xFactor
+            prevCameraPosition.x + zoomProgress * xFactor
           );
         }
-        cameraY = Math.min(
-          13,
-          prevCameraPosition.y + (localProgress / 1000) * yFactor
-        );
-        cameraZ = Math.min(
-          550,
-          prevCameraPosition.z + (localProgress / 1000) * zFactor
-        );
+        cameraY = camera.position.y;
+        cameraZ = Math.min(550, prevCameraPosition.z + zoomProgress * zFactor);
         camera.position.set(...[cameraX, cameraY, cameraZ]);
       } else {
         prevCameraPosition = camera.position;
@@ -253,7 +199,6 @@ const World = () => {
         handleProgress(progress);
       }
     );
-
     return () => {
       divContainer.removeEventListener("wheel", onWheel);
       window.removeEventListener("resize", onResize);
@@ -261,12 +206,6 @@ const World = () => {
       unsubscribeProgress();
     };
   }, []);
-
-  const floor = useRef();
-
-  const lineGeometry = new THREE.BufferGeometry().setFromPoints(
-    line.getSpacedPoints(20000)
-  );
 
   return (
     <>
@@ -290,6 +229,11 @@ const World = () => {
       </Suspense>
 
       <TimeDefinition />
+
+      <Suspense fallback={null}>
+        <Brain />
+      </Suspense>
+
       <Suspense fallback={null}>
         <Stars />
       </Suspense>

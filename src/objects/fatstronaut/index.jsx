@@ -7,10 +7,9 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 
-import useStore from "../../store";
-import { nameOf } from "../../helpers/string";
-
 export default function Fatstronaut({ ...props }) {
+  const group = useRef();
+
   const { nodes, materials, scene } = useGLTF("/fatstronaut.glb");
 
   useEffect(() => {
@@ -21,37 +20,15 @@ export default function Fatstronaut({ ...props }) {
     scene.position.x += scene.position.x - center.x;
     scene.position.y += scene.position.y - center.y;
     scene.position.z += scene.position.z - center.z;
-
-    const unsubscribeFatscronaut = useStore.subscribe(
-      (state) => state.fatstronaut,
-      ({ position, rotation, scaleFactor, lastChanged }) => {
-        switch (lastChanged) {
-          case nameOf(position):
-            break;
-          case nameOf(rotation):
-            break;
-          case nameOf(scaleFactor):
-            break;
-
-          default:
-            break;
-        }
-      }
-    );
-
-    return () => {
-      unsubscribeFatscronaut();
-    };
   }, []);
 
   useFrame(({ clock }) => {
     if (group.current) {
       group.current.rotation.y = group.current.rotation.z =
-        Math.sin(clock.getElapsedTime() * 0.05) * 0.7;
+        Math.sin(clock.getElapsedTime() * 0.07) * 0.7;
     }
   });
 
-  const group = useRef();
   return (
     <group
       position={[-200, 0, 500]}
