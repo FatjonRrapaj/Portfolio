@@ -62,7 +62,7 @@ function Effect() {
       //radius,
       //threshold
       new Vector2(size.width, size.height),
-      bloomStrength,
+      1.5,
       bloomRadius,
       bloomThreshold
     );

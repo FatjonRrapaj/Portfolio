@@ -49,7 +49,9 @@ const World = () => {
         heightDivider: 3,
       }),
       new THREE.Vector3(100, 4, 400),
-      new THREE.Vector3(50, 0, 300),
+      new THREE.Vector3(50, -4, 380),
+      new THREE.Vector3(0, 4, 380),
+      new THREE.Vector3(0, 0, 300),
     ];
   });
 

@@ -36,7 +36,7 @@ const Sky = () => {
     z: {
       min: -2000,
       max: 2000,
-      value: -1500,
+      value: -550,
       step: 0.1,
     },
     radius: {
@@ -82,16 +82,16 @@ const Sky = () => {
       scale={[scaleFactor, scaleFactor, scaleFactor]}
       layers={1}
       ref={sky}
-      position={[x, y, z]}
+      position={[0, 0, -550]}
     >
-      <sphereBufferGeometry args={[radius, detail, detail]} />
+      <sphereBufferGeometry args={[radius, 1000, 1000]} />
       <meshStandardMaterial
         side={THREE.DoubleSide}
         color={color}
         flatShading={flatShading}
         wireframe={wireframe}
         emissive={emissiveColor}
-        emissiveIntensity={emissiveIntensity}
+        emissiveIntensity={2.0}
       />
     </mesh>
   );
