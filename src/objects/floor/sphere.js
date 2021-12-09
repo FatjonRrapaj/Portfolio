@@ -13,9 +13,6 @@ const Sphere = forwardRef(
       polygonOffsetFactor,
       polygonOffsetUnits,
       opacity,
-      positionX,
-      positionY,
-      positionZ,
       wireframeLinewidth,
       wireframeLinecap,
       wireframeLinejoin,
@@ -60,9 +57,7 @@ const Sphere = forwardRef(
     return (
       <mesh
         // receiveShadow={true}
-
         layers={1}
-        position={[positionX, positionY, positionZ]}
         ref={sphere}
       >
         <icosahedronBufferGeometry

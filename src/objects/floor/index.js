@@ -81,8 +81,8 @@ const Floor = forwardRef((props, sphericFloor) => {
     autoRotate: false,
     scaleFactor: {
       min: 0.1,
-      max: 2,
-      value: 0.8,
+      max: 100,
+      value: 1,
       step: 0.01,
     },
   });
@@ -236,9 +236,6 @@ const Floor = forwardRef((props, sphericFloor) => {
         polygonOffsetFactor={polygonOffsetFactor}
         polygonOffsetUnits={polygonOffsetUnits}
         opacity={opacity}
-        positionX={positionX}
-        positionY={positionY}
-        positionZ={positionZ}
         wireframeLinewidth={wireframeLinewidth}
         wireframeLinecap={wireframeLinecap}
         wireframeLinejoin={wireframeLinejoin}
@@ -253,9 +250,6 @@ const Floor = forwardRef((props, sphericFloor) => {
         polygonOffsetFactor={polygonOffsetFactor}
         polygonOffsetUnits={polygonOffsetUnits}
         opacity={opacity}
-        positionX={positionX}
-        positionY={positionY}
-        positionZ={positionZ}
         wireframeLinewidth={wireframeLinewidth}
         wireframeLinecap={wireframeLinecap}
         wireframeLinejoin={wireframeLinejoin}
