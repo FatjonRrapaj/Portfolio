@@ -23,9 +23,3 @@
   height: 100000px;
   scroll-behavior: smooth;
 }
-
-#fly {
-  opacity: 0.5;
-  height: 20000px;
-  background: blue;
-}

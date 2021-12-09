@@ -27,7 +27,6 @@ const Scene = () => {
 
       {/* <Welcome /> */}
       <div id="fold" className="container"></div>
-      <div id="fly" className="container"></div>
     </div>
   );
 };
