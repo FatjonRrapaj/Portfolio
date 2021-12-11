@@ -10,7 +10,7 @@ function CreativityDefiniton() {
     const unsubscribeProgress = useStore.subscribe(
       (state) => state.world,
       ({ progress }) => {
-        if (progress > 30000 && progress < 38650) {
+        if (progress > 27300 && progress < 33611) {
           if (creativityDef.current) {
             creativityDef.current.style.opacity = 1;
           }
@@ -25,7 +25,7 @@ function CreativityDefiniton() {
     return () => {
       unsubscribeProgress();
     };
-  }, [creativityDef.current]);
+  }, []);
 
   return (
     <Html

@@ -1,15 +1,13 @@
 import { Suspense, useState, useEffect, useRef } from "react";
 import * as THREE from "three";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useThree } from "@react-three/fiber";
 import { Stats } from "@react-three/drei";
-import anime from "animejs/lib/anime.es.js";
 
 import { lerp } from "../../helpers/animation";
 import createSpiralPathFromCoordinateWithRadius from "./createPath";
 
+import Planet from "../planet";
 import DirectionalLight from "../components/directionalLight";
-import Floor from "../floor";
-import Sky from "../sky";
 import PaperPlane from "../paperPlane";
 import Fatstronaut from "../fatstronaut";
 import Brain from "../brain";
@@ -24,8 +22,6 @@ import useStore from "../../store";
 
 const World = () => {
   const { camera } = useThree();
-
-  const floor = useRef();
 
   /** Line */
   const [points] = useState(() => {
@@ -43,7 +39,7 @@ const World = () => {
       }),
       new THREE.Vector3(-185, 0, 505),
       new THREE.Vector3(-100, 2, 505),
-      new THREE.Vector3(50, 0, 410),
+      new THREE.Vector3(50, 0, 500),
       ...createSpiralPathFromCoordinateWithRadius({
         coordinate: [200, 4, 430],
         direction: 1,
@@ -54,18 +50,33 @@ const World = () => {
       new THREE.Vector3(100, 4, 400),
       new THREE.Vector3(50, -4, 380),
       new THREE.Vector3(0, 4, 380),
-      new THREE.Vector3(-10, 0, 300),
-      new THREE.Vector3(0, 10, 100),
-      new THREE.Vector3(10, 5, 0),
-      new THREE.Vector3(-20, 10, -100),
-      new THREE.Vector3(0, 40, -200),
-      new THREE.Vector3(0, 80, -300),
-      new THREE.Vector3(0, 120, -350),
-      new THREE.Vector3(0, 130, -400),
-      new THREE.Vector3(10, 130, -400),
-      new THREE.Vector3(-10, 130, -400),
-      new THREE.Vector3(-10, 130, -400),
-      new THREE.Vector3(5, 140, -420),
+      new THREE.Vector3(-10, 0, 350),
+      new THREE.Vector3(0, 10, 300),
+      new THREE.Vector3(10, 20, 270),
+      new THREE.Vector3(4, 30, 220),
+      new THREE.Vector3(-3, 40, 200),
+      new THREE.Vector3(0, 90, 170),
+      new THREE.Vector3(0, 120, 150),
+      new THREE.Vector3(-8, 160, 150),
+      new THREE.Vector3(8, 180, 145),
+      new THREE.Vector3(2, 200, 145),
+      new THREE.Vector3(6, 220, 130),
+      new THREE.Vector3(10, 220, 130),
+      new THREE.Vector3(2, 220, 125),
+      new THREE.Vector3(12, 220, 125),
+      new THREE.Vector3(0, 220, 150),
+      new THREE.Vector3(-13, 220, 150),
+      new THREE.Vector3(-7, 220, 180),
+      new THREE.Vector3(8, 220, 180),
+      new THREE.Vector3(2, 220, 150),
+      new THREE.Vector3(-0.7, 225, 150),
+      new THREE.Vector3(-0.5, 220, 145),
+      new THREE.Vector3(-13, 225, 145),
+      new THREE.Vector3(0, 225, 140),
+      new THREE.Vector3(5, 220, 140),
+      new THREE.Vector3(9, 218, 120),
+      new THREE.Vector3(12, 220, 120),
+      new THREE.Vector3(0, 220, 110),
     ];
   });
 
@@ -158,7 +169,7 @@ const World = () => {
 
   let oldProgress = -Infinity;
 
-  function handleProgress(progress, scrollingStopped) {
+  function handleProgress(progress) {
     console.log("progress: ", progress);
     let isBackward = false;
     if (oldProgress > progress) {
@@ -177,7 +188,7 @@ const World = () => {
       const localProgress = progress - 18000;
       const fraction = localProgress / 30000;
       let prevCameraPosition = camera.position;
-      if (progress > 22500 && progress <= 28800) {
+      if (progress > 20760 && progress <= 26262) {
         //PLANE
         movePlane({
           fraction,
@@ -204,14 +215,14 @@ const World = () => {
         cameraY = camera.position.y;
         cameraZ = Math.min(550, prevCameraPosition.z + zoomProgress * zFactor);
         camera.position.set(...[cameraX, cameraY, cameraZ]);
-      } else if (progress > 28800 && progress <= 29950) {
+      } else if (progress > 26262 && progress <= 27300) {
         //PLANE TO BRAIN
         movePlane({
           fraction,
           isBackward,
           moveCamera: true,
         });
-      } else if (progress > 29950 && progress <= 38700) {
+      } else if (progress > 27300 && progress <= 33611) {
         //BRAIN
         movePlane({
           fraction,
@@ -244,13 +255,14 @@ const World = () => {
         }
         cameraZ = Math.min(490, prevCameraPosition.z + zoomProgress * zFactor);
         camera.position.set(...[cameraX, cameraY, cameraZ]);
-      } else if (progress > 38700 && progress <= 39700) {
+      } else if (progress > 33611 && progress <= 34600) {
+        //BRAIN TO WORLD
         movePlane({
           fraction,
           isBackward,
           moveCamera: true,
         });
-      } else if (progress >= 39700 && progress < 42000) {
+      } else if (progress > 34600 && progress <= 42000) {
         movePlane({
           fraction,
           isBackward,
@@ -301,8 +313,7 @@ const World = () => {
           linejoin={"round"}
         />
       </line>
-      <Floor ref={floor} />
-      <Sky />
+      <Planet />
       <Suspense fallback={null}>
         <PaperPlane />
       </Suspense>

@@ -4,9 +4,9 @@ import { useControls } from "leva";
 
 import Sphere from "./sphere";
 
-const Floor = forwardRef((props, sphericFloor) => {
-  const sphere = createRef();
-  const sphere2 = createRef();
+function Floor() {
+  const sphericFloor = useRef();
+
   let cam = null;
 
   /**
@@ -82,7 +82,7 @@ const Floor = forwardRef((props, sphericFloor) => {
     scaleFactor: {
       min: 0.1,
       max: 100,
-      value: 1,
+      value: 3.5,
       step: 0.01,
     },
   });
@@ -197,39 +197,31 @@ const Floor = forwardRef((props, sphericFloor) => {
       step: Math.PI / 4,
       min: -1000,
       max: 1000,
-      onChange: (val) => sphere.current && sphere.current.rotateX(val),
     },
     rotationY: {
       value: 0,
       step: Math.PI / 4,
       min: -1000,
       max: 1000,
-      onChange: (val) => sphere.current && sphere.current.rotateY(val),
     },
     rotationZ: {
       value: 0,
       step: Math.PI / 4,
       min: -1000,
       max: 1000,
-      onChange: (val) => sphere.current && sphere.current.rotateZ(val),
     },
     sphere1WireFrame: false,
     sphere2WireFrame: true,
   });
 
   useFrame(() => {
-    // if (autoRotate) sphericFloor.current.rotation.y += 0.005;
-    // if (autoRotate) sphericFloor.current.rotation.x += 0.005;
-    if (autoRotate) sphericFloor.current.rotation.x += 0.0001;
+    if (sphericFloor.current) {
+      sphericFloor.current.rotation.x += 0.0003;
+    }
   });
 
   return (
-    <group
-      scale={[scaleFactor, scaleFactor, scaleFactor]}
-      position={[0, 0, -550]}
-      layers={1}
-      ref={sphericFloor}
-    >
+    <group scale={[1.5, 1.5, 1.5]} layers={1} ref={sphericFloor}>
       <Sphere
         radius={radius}
         detail={detail}
@@ -240,7 +232,6 @@ const Floor = forwardRef((props, sphericFloor) => {
         wireframeLinecap={wireframeLinecap}
         wireframeLinejoin={wireframeLinejoin}
         roughness={roughness}
-        ref={sphere}
         color={sphere1Color}
         wireframe={sphere1WireFrame}
       />
@@ -257,11 +248,10 @@ const Floor = forwardRef((props, sphericFloor) => {
         name="Sphere2"
         wireframe={sphere2WireFrame}
         offset={offset}
-        ref={sphere2}
         color={sphere2Color}
       />
     </group>
   );
-});
+}
 
 export default Floor;

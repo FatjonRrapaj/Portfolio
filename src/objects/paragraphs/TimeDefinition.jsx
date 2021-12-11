@@ -10,9 +10,7 @@ function TimeDefinition() {
     const unsubscribeProgress = useStore.subscribe(
       (state) => state.world,
       ({ progress }) => {
-        if (progress > 22700 && progress < 28800) {
-          console.log("progress: ", progress);
-
+        if (progress > 20760 && progress < 26262) {
           if (timeDef.current) {
             timeDef.current.style.opacity = 1;
           }
@@ -27,7 +25,7 @@ function TimeDefinition() {
     return () => {
       unsubscribeProgress();
     };
-  }, [timeDef.current]);
+  }, []);
 
   return (
     <Html
