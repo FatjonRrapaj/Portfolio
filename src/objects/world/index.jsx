@@ -1,7 +1,8 @@
 import { Suspense, useState, useEffect, useRef } from "react";
 import * as THREE from "three";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { Stats } from "@react-three/drei";
+import anime from "animejs/lib/anime.es.js";
 
 import { lerp } from "../../helpers/animation";
 import createSpiralPathFromCoordinateWithRadius from "./createPath";
@@ -17,6 +18,7 @@ import Effect from "../../postprocessing";
 
 //Paragraphs
 import TimeDefinition from "../paragraphs/TimeDefinition";
+import CreativityDefiniton from "../paragraphs/CreativityDefinition";
 
 import useStore from "../../store";
 
@@ -36,15 +38,16 @@ const World = () => {
       ...createSpiralPathFromCoordinateWithRadius({
         coordinate: [-200, 15, 490],
         radius: 15,
-        spirals: 4,
-        heightDivider: 5,
+        spirals: 3,
+        heightDivider: 3,
       }),
-      new THREE.Vector3(-100, 3, 500),
-      new THREE.Vector3(50, -3, 450),
+      new THREE.Vector3(-185, 0, 505),
+      new THREE.Vector3(-100, 2, 505),
+      new THREE.Vector3(50, 0, 410),
       ...createSpiralPathFromCoordinateWithRadius({
         coordinate: [200, 4, 430],
         direction: 1,
-        radius: 18,
+        radius: 16,
         spirals: 3,
         heightDivider: 3,
       }),
@@ -54,7 +57,15 @@ const World = () => {
       new THREE.Vector3(-10, 0, 300),
       new THREE.Vector3(0, 10, 100),
       new THREE.Vector3(10, 5, 0),
-      new THREE.Vector3(0, 0, -100),
+      new THREE.Vector3(-20, 10, -100),
+      new THREE.Vector3(0, 40, -200),
+      new THREE.Vector3(0, 80, -300),
+      new THREE.Vector3(0, 120, -350),
+      new THREE.Vector3(0, 130, -400),
+      new THREE.Vector3(10, 130, -400),
+      new THREE.Vector3(-10, 130, -400),
+      new THREE.Vector3(-10, 130, -400),
+      new THREE.Vector3(5, 140, -420),
     ];
   });
 
@@ -63,6 +74,7 @@ const World = () => {
     c.tension = 1;
     c.arcLengthDivisions = 20000;
     c.curveType = "catmullrom";
+    c.closed = true;
     return c;
   });
 
@@ -84,10 +96,17 @@ const World = () => {
     maxHeight = divContainer.clientHeight - window.innerHeight;
   };
 
+  let isScrolling;
+
   function onWheel(e) {
     var evt = event;
     evt.deltaY = e.wheelDeltaY || e.deltaY * -1;
     evt.deltaY *= 0.5;
+    clearTimeout(isScrolling);
+    useStore.getState().world.setScrollingStopped(false);
+    isScrolling = setTimeout(function () {
+      useStore.getState().world.setScrollingStopped(true);
+    }, 66);
     scroll(e);
   }
 
@@ -101,6 +120,7 @@ const World = () => {
       evt.y += evt.deltaY;
     }
     scrollY = -evt.y;
+    useStore.getState().world.setScrollY(scrollY);
     percentage = lerp(percentage, scrollY, 0.07);
     useStore.getState().world.setProgress(percentage);
   }
@@ -126,6 +146,7 @@ const World = () => {
     } else {
       up.z = -1;
     }
+
     const tangent = line.getTangent(fraction);
     axis.crossVectors(up, tangent).normalize();
     const radians = Math.acos(up.dot(tangent));
@@ -136,8 +157,9 @@ const World = () => {
   }
 
   let oldProgress = -Infinity;
-  let prevCameraPosition = camera.position;
-  function handleProgress(progress) {
+
+  function handleProgress(progress, scrollingStopped) {
+    console.log("progress: ", progress);
     let isBackward = false;
     if (oldProgress > progress) {
       isBackward = true;
@@ -145,48 +167,96 @@ const World = () => {
       isBackward = false;
     }
     oldProgress = progress;
+
     if (progress <= 18000) {
       animatePlane(progress);
     } else if (progress > 18000 && progress <= 20000) {
       const fraction = progress - 18000;
       animatePlaneToInitialTrajectoryPoint(fraction);
-    } else if (progress > 20000) {
-      const localProgress = progress - 20000;
-      const fraction = localProgress / 20000;
-      prevCameraPosition = camera.position;
-      //FATSCRONAUT & TIME TEXT
-      if (progress > 21000 && progress < 30000) {
+    } else if (progress > 18000) {
+      const localProgress = progress - 18000;
+      const fraction = localProgress / 30000;
+      let prevCameraPosition = camera.position;
+      if (progress > 22500 && progress <= 28800) {
+        //PLANE
+        movePlane({
+          fraction,
+          isBackward,
+          moveCamera: false,
+        });
+        const xFactor = isBackward ? 1 : -1;
+        const zFactor = 1;
+        let cameraX;
+        let cameraY;
+        let cameraZ;
+        const zoomProgress = localProgress / 50000;
+        if (isBackward) {
+          cameraX = Math.min(
+            -190,
+            prevCameraPosition.x + zoomProgress * xFactor
+          );
+        } else {
+          cameraX = Math.max(
+            -190,
+            prevCameraPosition.x + zoomProgress * xFactor
+          );
+        }
+        cameraY = camera.position.y;
+        cameraZ = Math.min(550, prevCameraPosition.z + zoomProgress * zFactor);
+        camera.position.set(...[cameraX, cameraY, cameraZ]);
+      } else if (progress > 28800 && progress <= 29950) {
+        //PLANE TO BRAIN
         movePlane({
           fraction,
           isBackward,
           moveCamera: true,
         });
-
-        //COMMENTED OUT FOR NOW, DO NOT DELETE
-
-        // const xFactor = isBackward ? 1 : -1;
-        // // const yFactor = 1;
-        // const zFactor = 1;
-        // let cameraX;
-        // let cameraY;
-        // let cameraZ;
-        // const zoomProgress = localProgress / 50000;
-        // if (isBackward) {
-        //   cameraX = Math.min(
-        //     -190,
-        //     prevCameraPosition.x + zoomProgress * xFactor
-        //   );
-        // } else {
-        //   cameraX = Math.max(
-        //     -190,
-        //     prevCameraPosition.x + zoomProgress * xFactor
-        //   );
-        // }
-        // cameraY = camera.position.y;
-        // cameraZ = Math.min(550, prevCameraPosition.z + zoomProgress * zFactor);
-        // camera.position.set(...[cameraX, cameraY, cameraZ]);
+      } else if (progress > 29950 && progress <= 38700) {
+        //BRAIN
+        movePlane({
+          fraction,
+          isBackward,
+          moveCamera: false,
+        });
+        const xFactor = isBackward ? 1 : -1;
+        const zFactor = 1;
+        let cameraX;
+        let cameraY;
+        let cameraZ;
+        const zoomProgress = localProgress / 50000;
+        if (isBackward) {
+          cameraX = Math.min(
+            190,
+            prevCameraPosition.x + zoomProgress * xFactor
+          );
+        } else {
+          cameraX = Math.max(
+            190,
+            prevCameraPosition.x + zoomProgress * xFactor
+          );
+        }
+        cameraY = Math.min(8, prevCameraPosition.y + zoomProgress);
+        if (isBackward) {
+          cameraZ = Math.max(
+            490,
+            prevCameraPosition.z + zoomProgress * zFactor
+          );
+        }
+        cameraZ = Math.min(490, prevCameraPosition.z + zoomProgress * zFactor);
+        camera.position.set(...[cameraX, cameraY, cameraZ]);
+      } else if (progress > 38700 && progress <= 39700) {
+        movePlane({
+          fraction,
+          isBackward,
+          moveCamera: true,
+        });
+      } else if (progress >= 39700 && progress < 42000) {
+        movePlane({
+          fraction,
+          isBackward,
+          moveCamera: true,
+        });
       } else {
-        prevCameraPosition = camera.position;
         movePlane({
           fraction,
           isBackward,
@@ -198,23 +268,26 @@ const World = () => {
 
   useEffect(() => {
     //TODO: KEEP AN EYE ON THE PROGRESS WITH THIS.
+
     divContainer.scrollIntoView();
     //Scroll & resize event listeners
     divContainer.addEventListener("wheel", onWheel, false);
     window.addEventListener("resize", onResize, { passive: true });
 
-    //Scroll Progress Subscription
-    const unsubscribeProgress = useStore.subscribe(
+    //Zustand store subscriptions
+    const unSubscribeWorldChanges = useStore.subscribe(
       (state) => state.world,
-      ({ progress }) => {
-        handleProgress(progress);
+      ({ progress, scrollingStopped }) => {
+        handleProgress(progress, scrollingStopped);
       }
     );
+
     return () => {
       divContainer.removeEventListener("wheel", onWheel);
       window.removeEventListener("resize", onResize);
       useStore.getState().world.setProgress(0);
-      unsubscribeProgress();
+      useStore.getState().world.setScrollY(0);
+      unSubscribeWorldChanges();
     };
   }, []);
 
@@ -245,6 +318,8 @@ const World = () => {
         <Brain />
       </Suspense>
 
+      <CreativityDefiniton />
+
       <Suspense fallback={null}>
         <Stars />
       </Suspense>
@@ -252,7 +327,7 @@ const World = () => {
       <Effect />
       <Stats />
 
-      <axesHelper args={[1000000]} />
+      {/* <axesHelper args={[1000000]} /> */}
     </>
   );
 };

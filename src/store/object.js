@@ -1,5 +1,3 @@
-import { nameOf } from "../helpers/string";
-
 const useObject = (set, get, key) => {
   return {
     [key]: {
@@ -11,11 +9,14 @@ const useObject = (set, get, key) => {
       lastChanged: null,
       progress: null,
       scaleFactor: null,
+      scrollY: null,
+      scrollingStopped: null,
+
       move(position) {
         set((state) => ({
           [key]: {
             ...state[key],
-            lastChanged: nameOf(position),
+            lastChanged: "position",
             position,
           },
         }));
@@ -24,7 +25,7 @@ const useObject = (set, get, key) => {
         set((state) => ({
           [key]: {
             ...state[key],
-            lastChanged: nameOf(rotation),
+            lastChanged: "rotation",
             rotation,
           },
         }));
@@ -33,7 +34,7 @@ const useObject = (set, get, key) => {
         set((state) => ({
           [key]: {
             ...state[key],
-            lastChanged: nameOf(rotationAngle),
+            lastChanged: "rotationAngle",
             rotationAngle,
           },
         }));
@@ -42,7 +43,7 @@ const useObject = (set, get, key) => {
         set((state) => ({
           [key]: {
             ...state[key],
-            lastChanged: nameOf(scaleFactor),
+            lastChanged: "scaleFactor",
             scaleFactor,
           },
         }));
@@ -51,7 +52,7 @@ const useObject = (set, get, key) => {
         set((state) => ({
           [key]: {
             ...state[key],
-            lastChanged: nameOf(animationTime),
+            lastChanged: "animationTime",
             animationTime,
           },
         }));
@@ -62,8 +63,17 @@ const useObject = (set, get, key) => {
         set((state) => ({
           [key]: {
             ...state[key],
-            lastChanged: nameOf(initialTrajectoryPointAnimationTime),
+            lastChanged: "initialTrajectoryPointAnimationTime",
             initialTrajectoryPointAnimationTime,
+          },
+        }));
+      },
+      setScrollY(scrollY) {
+        set((state) => ({
+          [key]: {
+            ...state[key],
+            lastChanged: "scrollY",
+            scrollY,
           },
         }));
       },
@@ -71,8 +81,18 @@ const useObject = (set, get, key) => {
         set((state) => ({
           [key]: {
             ...state[key],
-            lastChanged: nameOf(progress),
+            lastChanged: "progress",
+            sameProgress: state.progress === progress,
             progress,
+          },
+        }));
+      },
+      setScrollingStopped(scrollingStopped) {
+        set((state) => ({
+          [key]: {
+            ...state[key],
+            lastChanged: "scrollingStopped",
+            scrollingStopped,
           },
         }));
       },

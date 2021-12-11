@@ -9,7 +9,6 @@ import { useLoader, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
 import anime from "animejs/lib/anime.es.js";
 
-import { nameOf } from "../../helpers/string";
 import useStore from "../../store";
 
 export default function PaperPlane({ ...props }) {
@@ -107,7 +106,6 @@ export default function PaperPlane({ ...props }) {
     fold.play();
 
     //Zustand store subscriptions
-
     const unsubscribePaperPlaneChanges = useStore.subscribe(
       (state) => state.paperPlane,
       ({
@@ -118,21 +116,21 @@ export default function PaperPlane({ ...props }) {
         lastChanged,
       }) => {
         switch (lastChanged) {
-          case nameOf(animationTime):
+          case "animationTime":
             if (animationTime <= 18000) {
               fold._mixer.setTime(animationTime);
             }
             break;
-          case nameOf(initialTrajectoryPointAnimationTime):
+          case "initialTrajectoryPointAnimationTime":
             if (timeline.began && timeline.completed) {
               timeline.completed = false;
             }
             timeline.seek(initialTrajectoryPointAnimationTime);
             break;
-          case nameOf(position):
+          case "position":
             group.current && group.current.position.set(...position);
             break;
-          case nameOf(rotationAngle):
+          case "rotationAngle":
             group.current.quaternion.setFromAxisAngle(
               rotationAngle.axis,
               rotationAngle.angle
