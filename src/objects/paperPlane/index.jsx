@@ -84,9 +84,13 @@ export default function PaperPlane({ ...props }) {
   const { nodes, materials, animations } = useGLTF("/ekzotik.glb");
   const { actions } = useAnimations(animations, group);
 
-  /** GLTF PaperPlane textures */
-  // const test = useLoader(THREE.TextureLoader, "/test.jpg");
-  // test.flipY = false;
+  // /** GLTF PaperPlane textures */
+  const front = useLoader(THREE.TextureLoader, "/front.jpg");
+  front.flipY = false;
+  const back = useLoader(THREE.TextureLoader, "/back.jpg");
+  const frontAMap = useLoader(THREE.TextureLoader, "/aMap.jpg");
+  frontAMap.flipY = false;
+  const backAMap = useLoader(THREE.TextureLoader, "/aMap.jpg");
 
   /** Store subscription handling */
   const positionRef = useRef([0, 0, 697]);
@@ -199,10 +203,24 @@ export default function PaperPlane({ ...props }) {
         layers={2}
         name="Plane_1"
         geometry={nodes.Plane_1.geometry}
-        material={materials.back}
+        // material={materials.back}
+        castShadow={true}
+        receiveShadow={true}
         morphTargetDictionary={nodes.Plane_1.morphTargetDictionary}
         morphTargetInfluences={nodes.Plane_1.morphTargetInfluences}
-      ></mesh>
+      >
+        <meshStandardMaterial
+          {...materials.back}
+          alphaMap={backAMap}
+          roughness={1}
+          metalness={0.4}
+          map={back}
+          transparent={true}
+          depthTest={true}
+          alphaTest={0.5}
+          side={THREE.FrontSide}
+        />
+      </mesh>
       <mesh
         layers={2}
         name="Plane_2"
@@ -217,11 +235,19 @@ export default function PaperPlane({ ...props }) {
         layers={2}
         name="Plane_3"
         geometry={nodes.Plane_3.geometry}
-        material={materials.front}
+        // material={materials.front}
         morphTargetDictionary={nodes.Plane_3.morphTargetDictionary}
         morphTargetInfluences={nodes.Plane_3.morphTargetInfluences}
       >
-        <meshStandardMaterial color={"#fff"} />
+        <meshStandardMaterial
+          {...materials.front}
+          side={THREE.FrontSide}
+          roughness={1}
+          metalness={0.4}
+          map={front}
+          transparent={true}
+          alphaMap={frontAMap}
+        />
       </mesh>
     </group>
   );
