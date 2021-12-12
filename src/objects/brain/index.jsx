@@ -7,11 +7,13 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 
+import brainPath from "/brain.glb";
+
 export default function Brain({ ...props }) {
   const brain = useRef();
   const brainMesh = useRef();
   const brainMeshWireframe = useRef();
-  const { nodes, materials, scene } = useGLTF("/brain.glb");
+  const { nodes, materials, scene } = useGLTF(brainPath);
 
   useEffect(() => {
     //center gltf

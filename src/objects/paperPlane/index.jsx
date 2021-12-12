@@ -11,6 +11,8 @@ import anime from "animejs/lib/anime.es.js";
 
 import useStore from "../../store";
 
+import plane3d from "/ekzotik.glb";
+
 export default function PaperPlane({ ...props }) {
   const { camera } = useThree();
 
@@ -81,7 +83,7 @@ export default function PaperPlane({ ...props }) {
 
   /** GLTF variables */
   const group = useRef();
-  const { nodes, materials, animations } = useGLTF("/ekzotik.glb");
+  const { nodes, materials, animations } = useGLTF(plane3d);
   const { actions } = useAnimations(animations, group);
 
   // /** GLTF PaperPlane textures */

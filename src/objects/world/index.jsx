@@ -170,7 +170,7 @@ const World = () => {
   let oldProgress = -Infinity;
 
   function handleProgress(progress) {
-    console.log("progress: ", progress);
+    // console.log("progress: ", progress);
     let isBackward = false;
     if (oldProgress > progress) {
       isBackward = true;

@@ -18,8 +18,6 @@ function Planet() {
     })
   );
 
-  console.log("timeLine: ", timeline);
-
   useEffect(() => {
     if (planetRef.current) {
       timeline.add({

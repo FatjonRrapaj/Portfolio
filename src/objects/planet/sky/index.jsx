@@ -84,7 +84,6 @@ const Sky = () => {
 
   useEffect(() => {
     if (outerSky.current) {
-      console.log("outerSky.current: ", outerSky.current);
       timeline.add({
         targets: outerSky.current.material,
         opacity: 0,
@@ -96,7 +95,6 @@ const Sky = () => {
         ({ progress }) => {
           if (progress > 42320) {
             const localProgress = progress - 42320;
-            console.log("localProgress: ", localProgress);
             if (timeline.began && timeline.completed) {
               timeline.completed = false;
             }
@@ -106,8 +104,6 @@ const Sky = () => {
       );
     }
   }, [outerSky.current]);
-
-  console.log("SKY CURR", outerSky.current);
 
   useFrame(() => {
     if (innerSky.current) {
