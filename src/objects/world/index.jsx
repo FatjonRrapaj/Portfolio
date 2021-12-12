@@ -98,6 +98,7 @@ const World = () => {
   var maxHeight = divContainer.clientHeight - window.innerHeight;
   var percentage = 0;
   var scrollY = 0;
+  var touchStartY = 0;
   var event = {
     y: 0,
     deltaY: 0,
@@ -278,6 +279,20 @@ const World = () => {
     }
   }
 
+  function onTouchStart(e) {
+    var t = e.targetTouches ? e.targetTouches[0] : e;
+    touchStartY = t.pageY;
+  }
+
+  function onTouchMove(e) {
+    var evt = event;
+    var t = e.targetTouches ? e.targetTouches[0] : e;
+    // the multiply factor on mobile must be about 10x the factor applied on the wheel
+    evt.deltaY = (t.pageY - touchStartY) * 5;
+    touchStartY = t.pageY;
+    scroll(e);
+  }
+
   useEffect(() => {
     //TODO: KEEP AN EYE ON THE PROGRESS WITH THIS.
 
@@ -294,9 +309,14 @@ const World = () => {
       }
     );
 
+    divContainer.addEventListener("touchstart", onTouchStart);
+    divContainer.addEventListener("touchmove", onTouchMove);
+
     return () => {
       divContainer.removeEventListener("wheel", onWheel);
       window.removeEventListener("resize", onResize);
+      divContainer.removeEventListener("touchstart", onTouchStart);
+      divContainer.removeEventListener("touchmove", onTouchMove);
       useStore.getState().world.setProgress(0);
       useStore.getState().world.setScrollY(0);
       unSubscribeWorldChanges();
