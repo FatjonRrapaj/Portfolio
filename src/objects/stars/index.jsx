@@ -3,7 +3,10 @@ import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 
 function Stars() {
-  const starTexture = useLoader(THREE.TextureLoader, "/star.png");
+  const starTexture = useLoader(
+    THREE.TextureLoader,
+    process.env.PUBLIC_URL + "/star.png"
+  );
 
   const { particlesMaterial, particlesGeometry } = useMemo(() => {
     const count = 10000;
