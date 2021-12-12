@@ -305,14 +305,14 @@ const World = () => {
 
   return (
     <>
-      <line geometry={lineGeometry}>
+      {/* <line geometry={lineGeometry}>
         <lineBasicMaterial
           attach="material"
           color="red"
           linecap={"round"}
           linejoin={"round"}
         />
-      </line>
+      </line> */}
       <Planet />
       <Suspense fallback={null}>
         <PaperPlane />

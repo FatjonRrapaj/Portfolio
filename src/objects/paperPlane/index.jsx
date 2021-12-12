@@ -235,7 +235,6 @@ export default function PaperPlane({ ...props }) {
         layers={2}
         name="Plane_3"
         geometry={nodes.Plane_3.geometry}
-        // material={materials.front}
         morphTargetDictionary={nodes.Plane_3.morphTargetDictionary}
         morphTargetInfluences={nodes.Plane_3.morphTargetInfluences}
       >
