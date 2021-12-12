@@ -85,12 +85,12 @@ export default function PaperPlane({ ...props }) {
   const { actions } = useAnimations(animations, group);
 
   // /** GLTF PaperPlane textures */
-  const front = useLoader(THREE.TextureLoader, "/front.jpg");
+  const front = useLoader(THREE.TextureLoader, "front.jpg");
   front.flipY = false;
-  const back = useLoader(THREE.TextureLoader, "/back.jpg");
-  const frontAMap = useLoader(THREE.TextureLoader, "/aMap.jpg");
+  const back = useLoader(THREE.TextureLoader, "back.jpg");
+  const frontAMap = useLoader(THREE.TextureLoader, "aMap.jpg");
   frontAMap.flipY = false;
-  const backAMap = useLoader(THREE.TextureLoader, "/aMap.jpg");
+  const backAMap = useLoader(THREE.TextureLoader, "aMap.jpg");
 
   /** Store subscription handling */
   const positionRef = useRef([0, 0, 697]);
