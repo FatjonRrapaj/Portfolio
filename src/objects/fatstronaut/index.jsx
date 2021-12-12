@@ -7,12 +7,10 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 
-import fatStronaut from "/fatstronaut.glb";
-
 export default function Fatstronaut({ ...props }) {
   const group = useRef();
 
-  const { nodes, materials, scene } = useGLTF(fatStronaut);
+  const { nodes, materials, scene } = useGLTF("fatstronaut.glb");
 
   useEffect(() => {
     //center gltf
@@ -106,4 +104,4 @@ export default function Fatstronaut({ ...props }) {
   );
 }
 
-useGLTF.preload("/fatstronaut.glb");
+useGLTF.preload("fatstronaut.glb");
