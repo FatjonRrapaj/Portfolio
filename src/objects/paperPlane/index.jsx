@@ -81,7 +81,9 @@ export default function PaperPlane({ ...props }) {
 
   /** GLTF variables */
   const group = useRef();
-  const { nodes, materials, animations } = useGLTF("ekzotik.glb");
+  const { nodes, materials, animations } = useGLTF(
+    process.env.PUBLIC_URL + "/ekzotik.glb"
+  );
   const { actions } = useAnimations(animations, group);
 
   // /** GLTF PaperPlane textures */
@@ -252,4 +254,4 @@ export default function PaperPlane({ ...props }) {
   );
 }
 
-useGLTF.preload("ekzotik.glb");
+useGLTF.preload(process.env.PUBLIC_URL + "/ekzotik.glb");

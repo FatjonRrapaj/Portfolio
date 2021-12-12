@@ -11,7 +11,9 @@ export default function Brain({ ...props }) {
   const brain = useRef();
   const brainMesh = useRef();
   const brainMeshWireframe = useRef();
-  const { nodes, materials, scene } = useGLTF("brain.glb");
+  const { nodes, materials, scene } = useGLTF(
+    process.env.PUBLIC_URL + "/brain.glb"
+  );
 
   useEffect(() => {
     //center gltf
@@ -96,4 +98,4 @@ export default function Brain({ ...props }) {
   );
 }
 
-useGLTF.preload("brain.glb");
+useGLTF.preload(process.env.PUBLIC_URL + "/brain.glb");
