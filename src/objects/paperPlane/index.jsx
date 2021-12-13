@@ -15,69 +15,69 @@ export default function PaperPlane({ ...props }) {
   const { camera } = useThree();
 
   /** GLTF PaperPlane controls leva */
-  const {
-    scaleFactor,
-    color,
-    positionX,
-    positionY,
-    positionZ,
-    wireframe,
-    rotationX,
-    rotationY,
-    rotationZ,
-    emissiveIntensity,
-  } = useControls("plane", {
-    scaleFactor: {
-      value: 10,
-      min: 0.1,
-      max: 100,
-      step: 0.5,
-    },
-    emissiveIntensity: {
-      min: 0,
-      max: 100,
-      value: 0,
-      step: 0.01,
-    },
-    color: "#fff",
-    positionX: {
-      value: 0,
-      min: -1000,
-      max: 1000,
-      step: 0.01,
-    },
-    positionY: {
-      value: 0,
-      min: -1000,
-      max: 1000,
-      step: 0.1,
-    },
-    positionZ: {
-      value: 697,
-      min: -1000,
-      max: 1000,
-      step: 0.1,
-    },
-    rotationX: {
-      value: Math.PI / 2,
-      step: 0.1,
-      min: -1000,
-      max: 1000,
-    },
-    rotationY: {
-      value: 0,
-      step: 0.1,
-      min: -1000,
-      max: 1000,
-    },
-    rotationZ: {
-      value: -Math.PI * 2,
-      step: 0.001,
-      min: -1000,
-      max: 1000,
-    },
-    wireframe: false,
-  });
+  // const {
+  //   scaleFactor,
+  //   color,
+  //   positionX,
+  //   positionY,
+  //   positionZ,
+  //   wireframe,
+  //   rotationX,
+  //   rotationY,
+  //   rotationZ,
+  //   emissiveIntensity,
+  // } = useControls("plane", {
+  //   scaleFactor: {
+  //     value: 10,
+  //     min: 0.1,
+  //     max: 100,
+  //     step: 0.5,
+  //   },
+  //   emissiveIntensity: {
+  //     min: 0,
+  //     max: 100,
+  //     value: 0,
+  //     step: 0.01,
+  //   },
+  //   color: "#fff",
+  //   positionX: {
+  //     value: 0,
+  //     min: -1000,
+  //     max: 1000,
+  //     step: 0.01,
+  //   },
+  //   positionY: {
+  //     value: 0,
+  //     min: -1000,
+  //     max: 1000,
+  //     step: 0.1,
+  //   },
+  //   positionZ: {
+  //     value: 697,
+  //     min: -1000,
+  //     max: 1000,
+  //     step: 0.1,
+  //   },
+  //   rotationX: {
+  //     value: Math.PI / 2,
+  //     step: 0.1,
+  //     min: -1000,
+  //     max: 1000,
+  //   },
+  //   rotationY: {
+  //     value: 0,
+  //     step: 0.1,
+  //     min: -1000,
+  //     max: 1000,
+  //   },
+  //   rotationZ: {
+  //     value: -Math.PI * 2,
+  //     step: 0.001,
+  //     min: -1000,
+  //     max: 1000,
+  //   },
+  //   wireframe: false,
+  // });
 
   /** GLTF variables */
   const group = useRef();
@@ -201,8 +201,8 @@ export default function PaperPlane({ ...props }) {
 
   return (
     <group
-      scale={[scaleFactor, scaleFactor, scaleFactor]}
-      rotation={[rotationX, rotationY, rotationZ]}
+      scale={[10, 10, 10]}
+      rotation={[Math.PI / 2, 0, -Math.PI * 2]}
       position={positionRef.current}
       ref={group}
       {...props}

@@ -10,68 +10,68 @@ const Sky = () => {
   const innerSky = useRef();
   const outerSky = useRef();
 
-  const {
-    color,
-    wireframe,
-    emissiveColor,
-    flatShading,
-    emissiveIntensity,
-    x,
-    y,
-    z,
-    radius,
-    detail,
-    autoRotate,
-    scaleFactor,
-  } = useControls("Sky", {
-    x: {
-      min: -1000,
-      max: 1000,
-      value: 0,
-      step: 0.1,
-    },
-    y: {
-      min: -1000,
-      max: 1000,
-      value: 0,
-      step: 0.1,
-    },
-    z: {
-      min: -2000,
-      max: 2000,
-      value: -550,
-      step: 0.1,
-    },
-    radius: {
-      min: 400,
-      max: 1000,
-      step: 1,
-      value: 500,
-    },
-    detail: {
-      min: 1,
-      max: 1000,
-      value: 400,
-      step: 1,
-    },
-    emissiveIntensity: {
-      min: 0.1,
-      max: 100,
-      value: 5.0,
-      step: 0.1,
-    },
-    color: "#ffffff",
-    emissiveColor: "#ffffff",
-    wireframe: true,
-    flatShading: false,
-    autoRotate: true,
-    scaleFactor: {
-      min: 0.1,
-      max: 2,
-      value: 0.8,
-      step: 0.01,
-    },
-  });
+  // const {
+  //   color,
+  //   wireframe,
+  //   emissiveColor,
+  //   flatShading,
+  //   emissiveIntensity,
+  //   x,
+  //   y,
+  //   z,
+  //   radius,
+  //   detail,
+  //   autoRotate,
+  //   scaleFactor,
+  // } = useControls("Sky", {
+  //   x: {
+  //     min: -1000,
+  //     max: 1000,
+  //     value: 0,
+  //     step: 0.1,
+  //   },
+  //   y: {
+  //     min: -1000,
+  //     max: 1000,
+  //     value: 0,
+  //     step: 0.1,
+  //   },
+  //   z: {
+  //     min: -2000,
+  //     max: 2000,
+  //     value: -550,
+  //     step: 0.1,
+  //   },
+  //   radius: {
+  //     min: 400,
+  //     max: 1000,
+  //     step: 1,
+  //     value: 500,
+  //   },
+  //   detail: {
+  //     min: 1,
+  //     max: 1000,
+  //     value: 400,
+  //     step: 1,
+  //   },
+  //   emissiveIntensity: {
+  //     min: 0.1,
+  //     max: 100,
+  //     value: 5.0,
+  //     step: 0.1,
+  //   },
+  //   color: "#ffffff",
+  //   emissiveColor: "#ffffff",
+  //   wireframe: true,
+  //   flatShading: false,
+  //   autoRotate: true,
+  //   scaleFactor: {
+  //     min: 0.1,
+  //     max: 2,
+  //     value: 0.8,
+  //     step: 0.01,
+  //   },
+  // });
 
   /** Anime JS timeline */
   const [timeline] = useState(() =>
@@ -113,37 +113,33 @@ const Sky = () => {
 
   return (
     <>
-      <mesh
-        scale={[scaleFactor, scaleFactor, scaleFactor]}
-        layers={1}
-        ref={outerSky}
-      >
-        <sphereBufferGeometry args={[radius, 1000, 1000]} />
+      <mesh scale={[0.8, 0.8, 0.8]} layers={1} ref={outerSky}>
+        <sphereBufferGeometry args={[500, 1000, 1000]} />
         <meshStandardMaterial
           ref={outerSky}
           side={THREE.DoubleSide}
           transparent={true}
           opacity={1}
-          color={color}
-          flatShading={flatShading}
-          wireframe={wireframe}
-          emissive={emissiveColor}
+          color="#ffffff"
+          flatShading={false}
+          wireframe={true}
+          emissive="#ffffff"
           emissiveIntensity={2.0}
         />
       </mesh>
       <mesh
         ref={innerSky}
-        scale={[scaleFactor, scaleFactor, scaleFactor]}
+        scale={[0.8, 0.8, 0.8]}
         rotation={[0, 0, Math.PI / 2]}
         layers={1}
       >
-        <sphereBufferGeometry args={[radius, 100, 50]} />
+        <sphereBufferGeometry args={[500, 100, 50]} />
         <meshStandardMaterial
           side={THREE.DoubleSide}
-          color={color}
-          flatShading={flatShading}
-          wireframe={wireframe}
-          emissive={emissiveColor}
+          color="#ffffff"
+          flatShading={false}
+          wireframe={true}
+          emissive="#ffffff"
           emissiveIntensity={0.1}
         />
       </mesh>

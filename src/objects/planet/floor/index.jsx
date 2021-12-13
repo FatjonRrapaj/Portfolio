@@ -12,63 +12,63 @@ function Floor() {
   /**
    * Camera Controls
    */
-  useControls("camera", {
-    positionX: {
-      value: 0,
-      min: -1000,
-      max: 1000,
-      step: 0.01,
-      onChange: (val) => {
-        cam.position.x = val;
-      },
-    },
-    positionY: {
-      value: 0,
-      min: -1000,
-      max: 1000,
-      step: 0.01,
-      onChange: (val) => {
-        cam.position.y = val;
-      },
-    },
-    positionZ: {
-      value: 700,
-      min: -2000,
-      max: 2000,
-      step: 0.01,
-      onChange: (val) => {
-        cam.position.z = val;
-      },
-    },
+  // useControls("camera", {
+  //   positionX: {
+  //     value: 0,
+  //     min: -1000,
+  //     max: 1000,
+  //     step: 0.01,
+  //     onChange: (val) => {
+  //       cam.position.x = val;
+  //     },
+  //   },
+  //   positionY: {
+  //     value: 0,
+  //     min: -1000,
+  //     max: 1000,
+  //     step: 0.01,
+  //     onChange: (val) => {
+  //       cam.position.y = val;
+  //     },
+  //   },
+  //   positionZ: {
+  //     value: 700,
+  //     min: -2000,
+  //     max: 2000,
+  //     step: 0.01,
+  //     onChange: (val) => {
+  //       cam.position.z = val;
+  //     },
+  //   },
 
-    rotationX: {
-      value: 0,
-      step: Math.PI / 4,
-      min: -1000,
-      max: 1000,
-      onChange: (val) => {
-        cam.rotateX(val);
-      },
-    },
-    rotationY: {
-      value: 0,
-      step: Math.PI / 4,
-      min: -1000,
-      max: 1000,
-      onChange: (val) => {
-        cam.rotateY(val);
-      },
-    },
-    rotationZ: {
-      value: 0,
-      step: Math.PI / 4,
-      min: -1000,
-      max: 1000,
-      onChange: (val) => {
-        cam.rotateZ(val);
-      },
-    },
-  });
+  //   rotationX: {
+  //     value: 0,
+  //     step: Math.PI / 4,
+  //     min: -1000,
+  //     max: 1000,
+  //     onChange: (val) => {
+  //       cam.rotateX(val);
+  //     },
+  //   },
+  //   rotationY: {
+  //     value: 0,
+  //     step: Math.PI / 4,
+  //     min: -1000,
+  //     max: 1000,
+  //     onChange: (val) => {
+  //       cam.rotateY(val);
+  //     },
+  //   },
+  //   rotationZ: {
+  //     value: 0,
+  //     step: Math.PI / 4,
+  //     min: -1000,
+  //     max: 1000,
+  //     onChange: (val) => {
+  //       cam.rotateZ(val);
+  //     },
+  //   },
+  // });
 
   useThree(({ camera }) => {
     cam = camera;
@@ -77,142 +77,142 @@ function Floor() {
   /**
    * SphericFloor controls
    */
-  const { autoRotate, scaleFactor } = useControls("sphericFloor", {
-    autoRotate: false,
-    scaleFactor: {
-      min: 0.1,
-      max: 100,
-      value: 3.5,
-      step: 0.01,
-    },
-  });
+  // const { autoRotate, scaleFactor } = useControls("sphericFloor", {
+  //   autoRotate: false,
+  //   scaleFactor: {
+  //     min: 0.1,
+  //     max: 100,
+  //     value: 3.5,
+  //     step: 0.01,
+  //   },
+  // });
 
-  const {
-    radius,
-    detail,
-    polygonOffsetFactor,
-    polygonOffsetUnits,
-    opacity,
-    positionX,
-    positionY,
-    positionZ,
-    wireframeLinewidth,
-    wireframeLinecap,
-    wireframeLinejoin,
-    roughness,
-    sphere1Color,
-    sphere2Color,
-    offset,
-    rotationSpeed,
-    sphere1WireFrame,
-    sphere2WireFrame,
-  } = useControls("floorSphere", {
-    sphere1Color: "#00cfff",
-    sphere2Color: "#26ffa6",
-    offset: 0.2,
-    radius: {
-      value: 199,
-      min: 1,
-      max: 500,
-      step: 10,
-    },
-    detail: {
-      value: 160,
-      min: 1,
-      max: 500,
-      step: 0.5,
-    },
-    opacity: {
-      value: 1,
-      max: 1,
-      min: 0,
-      step: 0.01,
-    },
-    polygonOffsetFactor: {
-      min: -100,
-      max: 100,
-      step: 1,
-      value: 1,
-    },
-    polygonOffsetUnits: {
-      min: -100,
-      max: 100,
-      step: 1,
-      value: 1,
-    },
-    wireframeLinewidth: {
-      min: -100,
-      max: 100,
-      step: 1,
-      value: 1,
-    },
-    wireframeLinecap: {
-      options: {
-        butt: "butt",
-        round: "round",
-        square: "square",
-      },
-      value: "round",
-    },
-    wireframeLinejoin: {
-      options: {
-        bevel: "bevel",
-        round: "round",
-        miter: "miter",
-      },
-      value: "round",
-    },
-    roughness: {
-      value: 0.8,
-      min: 0,
-      max: 1,
-      step: 0.01,
-    },
-    rotationSpeed: {
-      value: 0.05,
-      min: 0.001,
-      max: 1,
-      step: 0.001,
-    },
-    positionX: {
-      value: 0,
-      min: -1000,
-      max: 1000,
-      step: 0.01,
-    },
-    positionY: {
-      value: 0,
-      min: -100,
-      max: 100,
-      step: 0.01,
-    },
-    positionZ: {
-      value: -550,
-      min: -1500,
-      max: 2000,
-      step: 0.01,
-    },
-    rotationX: {
-      value: 0,
-      step: Math.PI / 4,
-      min: -1000,
-      max: 1000,
-    },
-    rotationY: {
-      value: 0,
-      step: Math.PI / 4,
-      min: -1000,
-      max: 1000,
-    },
-    rotationZ: {
-      value: 0,
-      step: Math.PI / 4,
-      min: -1000,
-      max: 1000,
-    },
-    sphere1WireFrame: false,
-    sphere2WireFrame: true,
-  });
+  // const {
+  //   radius,
+  //   detail,
+  //   polygonOffsetFactor,
+  //   polygonOffsetUnits,
+  //   opacity,
+  //   positionX,
+  //   positionY,
+  //   positionZ,
+  //   wireframeLinewidth,
+  //   wireframeLinecap,
+  //   wireframeLinejoin,
+  //   roughness,
+  //   sphere1Color,
+  //   sphere2Color,
+  //   offset,
+  //   rotationSpeed,
+  //   sphere1WireFrame,
+  //   sphere2WireFrame,
+  // } = useControls("floorSphere", {
+  //   sphere1Color: "#00cfff",
+  //   sphere2Color: "#26ffa6",
+  //   offset: 0.2,
+  //   radius: {
+  //     value: 199,
+  //     min: 1,
+  //     max: 500,
+  //     step: 10,
+  //   },
+  //   detail: {
+  //     value: 160,
+  //     min: 1,
+  //     max: 500,
+  //     step: 0.5,
+  //   },
+  //   opacity: {
+  //     value: 1,
+  //     max: 1,
+  //     min: 0,
+  //     step: 0.01,
+  //   },
+  //   polygonOffsetFactor: {
+  //     min: -100,
+  //     max: 100,
+  //     step: 1,
+  //     value: 1,
+  //   },
+  //   polygonOffsetUnits: {
+  //     min: -100,
+  //     max: 100,
+  //     step: 1,
+  //     value: 1,
+  //   },
+  //   wireframeLinewidth: {
+  //     min: -100,
+  //     max: 100,
+  //     step: 1,
+  //     value: 1,
+  //   },
+  //   wireframeLinecap: {
+  //     options: {
+  //       butt: "butt",
+  //       round: "round",
+  //       square: "square",
+  //     },
+  //     value: "round",
+  //   },
+  //   wireframeLinejoin: {
+  //     options: {
+  //       bevel: "bevel",
+  //       round: "round",
+  //       miter: "miter",
+  //     },
+  //     value: "round",
+  //   },
+  //   roughness: {
+  //     value: 0.8,
+  //     min: 0,
+  //     max: 1,
+  //     step: 0.01,
+  //   },
+  //   rotationSpeed: {
+  //     value: 0.05,
+  //     min: 0.001,
+  //     max: 1,
+  //     step: 0.001,
+  //   },
+  //   positionX: {
+  //     value: 0,
+  //     min: -1000,
+  //     max: 1000,
+  //     step: 0.01,
+  //   },
+  //   positionY: {
+  //     value: 0,
+  //     min: -100,
+  //     max: 100,
+  //     step: 0.01,
+  //   },
+  //   positionZ: {
+  //     value: -550,
+  //     min: -1500,
+  //     max: 2000,
+  //     step: 0.01,
+  //   },
+  //   rotationX: {
+  //     value: 0,
+  //     step: Math.PI / 4,
+  //     min: -1000,
+  //     max: 1000,
+  //   },
+  //   rotationY: {
+  //     value: 0,
+  //     step: Math.PI / 4,
+  //     min: -1000,
+  //     max: 1000,
+  //   },
+  //   rotationZ: {
+  //     value: 0,
+  //     step: Math.PI / 4,
+  //     min: -1000,
+  //     max: 1000,
+  //   },
+  //   sphere1WireFrame: false,
+  //   sphere2WireFrame: true,
+  // });
 
   useFrame(() => {
     if (sphericFloor.current) {
@@ -223,32 +223,22 @@ function Floor() {
   return (
     <group scale={[1.5, 1.5, 1.5]} layers={1} ref={sphericFloor}>
       <Sphere
-        radius={radius}
-        detail={detail}
-        polygonOffsetFactor={polygonOffsetFactor}
-        polygonOffsetUnits={polygonOffsetUnits}
-        opacity={opacity}
-        wireframeLinewidth={wireframeLinewidth}
-        wireframeLinecap={wireframeLinecap}
-        wireframeLinejoin={wireframeLinejoin}
-        roughness={roughness}
-        color={sphere1Color}
-        wireframe={sphere1WireFrame}
+        radius={199}
+        detail={160}
+        opacity={1}
+        roughness={0.8}
+        color="#00cfff"
+        wireframe={false}
       />
       <Sphere
-        radius={radius}
-        detail={detail}
-        polygonOffsetFactor={polygonOffsetFactor}
-        polygonOffsetUnits={polygonOffsetUnits}
-        opacity={opacity}
-        wireframeLinewidth={wireframeLinewidth}
-        wireframeLinecap={wireframeLinecap}
-        wireframeLinejoin={wireframeLinejoin}
-        roughness={roughness}
+        radius={199}
+        detail={160}
+        opacity={1}
+        roughness={0.8}
         name="Sphere2"
-        wireframe={sphere2WireFrame}
-        offset={offset}
-        color={sphere2Color}
+        wireframe={true}
+        offset={0.2}
+        color="#26ffa6"
       />
     </group>
   );

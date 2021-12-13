@@ -50,33 +50,33 @@ const World = () => {
       new THREE.Vector3(100, 4, 400),
       new THREE.Vector3(50, -4, 380),
       new THREE.Vector3(0, 4, 380),
-      new THREE.Vector3(-10, 0, 350),
+      new THREE.Vector3(0, 0, 350),
       new THREE.Vector3(0, 10, 300),
-      new THREE.Vector3(10, 20, 270),
-      new THREE.Vector3(4, 30, 220),
-      new THREE.Vector3(-3, 40, 200),
+      new THREE.Vector3(0, 20, 270),
+      new THREE.Vector3(0, 30, 220),
+      new THREE.Vector3(0, 40, 200),
+      new THREE.Vector3(0, 40, 200),
+      new THREE.Vector3(0, 40, 200),
+      new THREE.Vector3(0, 30, 200),
+      new THREE.Vector3(0, 30, 200),
+      new THREE.Vector3(0, 30, 210),
+      new THREE.Vector3(0, 30, 200),
+      new THREE.Vector3(0, 30, 200),
+      new THREE.Vector3(0, 30, 200),
+      new THREE.Vector3(0, 90, 200),
       new THREE.Vector3(0, 90, 170),
-      new THREE.Vector3(0, 120, 150),
-      new THREE.Vector3(-8, 160, 150),
-      new THREE.Vector3(8, 180, 145),
-      new THREE.Vector3(2, 200, 145),
-      new THREE.Vector3(6, 220, 130),
-      new THREE.Vector3(10, 220, 130),
-      new THREE.Vector3(2, 220, 125),
-      new THREE.Vector3(12, 220, 125),
-      new THREE.Vector3(0, 220, 150),
-      new THREE.Vector3(-13, 220, 150),
-      new THREE.Vector3(-7, 220, 180),
-      new THREE.Vector3(8, 220, 180),
-      new THREE.Vector3(2, 220, 150),
-      new THREE.Vector3(-0.7, 225, 150),
-      new THREE.Vector3(-0.5, 220, 145),
-      new THREE.Vector3(-13, 225, 145),
-      new THREE.Vector3(0, 225, 140),
-      new THREE.Vector3(5, 220, 140),
-      new THREE.Vector3(9, 218, 120),
-      new THREE.Vector3(12, 220, 120),
-      new THREE.Vector3(0, 220, 110),
+      new THREE.Vector3(0, 90, 170),
+      new THREE.Vector3(0, 90, 100),
+      new THREE.Vector3(0, 130, 100),
+      new THREE.Vector3(0, 130, 100),
+      new THREE.Vector3(0, 130, 100),
+      new THREE.Vector3(0, 180, 50),
+      new THREE.Vector3(0, 180, 50),
+      new THREE.Vector3(0, 180, 150),
+      new THREE.Vector3(0, 180, 150),
+      new THREE.Vector3(0, 180, 150),
+      new THREE.Vector3(0, 1800, 100),
+      new THREE.Vector3(0, 1800, 100),
     ];
   });
 
@@ -295,7 +295,7 @@ const World = () => {
 
   useEffect(() => {
     //TODO: KEEP AN EYE ON THE PROGRESS WITH THIS.
-
+    camera.position.z = 700;
     divContainer.scrollIntoView();
     //Scroll & resize event listeners
     divContainer.addEventListener("wheel", onWheel, false);
@@ -314,6 +314,7 @@ const World = () => {
 
     return () => {
       divContainer.removeEventListener("wheel", onWheel);
+
       window.removeEventListener("resize", onResize);
       divContainer.removeEventListener("touchstart", onTouchStart);
       divContainer.removeEventListener("touchmove", onTouchMove);

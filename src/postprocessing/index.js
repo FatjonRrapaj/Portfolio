@@ -14,44 +14,44 @@ function Effect() {
 
   useEffect(() => {}, []);
 
-  /**
-   * Bloom Pass controls
-   */
-  const { exposure, bloomThreshold, bloomRadius, bloomStrength } = useControls(
-    "bloomPass",
-    {
-      exposure: {
-        value: 1,
-        min: 0,
-        max: 5,
-        step: 0.01,
-      },
-      bloomThreshold: {
-        min: 0,
-        max: 1,
-        value: 0,
-        step: 0.01,
-      },
-      bloomRadius: {
-        min: 0,
-        max: 5,
-        step: 0.01,
-        value: 1,
-      },
-      bloomStrength: {
-        min: 0,
-        max: 5,
-        step: 0.01,
-        value: 1,
-      },
-    }
-  );
+  // /**
+  //  * Bloom Pass controls
+  //  */
+  // const { exposure, bloomThreshold, bloomRadius, bloomStrength } = useControls(
+  //   "bloomPass",
+  //   {
+  //     exposure: {
+  //       value: 1,
+  //       min: 0,
+  //       max: 5,
+  //       step: 0.01,
+  //     },
+  //     bloomThreshold: {
+  //       min: 0,
+  //       max: 1,
+  //       value: 0,
+  //       step: 0.01,
+  //     },
+  //     bloomRadius: {
+  //       min: 0,
+  //       max: 5,
+  //       step: 0.01,
+  //       value: 1,
+  //     },
+  //     bloomStrength: {
+  //       min: 0,
+  //       max: 5,
+  //       step: 0.01,
+  //       value: 1,
+  //     },
+  //   }
+  // );
 
   const effectComposer = useMemo(() => {
     const renderScene = new RenderPass(scene, camera);
 
     //renderer exposure
-    gl.toneMappingExposure = Math.pow(exposure, 4.0);
+    gl.toneMappingExposure = Math.pow(1, 4.0);
     gl.autoClear = false;
     gl.antialias = true;
 
@@ -63,13 +63,13 @@ function Effect() {
       //threshold
       new Vector2(size.width, size.height),
       1.5,
-      bloomRadius,
-      bloomThreshold
+      1,
+      0
     );
     finalComposer.addPass(renderScene);
     finalComposer.addPass(unrealBloomPass);
     return finalComposer;
-  }, [bloomThreshold, bloomStrength, bloomRadius, exposure]);
+  }, []);
 
   useEffect(() => {
     effectComposer.setSize(size.width, size.height);
