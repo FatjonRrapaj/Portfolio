@@ -22,6 +22,9 @@ import useStore from "../../store";
 
 const World = () => {
   const { camera } = useThree();
+  const lineRef = useRef();
+
+  lineRef.current && lineRef.current.computeLineDistances();
 
   /** Line */
   const [points] = useState(() => {
@@ -85,7 +88,7 @@ const World = () => {
     c.tension = 1;
     c.arcLengthDivisions = 20000;
     c.curveType = "catmullrom";
-    c.closed = true;
+
     return c;
   });
 
@@ -293,6 +296,8 @@ const World = () => {
     scroll(e);
   }
 
+  console.log("MB");
+
   useEffect(() => {
     //TODO: KEEP AN EYE ON THE PROGRESS WITH THIS.
     camera.position.z = 700;
@@ -326,14 +331,17 @@ const World = () => {
 
   return (
     <>
-      {/* <line geometry={lineGeometry}>
-        <lineBasicMaterial
-          attach="material"
+      <line ref={lineRef} geometry={lineGeometry}>
+        <lineDashedMaterial
+          layers={1}
+          emissive="red"
+          emissiveIntensity={10}
+          scale={1}
+          dashSize={0.5}
+          gapSize={0.5}
           color="red"
-          linecap={"round"}
-          linejoin={"round"}
         />
-      </line> */}
+      </line>
       <Planet />
       <Suspense fallback={null}>
         <PaperPlane />
