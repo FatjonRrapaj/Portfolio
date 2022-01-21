@@ -1,7 +1,8 @@
 import { Suspense, useState, useEffect, useRef } from "react";
 import * as THREE from "three";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree, extend } from "@react-three/fiber";
 import { Stats } from "@react-three/drei";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import { lerp } from "../../helpers/animation";
 import createSpiralPathFromCoordinateWithRadius from "./createPath";
@@ -12,6 +13,7 @@ import PaperPlane from "../paperPlane";
 import Fatstronaut from "../fatstronaut";
 import Brain from "../brain";
 import Stars from "../stars";
+import Everything from "../Starter";
 import Effect from "../../postprocessing";
 
 //Paragraphs
@@ -20,9 +22,14 @@ import CreativityDefiniton from "../paragraphs/CreativityDefinition";
 
 import useStore from "../../store";
 
+extend({ OrbitControls });
+
 const World = () => {
-  const { camera } = useThree();
+  const { camera, ...rest } = useThree();
+  console.log("rest: ", rest);
   const lineRef = useRef();
+
+  const controls = useRef();
 
   lineRef.current && lineRef.current.computeLineDistances();
 
@@ -329,11 +336,14 @@ const World = () => {
     };
   }, []);
 
+  useFrame(() => {
+    controls.current && controls.current.update();
+  });
+
   return (
     <>
-      <line ref={lineRef} geometry={lineGeometry}>
+      {/* <line ref={lineRef} geometry={lineGeometry}>
         <lineDashedMaterial
-          layers={1}
           emissive="red"
           emissiveIntensity={10}
           scale={1}
@@ -341,9 +351,9 @@ const World = () => {
           gapSize={0.5}
           color="red"
         />
-      </line>
-      <Planet />
-      <Suspense fallback={null}>
+      </line> */}
+      {/* <Planet /> */}
+      {/* <Suspense fallback={null}>
         <PaperPlane />
       </Suspense>
       <DirectionalLight />
@@ -359,6 +369,7 @@ const World = () => {
       </Suspense>
 
       <CreativityDefiniton />
+    */}
 
       <Suspense fallback={null}>
         <Stars />
@@ -366,6 +377,11 @@ const World = () => {
 
       <Effect />
       <Stats />
+      <Suspense fallback={null}>
+        <Everything />
+      </Suspense>
+      <directionalLight intensity={1} position={[2, 1, 697]} color="white" />
+      {/* <orbitControls ref={controls} args={[camera,domEle]} */}
 
       {/* <axesHelper args={[1000000]} /> */}
     </>

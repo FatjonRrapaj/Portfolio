@@ -13,7 +13,7 @@ const Scene = () => {
         <Canvas
           shadows
           camera={{
-            far: 500,
+            far: 200,
             near: 1,
             fov: 45,
             aspect: window.innerWidth / window.innerHeight,
