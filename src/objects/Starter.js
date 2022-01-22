@@ -27,7 +27,6 @@ export default function Model({ ...props }) {
     transform: null,
     move: null,
     moveInfinite: false,
-    stayStill: false, //after ending the animation do not change to cube and reverse
     transformTweak: 0,
     moveTweak: 0,
     reverseDelay: 0,
@@ -81,27 +80,27 @@ export default function Model({ ...props }) {
         actionsPointer.current.transform = toApple;
         actionsPointer.current.move = appleMove;
         actionsPointer.current.moveInfinite = true;
-        actionsPointer.current.transformTweak = 0.1; //from manually testing the animations... sorry for the inconvience.
-        actionsPointer.current.moveTweak = 0.1; //from manually testing the animations... sorry for the inconvience. //try also
+        actionsPointer.current.transformTweak = 0.1; //from manually testing the animations... sorry for the inconvience. //try also 0
+        actionsPointer.current.moveTweak = 0.1; //from manually testing the animations... sorry for the inconvience. //try also 0.05
         actionsPointer.current.reverseDelay = 7.75;
         break;
       case 4:
         //assign flower animations
         actionsPointer.current.transform = toFlower;
         actionsPointer.current.move = null;
-        actionsPointer.current.stayStill = true;
+        actionsPointer.current.transformTweak = 0.05; //from manually testing the animations... sorry for the inconvience.
         break;
       case 5:
         //assign pineapple animations
         actionsPointer.current.transform = toPineapple;
         actionsPointer.current.move = null;
-        actionsPointer.current.stayStill = true;
+        actionsPointer.current.transformTweak = 0.05;
         break;
       case 6:
         //assign cannon animations
         actionsPointer.current.transform = toCannon;
         actionsPointer.current.move = null;
-        actionsPointer.current.stayStill = true;
+        actionsPointer.current.transformTweak = 0.05;
       default:
         break;
     }
@@ -196,9 +195,8 @@ export default function Model({ ...props }) {
   // };
 
   useEffect(() => {
-    assignActions(3);
+    assignActions(5);
     startAnimations();
-    console.log("in between");
     endAnimations();
 
     return () => {
@@ -219,6 +217,9 @@ export default function Model({ ...props }) {
       transform.paused = true;
     }
     //move fixes
+    if (!move) {
+      return;
+    }
     if (moveInfinite) {
       if (move.time >= move._clip.duration - moveTweak) {
         move.time = moveTweak;
