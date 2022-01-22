@@ -72,8 +72,8 @@ export default function Model({ ...props }) {
         actionsPointer.current.transform = toAndroid;
         actionsPointer.current.move = androidMove;
         actionsPointer.current.moveInfinite = false;
-        actionsPointer.current.transformTweak = 0.1; //from manually testing the animations... sorry for the inconvience.
-        actionsPointer.current.moveTweak = 0.1; //from manually testing the animations... sorry for the inconvience.
+        actionsPointer.current.transformTweak = 0; //from manually testing the animations... sorry for the inconvience.
+        actionsPointer.current.moveTweak = 0.05; //from manually testing the animations... sorry for the inconvience.
         actionsPointer.current.reverseDelay = 7.75;
         break;
       case 3:
@@ -119,7 +119,7 @@ export default function Model({ ...props }) {
 
     //move animation
     if (move) {
-      move.time = moveTweak;
+      if (moveInfinite) move.time = moveTweak;
       if (!moveInfinite) move.repetitions = 1;
       move.play();
     }
@@ -134,8 +134,7 @@ export default function Model({ ...props }) {
       return;
     }
     //fake waiting
-    if (!moveInfinite) await delay(move._clip.duration);
-    else await delay(8);
+    await delay(8);
 
     //reverse move;
     move.reset();
@@ -194,7 +193,7 @@ export default function Model({ ...props }) {
   // };
 
   useEffect(() => {
-    assignActions(0);
+    assignActions(2);
     startAnimations();
     console.log("in between");
     endAnimations();
@@ -234,7 +233,7 @@ export default function Model({ ...props }) {
 
   return (
     <group
-      position={[0, 0, 697]}
+      position={[0, 0, 692]}
       scale={[0.4, 0.4, 0.4]}
       rotation={[0, Math.PI / 6, 0]}
       ref={group}
