@@ -27,9 +27,10 @@ export default function Model({ ...props }) {
     transform: null,
     move: null,
     moveInfinite: false,
-    transformTweak: 0,
-    moveTweak: 0,
-    reverseDelay: 0,
+    fromLastPosition: false, //animation should start from where the object is, not from moving.
+    transformTweak: 0, //from manually testing the animations... sorry for the inconvience.
+    moveTweak: 0, //from manually testing the animations... sorry for the inconvience.
+    reverseDelay: 0, //from manually testing the animations... sorry for the inconvience.
   });
 
   const assignActions = (number) => {
@@ -53,54 +54,61 @@ export default function Model({ ...props }) {
         actionsPointer.current.transform = toClock;
         actionsPointer.current.move = clockMove;
         actionsPointer.current.moveInfinite = true;
-        actionsPointer.current.transformTweak = 0.1; //from manually testing the animations... sorry for the inconvience.
-        actionsPointer.current.moveTweak = 0.05; //from manually testing the animations... sorry for the inconvience.
+        actionsPointer.current.transformTweak = 0.1;
+        actionsPointer.current.moveTweak = 0.05;
         actionsPointer.current.reverseDelay = 7.75;
+        actionsPointer.current.fromLastPosition = false;
         break;
       case 1:
         //assign camel animations
         actionsPointer.current.transform = toCamel;
         actionsPointer.current.move = camelMove;
         actionsPointer.current.moveInfinite = true;
-        actionsPointer.current.transformTweak = 0.1; //from manually testing the animations... sorry for the inconvience.
-        actionsPointer.current.moveTweak = 0.055; //from manually testing the animations... sorry for the inconvience.
+        actionsPointer.current.transformTweak = 0.1;
+        actionsPointer.current.moveTweak = 0.055;
         actionsPointer.current.reverseDelay = 7.75;
+        actionsPointer.current.fromLastPosition = false;
         break;
       case 2:
         //assign android animations
         actionsPointer.current.transform = toAndroid;
         actionsPointer.current.move = androidMove;
         actionsPointer.current.moveInfinite = false;
-        actionsPointer.current.transformTweak = 0; //from manually testing the animations... sorry for the inconvience.
-        actionsPointer.current.moveTweak = 0.05; //from manually testing the animations... sorry for the inconvience.
+        actionsPointer.current.transformTweak = 0;
+        actionsPointer.current.moveTweak = 0.05;
         actionsPointer.current.reverseDelay = 7.75;
+        actionsPointer.current.fromLastPosition = false;
         break;
       case 3:
         //assign apple animations
         actionsPointer.current.transform = toApple;
         actionsPointer.current.move = appleMove;
         actionsPointer.current.moveInfinite = true;
-        actionsPointer.current.transformTweak = 0.1; //from manually testing the animations... sorry for the inconvience. //try also 0
-        actionsPointer.current.moveTweak = 0.1; //from manually testing the animations... sorry for the inconvience. //try also 0.05
+        actionsPointer.current.transformTweak = 0.1; //try also 0
+        actionsPointer.current.moveTweak = 0.1; //try also 0.05
         actionsPointer.current.reverseDelay = 7.75;
+        actionsPointer.current.fromLastPosition = false;
         break;
       case 4:
         //assign flower animations
         actionsPointer.current.transform = toFlower;
         actionsPointer.current.move = null;
-        actionsPointer.current.transformTweak = 0.05; //from manually testing the animations... sorry for the inconvience.
+        actionsPointer.current.transformTweak = 0.05;
+        actionsPointer.current.fromLastPosition = false;
         break;
       case 5:
         //assign pineapple animations
         actionsPointer.current.transform = toPineapple;
         actionsPointer.current.move = null;
         actionsPointer.current.transformTweak = 0.05;
+        actionsPointer.current.fromLastPosition = true;
         break;
       case 6:
         //assign cannon animations
         actionsPointer.current.transform = toCannon;
         actionsPointer.current.move = null;
         actionsPointer.current.transformTweak = 0.05;
+        actionsPointer.current.fromLastPosition = true;
       default:
         break;
     }
@@ -108,11 +116,15 @@ export default function Model({ ...props }) {
 
   const startAnimations = async () => {
     const { come } = actions;
-    const { transform, move, moveInfinite, moveTweak } = actionsPointer.current;
-    //come
-    come.repetitions = 1;
-    come.play();
-    await delay(come._clip.duration); //wait for animation to finish
+    const { transform, move, moveInfinite, moveTweak, fromLastPosition } =
+      actionsPointer.current;
+
+    if (!fromLastPosition) {
+      //come
+      come.repetitions = 1;
+      come.play();
+      await delay(come._clip.duration); //wait for animation to finish
+    }
 
     //transform animation
     transform.repetitions = 1;
@@ -129,8 +141,7 @@ export default function Model({ ...props }) {
 
   const endAnimations = async () => {
     const { go } = actions;
-    const { transform, move, moveInfinite, reverseDelay, moveTweak } =
-      actionsPointer.current;
+    const { transform, move, reverseDelay, moveTweak } = actionsPointer.current;
 
     if (!move) {
       return;
@@ -151,7 +162,7 @@ export default function Model({ ...props }) {
     transform.reset();
     transform.repetitions = 1;
     transform.timeScale = -1;
-    transform.startAt(reverseDelay); //needs value???
+    transform.startAt(reverseDelay);
     transform.play(); //+2 needed when going backwards
     await delay(2.75);
 
@@ -160,42 +171,8 @@ export default function Model({ ...props }) {
     go.play();
   };
 
-  // const playClockAnimations = async () => {
-  //   const { come, toClock, clockMove, go } = actions;
-  //   //come
-  //   come.repetitions = 1;
-  //   come.play();
-  //   await delay(come._clip.duration); //wait for animation to finish
-  //   //toClock
-  //   toClock.repetitions = 1;
-  //   toClock.play();
-  //   await delay(toClock._clip.duration);
-  //   //clockMove
-  //   clockMove.time = 0.05; //avoid inbetween glitches
-  //   clockMove.play();
-  //   await delay(3); //false delay, to be removed (will be triggered from the scroll & raycaster)
-  //   //reverse clockMove
-  //   clockMove.reset();
-  //   clockMove.timeScale = -1;
-  //   clockMove.repetitions = 1;
-  //   clockMove.startAt(0); //+2 needed when going backwards
-  //   clockMove.play();
-  //   await delay(clockMove._clip.duration);
-  //   //reverse toClock
-  //   toClock.reset();
-  //   toClock.repetitions = 1;
-  //   toClock.timeScale = -1;
-  //   toClock.startAt(7.75); //needs value???
-  //   toClock.play(); //+2 needed when going backwards
-  //   await delay(toClock._clip.duration);
-  //   //go
-  //   go.repetitions = 1;
-  //   go.clampWhenFinished = true;
-  //   go.play();
-  // };
-
   useEffect(() => {
-    assignActions(5);
+    assignActions(6);
     startAnimations();
     endAnimations();
 
@@ -237,7 +214,7 @@ export default function Model({ ...props }) {
 
   return (
     <group
-      position={[0, 0, 692]}
+      position={[0, 0, 685]}
       scale={[0.4, 0.4, 0.4]}
       rotation={[0, Math.PI / 6, 0]}
       ref={group}
