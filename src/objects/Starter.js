@@ -81,6 +81,9 @@ export default function Model({ ...props }) {
         actionsPointer.current.transform = toApple;
         actionsPointer.current.move = appleMove;
         actionsPointer.current.moveInfinite = true;
+        actionsPointer.current.transformTweak = 0.1; //from manually testing the animations... sorry for the inconvience.
+        actionsPointer.current.moveTweak = 0.1; //from manually testing the animations... sorry for the inconvience. //try also
+        actionsPointer.current.reverseDelay = 7.75;
         break;
       case 4:
         //assign flower animations
@@ -193,7 +196,7 @@ export default function Model({ ...props }) {
   // };
 
   useEffect(() => {
-    assignActions(2);
+    assignActions(3);
     startAnimations();
     console.log("in between");
     endAnimations();
