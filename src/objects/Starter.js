@@ -30,8 +30,7 @@ export default function Model({ ...props }) {
     stayStill: false, //after ending the animation do not change to cube and reverse
     transformTweak: 0,
     moveTweak: 0,
-    reverseMoveDelay: 0,
-    reverseTransformDelay: 0,
+    reverseDelay: 0,
   });
 
   const assignActions = (number) => {
@@ -55,47 +54,39 @@ export default function Model({ ...props }) {
         actionsPointer.current.transform = toClock;
         actionsPointer.current.move = clockMove;
         actionsPointer.current.moveInfinite = true;
-        actionsPointer.current.secondMove = null;
         actionsPointer.current.transformTweak = 0.1; //from manually testing the animations... sorry for the inconvience.
-        actionsPointer.current.moveTweak = 0; //from manually testing the animations... sorry for the inconvience.
-        actionsPointer.current.reverseTransformDelay = 7.75;
-        actionsPointer.current.reverseMoveDelay = 3.75;
+        actionsPointer.current.moveTweak = 0.05; //from manually testing the animations... sorry for the inconvience.
+        actionsPointer.current.reverseDelay = 7.75;
         break;
       case 1:
         //assign camel animations
         actionsPointer.current.transform = toCamel;
         actionsPointer.current.move = camelMove;
         actionsPointer.current.moveInfinite = true;
-        actionsPointer.current.secondMove = null;
         actionsPointer.current.transformTweak = 0.1; //from manually testing the animations... sorry for the inconvience.
-        actionsPointer.current.moveTweak = 0.02; //from manually testing the animations... sorry for the inconvience.
-        actionsPointer.current.reverseTransformDelay = 7.75;
-        actionsPointer.current.reverseMoveDelay = 3.75;
-
+        actionsPointer.current.moveTweak = 0.055; //from manually testing the animations... sorry for the inconvience.
+        actionsPointer.current.reverseDelay = 7.75;
         break;
       case 2:
         //assign android animations
         actionsPointer.current.transform = toAndroid;
         actionsPointer.current.move = androidMove;
         actionsPointer.current.moveInfinite = false;
-        actionsPointer.current.transformTweak = 0.05; //from manually testing the animations... sorry for the inconvience.
-        actionsPointer.current.moveTweak = 0.05; //from manually testing the animations... sorry for the inconvience.
-        actionsPointer.current.reverseTransformDelay = 10;
-        actionsPointer.current.reverseMoveDelay = 6;
+        actionsPointer.current.transformTweak = 0.1; //from manually testing the animations... sorry for the inconvience.
+        actionsPointer.current.moveTweak = 0.1; //from manually testing the animations... sorry for the inconvience.
+        actionsPointer.current.reverseDelay = 7.75;
         break;
       case 3:
         //assign apple animations
         actionsPointer.current.transform = toApple;
         actionsPointer.current.move = appleMove;
         actionsPointer.current.moveInfinite = true;
-        actionsPointer.current.secondMove = null;
         break;
       case 4:
         //assign flower animations
         actionsPointer.current.transform = toFlower;
         actionsPointer.current.move = null;
         actionsPointer.current.stayStill = true;
-        actionsPointer.current.secondMove = null;
         break;
       case 5:
         //assign pineapple animations
@@ -128,7 +119,7 @@ export default function Model({ ...props }) {
 
     //move animation
     if (move) {
-      if (moveInfinite) move.time = moveTweak;
+      move.time = moveTweak;
       if (!moveInfinite) move.repetitions = 1;
       move.play();
     }
@@ -136,36 +127,32 @@ export default function Model({ ...props }) {
 
   const endAnimations = async () => {
     const { go } = actions;
-    const {
-      transform,
-      move,
-      reverseMoveDelay,
-      reverseTransformDelay,
-      moveTweak,
-    } = actionsPointer.current;
+    const { transform, move, moveInfinite, reverseDelay, moveTweak } =
+      actionsPointer.current;
 
     if (!move) {
       return;
     }
     //fake waiting
-    await delay(8);
+    if (!moveInfinite) await delay(move._clip.duration);
+    else await delay(8);
 
     //reverse move;
     move.reset();
     move.time = moveTweak;
     move.timeScale = -1;
     move.repetitions = 1;
-    move.startAt(reverseMoveDelay);
+    move.startAt(reverseDelay);
     move.play();
-    await delay(1);
+    await delay(move._clip.duration);
 
     //reverse transform
     transform.reset();
     transform.repetitions = 1;
     transform.timeScale = -1;
-    transform.startAt(reverseTransformDelay);
-    transform.play();
-    await delay(1);
+    transform.startAt(reverseDelay); //needs value???
+    transform.play(); //+2 needed when going backwards
+    await delay(2.75);
 
     go.repetitions = 1;
     go.clampWhenFinished = true;
@@ -207,8 +194,9 @@ export default function Model({ ...props }) {
   // };
 
   useEffect(() => {
-    assignActions(2);
+    assignActions(0);
     startAnimations();
+    console.log("in between");
     endAnimations();
 
     return () => {
