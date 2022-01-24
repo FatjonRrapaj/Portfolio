@@ -14,6 +14,8 @@ import Fatstronaut from "../fatstronaut";
 import Brain from "../brain";
 import Stars from "../stars";
 import Everything from "../Starter";
+import Plane from "../Plane";
+import TestPlane from "../TestOnlyPlane";
 import Effect from "../../postprocessing";
 
 //Paragraphs
@@ -378,7 +380,8 @@ const World = () => {
       <Effect />
       <Stats />
       <Suspense fallback={null}>
-        <Everything />
+        {/* <Everything /> */}
+        <TestPlane />
       </Suspense>
       <directionalLight intensity={1} position={[2, 1, 697]} color="white" />
       {/* <orbitControls ref={controls} args={[camera,domEle]} */}

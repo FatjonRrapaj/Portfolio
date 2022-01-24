@@ -221,9 +221,9 @@ export default function PaperPlane({ ...props }) {
         <meshStandardMaterial
           {...materials.back}
           alphaMap={alphaMap}
+          map={back}
           roughness={1}
           metalness={0.4}
-          map={back}
           transparent={true}
           depthTest={true}
           alphaTest={0.5}
