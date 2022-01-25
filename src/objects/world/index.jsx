@@ -311,7 +311,7 @@ const World = () => {
 
   useEffect(() => {
     //TODO: KEEP AN EYE ON THE PROGRESS WITH THIS.
-    camera.position.z = 700;
+    camera.position.z = 730;
     divContainer.scrollIntoView();
     //Scroll & resize event listeners
     divContainer.addEventListener("wheel", onWheel, false);
@@ -384,7 +384,7 @@ const World = () => {
 
       <Suspense fallback={null}>
         <Text
-          position={[0, 0, 620]}
+          position={[0, 1, 688]}
           rotation={[0, Math.PI / 8, 0]}
           children="LOADING"
         />

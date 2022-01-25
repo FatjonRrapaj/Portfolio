@@ -29,9 +29,9 @@ export default function Model({ ...props }) {
 
   return (
     <group
-      position={[5, -0.6, 682]}
-      scale={[0.4, 0.4, 0.4]}
-      rotation={[0, Math.PI / 6, 0]}
+      position={[12, -0.6, 682]}
+      // scale={[0.4, 0.4, 0.4]}
+      rotation={[0, Math.PI / 8, 0]}
       ref={group}
       {...props}
       dispose={null}

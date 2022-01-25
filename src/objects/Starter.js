@@ -220,9 +220,9 @@ export default function Model({ ...props }) {
 
   return (
     <group
-      position={[6.5, -0.6, 682]}
-      scale={[0.4, 0.4, 0.4]}
-      rotation={[0, Math.PI / 6, 0]}
+      position={[15.45, -0.6, 681.4]}
+      // scale={[0.4, 0.4, 0.4]}
+      rotation={[0, Math.PI / 8, 0]}
       ref={group}
       {...props}
       dispose={null}
@@ -258,7 +258,7 @@ export default function Model({ ...props }) {
           emissive="#fff000"
         />
       </mesh>
-      <group position={[5.5, -0.2, 0]} scale={[1.25, 1.25, 1.25]}>
+      <group position={[4.25, -0.25, 0]} scale={[1.255, 1.255, 1.255]}>
         <mesh
           name="cube_2"
           geometry={nodes.cube_2.geometry}
