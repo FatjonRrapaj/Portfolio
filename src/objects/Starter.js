@@ -178,9 +178,9 @@ export default function Model({ ...props }) {
   };
 
   useEffect(() => {
-    assignActions(6);
-    startAnimations();
-    endAnimations();
+    // assignActions(6);
+    // startAnimations();
+    // endAnimations();
 
     return () => {
       for (let i = 0; i < timeouts.current.length; i++) {
@@ -220,7 +220,7 @@ export default function Model({ ...props }) {
 
   return (
     <group
-      position={[0, 0, 685]}
+      position={[6.5, -0.6, 682]}
       scale={[0.4, 0.4, 0.4]}
       rotation={[0, Math.PI / 6, 0]}
       ref={group}
@@ -235,6 +235,7 @@ export default function Model({ ...props }) {
         morphTargetDictionary={nodes.cube.morphTargetDictionary}
         morphTargetInfluences={nodes.cube.morphTargetInfluences}
       >
+        {/**this is the main cube */}
         <meshStandardMaterial
           {...nodes.cube.material}
           layers={2}
@@ -250,60 +251,63 @@ export default function Model({ ...props }) {
         morphTargetDictionary={nodes.cube_1.morphTargetDictionary}
         morphTargetInfluences={nodes.cube_1.morphTargetInfluences}
       >
+        {/** this is the face of the main cube */}
         <meshStandardMaterial
           {...nodes.cube_1.material}
           layers={2}
           emissive="#fff000"
         />
       </mesh>
-      <mesh
-        name="cube_2"
-        geometry={nodes.cube_2.geometry}
-        material={nodes.cube_2.material}
-        morphTargetDictionary={nodes.cube_2.morphTargetDictionary}
-        morphTargetInfluences={nodes.cube_2.morphTargetInfluences}
-      >
-        <meshStandardMaterial
-          {...nodes.cube_2.material}
-          layers={2}
-          emissive="#00ff00"
-        />
-      </mesh>
-      <mesh
-        name="cube_3"
-        geometry={nodes.cube_3.geometry}
-        material={nodes.cube_3.material}
-        morphTargetDictionary={nodes.cube_3.morphTargetDictionary}
-        morphTargetInfluences={nodes.cube_3.morphTargetInfluences}
-      >
-        <meshStandardMaterial
-          {...nodes.cube_3.material}
-          layers={2}
-          emissive="#ff00ff"
-        />
-      </mesh>
-      <mesh
-        name="cube_4"
-        geometry={nodes.cube_4.geometry}
-        material={nodes.cube_4.material}
-        morphTargetDictionary={nodes.cube_4.morphTargetDictionary}
-        morphTargetInfluences={nodes.cube_4.morphTargetInfluences}
-      >
-        <meshStandardMaterial layers={2} emissive="red" />
-      </mesh>
-      <mesh
-        name="cube_5"
-        geometry={nodes.cube_5.geometry}
-        material={nodes.cube_5.material}
-        morphTargetDictionary={nodes.cube_5.morphTargetDictionary}
-        morphTargetInfluences={nodes.cube_5.morphTargetInfluences}
-      >
-        <meshStandardMaterial
-          {...nodes.cube_5.material}
-          layers={2}
-          emissive="#ff00aa"
-        />
-      </mesh>
+      <group position={[5.5, -0.2, 0]} scale={[1.25, 1.25, 1.25]}>
+        <mesh
+          name="cube_2"
+          geometry={nodes.cube_2.geometry}
+          material={nodes.cube_2.material}
+          morphTargetDictionary={nodes.cube_2.morphTargetDictionary}
+          morphTargetInfluences={nodes.cube_2.morphTargetInfluences}
+        >
+          <meshStandardMaterial
+            {...nodes.cube_2.material}
+            layers={2}
+            emissive="#00ff00"
+          />
+        </mesh>
+        <mesh
+          name="cube_3"
+          geometry={nodes.cube_3.geometry}
+          material={nodes.cube_3.material}
+          morphTargetDictionary={nodes.cube_3.morphTargetDictionary}
+          morphTargetInfluences={nodes.cube_3.morphTargetInfluences}
+        >
+          <meshStandardMaterial
+            {...nodes.cube_3.material}
+            layers={2}
+            emissive="#ff00ff"
+          />
+        </mesh>
+        <mesh
+          name="cube_4"
+          geometry={nodes.cube_4.geometry}
+          material={nodes.cube_4.material}
+          morphTargetDictionary={nodes.cube_4.morphTargetDictionary}
+          morphTargetInfluences={nodes.cube_4.morphTargetInfluences}
+        >
+          <meshStandardMaterial layers={2} emissive="red" />
+        </mesh>
+        <mesh
+          name="cube_5"
+          geometry={nodes.cube_5.geometry}
+          material={nodes.cube_5.material}
+          morphTargetDictionary={nodes.cube_5.morphTargetDictionary}
+          morphTargetInfluences={nodes.cube_5.morphTargetInfluences}
+        >
+          <meshStandardMaterial
+            {...nodes.cube_5.material}
+            layers={2}
+            emissive="#ff00aa"
+          />
+        </mesh>
+      </group>
     </group>
   );
 }

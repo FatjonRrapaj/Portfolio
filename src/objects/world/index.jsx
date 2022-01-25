@@ -16,6 +16,8 @@ import Stars from "../stars";
 import Everything from "../Starter";
 import Plane from "../Plane";
 import TestPlane from "../TestOnlyPlane";
+import Sheet from "../Sheet";
+import Text from "../Text";
 import Effect from "../../postprocessing";
 
 //Paragraphs
@@ -379,9 +381,16 @@ const World = () => {
 
       <Effect />
       <Stats />
+
       <Suspense fallback={null}>
-        {/* <Everything /> */}
+        <Text
+          position={[0, 0, 620]}
+          rotation={[0, Math.PI / 8, 0]}
+          children="LOADING"
+        />
+        <Everything />
         <TestPlane />
+        <Sheet />
       </Suspense>
       <directionalLight intensity={1} position={[2, 1, 697]} color="white" />
       {/* <orbitControls ref={controls} args={[camera,domEle]} */}
