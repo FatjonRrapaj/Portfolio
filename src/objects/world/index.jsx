@@ -2,7 +2,6 @@ import { Suspense, useState, useEffect, useRef } from "react";
 import { Vector3, CatmullRomCurve3 } from "three";
 import { useFrame, useThree, extend } from "@react-three/fiber";
 import { Stats } from "@react-three/drei";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import { lerp } from "../../helpers/animation";
 import createSpiralPathFromCoordinateWithRadius from "./createPath";
@@ -13,12 +12,9 @@ import TestPlane from "../TestOnlyPlane";
 import Sheet from "../Sheet";
 import Text from "../Text";
 import Effect from "../../postprocessing";
-
-//Paragraphs
+import AnimHandler from "../animHandler";
 
 import useStore from "../../store";
-
-extend({ OrbitControls });
 
 const World = () => {
   const { camera, ...rest } = useThree();
@@ -101,6 +97,7 @@ const World = () => {
   var percentage = 0;
   var scrollY = 0;
   var touchStartY = 0;
+
   var event = {
     y: 0,
     deltaY: 0,
@@ -151,6 +148,7 @@ const World = () => {
 
   const up = new Vector3(0, 0, -1);
   const axis = new Vector3();
+
   function movePlane({ fraction, isBackward, moveCamera }) {
     const point = line.getPoint(fraction);
     const { x, y, z } = point;
@@ -295,45 +293,42 @@ const World = () => {
     scroll(e);
   }
 
-  useEffect(() => {
-    //TODO: KEEP AN EYE ON THE PROGRESS WITH THIS.
-    camera.position.z = 730;
-    divContainer.scrollIntoView();
-    //Scroll & resize event listeners
-    divContainer.addEventListener("wheel", onWheel, false);
-    window.addEventListener("resize", onResize, { passive: true });
+  // useEffect(() => {
+  //   //TODO: KEEP AN EYE ON THE PROGRESS WITH THIS.
+  //   camera.position.z = 730;
+  //   divContainer.scrollIntoView();
+  //   //Scroll & resize event listeners
+  //   divContainer.addEventListener("wheel", onWheel, false);
+  //   window.addEventListener("resize", onResize, { passive: true });
 
-    //Zustand store subscriptions
-    const unSubscribeWorldChanges = useStore.subscribe(
-      (state) => state.world,
-      ({ progress, scrollingStopped }) => {
-        handleProgress(progress, scrollingStopped);
-      }
-    );
+  //   //Zustand store subscriptions
+  //   const unSubscribeWorldChanges = useStore.subscribe(
+  //     (state) => state.world,
+  //     ({ progress, scrollingStopped }) => {
+  //       handleProgress(progress, scrollingStopped);
+  //     }
+  //   );
 
-    divContainer.addEventListener("touchstart", onTouchStart);
-    divContainer.addEventListener("touchmove", onTouchMove);
+  //   divContainer.addEventListener("touchstart", onTouchStart);
+  //   divContainer.addEventListener("touchmove", onTouchMove);
 
-    return () => {
-      divContainer.removeEventListener("wheel", onWheel);
+  //   return () => {
+  //     divContainer.removeEventListener("wheel", onWheel);
 
-      window.removeEventListener("resize", onResize);
-      divContainer.removeEventListener("touchstart", onTouchStart);
-      divContainer.removeEventListener("touchmove", onTouchMove);
-      useStore.getState().world.setProgress(0);
-      useStore.getState().world.setScrollY(0);
-      unSubscribeWorldChanges();
-    };
-  }, []);
-
-  useFrame(() => {
-    controls.current && controls.current.update();
-  });
+  //     window.removeEventListener("resize", onResize);
+  //     divContainer.removeEventListener("touchstart", onTouchStart);
+  //     divContainer.removeEventListener("touchmove", onTouchMove);
+  //     useStore.getState().world.setProgress(0);
+  //     useStore.getState().world.setScrollY(0);
+  //     unSubscribeWorldChanges();
+  //   };
+  // }, []);
 
   return (
     <>
       <Effect />
       <Stats />
+      <AnimHandler />
 
       <Suspense fallback={null}>
         <Text

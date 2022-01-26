@@ -34,7 +34,7 @@ export default function Text({
   );
   const mesh = useRef();
   useLayoutEffect(() => {
-    const size = new THREE.Vector3();
+    const size = new Vector3();
     mesh.current.geometry.computeBoundingBox();
     mesh.current.geometry.boundingBox.getSize(size);
     mesh.current.position.x =
