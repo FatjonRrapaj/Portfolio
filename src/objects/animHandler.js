@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import anime from "animejs/lib/anime.es.js";
 import { useThree } from "@react-three/fiber";
+import useStore from "../store";
 
 export default function Animator() {
   const _event = useRef({
@@ -62,9 +63,7 @@ export default function Animator() {
 
   function render() {
     percentage = lerp(percentage, -_event.current.y, 0.07);
-    console.log("percentage: ", percentage);
-
-    timeline.seek(percentage * (1000 / maxHeight));
+    timeline.seek(percentage * (timeline.duration / maxHeight));
   }
 
   useFrame(() => {
@@ -74,20 +73,51 @@ export default function Animator() {
   const [timeline] = useState(() =>
     anime.timeline({
       autoplay: false,
-      duration: 3000,
       easing: "easeOutSine",
     })
   );
 
   const { camera } = useThree();
 
+  const empty = {};
+
+  let rotationProgress = null;
+
   function addTimelineEvents() {
     timeline.add({
       targets: camera.position,
-      x: 1,
+      x: 19,
       y: 0,
-      z: 700,
-      duration: 3000,
+      z: 710,
+      duration: 200,
+    });
+    timeline.add({
+      targets: empty,
+      duration: 400,
+      begin: function (anim) {
+        console.log("began: ", anim.began);
+      },
+      update: function (anim) {
+        if (!anim.completed) {
+          if (rotationProgress !== 0) {
+            console.log("before sending progress: ", anim.progress);
+            useStore.getState().experience.setRotationProgress(anim.progress);
+          }
+
+          rotationProgress = anim.progress;
+        } else {
+          if (anim.progress < 100) {
+            anim.completed = false;
+          }
+        }
+
+        //emit progress here.
+        //to single animation that updates the UI.
+      },
+    });
+    timeline.add({
+      targets: empty,
+      duration: 600,
     });
   }
 
