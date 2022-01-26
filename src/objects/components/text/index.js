@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import { Vector3 } from "three";
 import React, { useMemo, useRef, useLayoutEffect } from "react";
 import { extend, useLoader } from "@react-three/fiber";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader";

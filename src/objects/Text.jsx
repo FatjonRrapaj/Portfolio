@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import { Vector3 } from "three";
 import React, { useMemo, useRef, useLayoutEffect } from "react";
 import { extend, useLoader } from "@react-three/fiber";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
@@ -32,7 +32,7 @@ export default function Text({
   );
   const mesh = useRef();
   useLayoutEffect(() => {
-    const size = new THREE.Vector3();
+    const size = new Vector3();
     mesh.current.geometry.computeBoundingBox();
     mesh.current.geometry.boundingBox.getSize(size);
     mesh.current.position.x =

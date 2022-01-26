@@ -1,5 +1,5 @@
 import { Suspense, useState, useEffect, useRef } from "react";
-import * as THREE from "three";
+import { Vector3, CatmullRomCurve3 } from "three";
 import { useFrame, useThree, extend } from "@react-three/fiber";
 import { Stats } from "@react-three/drei";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -8,7 +8,6 @@ import { lerp } from "../../helpers/animation";
 import createSpiralPathFromCoordinateWithRadius from "./createPath";
 import anime from "animejs/lib/anime.es.js";
 
-import Stars from "../stars";
 import Everything from "../Starter";
 import TestPlane from "../TestOnlyPlane";
 import Sheet from "../Sheet";
@@ -33,20 +32,20 @@ const World = () => {
   /** Line */
   const [points] = useState(() => {
     return [
-      new THREE.Vector3(0, 0, 697),
-      new THREE.Vector3(10, 2, 640.0),
-      new THREE.Vector3(-10, -1, 600.0),
-      new THREE.Vector3(-40, -5, 580),
-      new THREE.Vector3(-100, 12, 550),
+      new Vector3(0, 0, 697),
+      new Vector3(10, 2, 640.0),
+      new Vector3(-10, -1, 600.0),
+      new Vector3(-40, -5, 580),
+      new Vector3(-100, 12, 550),
       ...createSpiralPathFromCoordinateWithRadius({
         coordinate: [-200, 15, 490],
         radius: 15,
         spirals: 3,
         heightDivider: 3,
       }),
-      new THREE.Vector3(-185, 0, 505),
-      new THREE.Vector3(-100, 2, 505),
-      new THREE.Vector3(50, 0, 500),
+      new Vector3(-185, 0, 505),
+      new Vector3(-100, 2, 505),
+      new Vector3(50, 0, 500),
       ...createSpiralPathFromCoordinateWithRadius({
         coordinate: [200, 4, 430],
         direction: 1,
@@ -54,41 +53,41 @@ const World = () => {
         spirals: 3,
         heightDivider: 3,
       }),
-      new THREE.Vector3(100, 4, 400),
-      new THREE.Vector3(50, -4, 380),
-      new THREE.Vector3(0, 4, 380),
-      new THREE.Vector3(0, 0, 350),
-      new THREE.Vector3(0, 10, 300),
-      new THREE.Vector3(0, 20, 270),
-      new THREE.Vector3(0, 30, 220),
-      new THREE.Vector3(0, 40, 200),
-      new THREE.Vector3(0, 40, 200),
-      new THREE.Vector3(0, 40, 200),
-      new THREE.Vector3(0, 30, 200),
-      new THREE.Vector3(0, 30, 200),
-      new THREE.Vector3(0, 30, 210),
-      new THREE.Vector3(0, 30, 200),
-      new THREE.Vector3(0, 30, 200),
-      new THREE.Vector3(0, 30, 200),
-      new THREE.Vector3(0, 90, 200),
-      new THREE.Vector3(0, 90, 170),
-      new THREE.Vector3(0, 90, 170),
-      new THREE.Vector3(0, 90, 100),
-      new THREE.Vector3(0, 130, 100),
-      new THREE.Vector3(0, 130, 100),
-      new THREE.Vector3(0, 130, 100),
-      new THREE.Vector3(0, 180, 50),
-      new THREE.Vector3(0, 180, 50),
-      new THREE.Vector3(0, 180, 150),
-      new THREE.Vector3(0, 180, 150),
-      new THREE.Vector3(0, 180, 150),
-      new THREE.Vector3(0, 1800, 100),
-      new THREE.Vector3(0, 1800, 100),
+      new Vector3(100, 4, 400),
+      new Vector3(50, -4, 380),
+      new Vector3(0, 4, 380),
+      new Vector3(0, 0, 350),
+      new Vector3(0, 10, 300),
+      new Vector3(0, 20, 270),
+      new Vector3(0, 30, 220),
+      new Vector3(0, 40, 200),
+      new Vector3(0, 40, 200),
+      new Vector3(0, 40, 200),
+      new Vector3(0, 30, 200),
+      new Vector3(0, 30, 200),
+      new Vector3(0, 30, 210),
+      new Vector3(0, 30, 200),
+      new Vector3(0, 30, 200),
+      new Vector3(0, 30, 200),
+      new Vector3(0, 90, 200),
+      new Vector3(0, 90, 170),
+      new Vector3(0, 90, 170),
+      new Vector3(0, 90, 100),
+      new Vector3(0, 130, 100),
+      new Vector3(0, 130, 100),
+      new Vector3(0, 130, 100),
+      new Vector3(0, 180, 50),
+      new Vector3(0, 180, 50),
+      new Vector3(0, 180, 150),
+      new Vector3(0, 180, 150),
+      new Vector3(0, 180, 150),
+      new Vector3(0, 1800, 100),
+      new Vector3(0, 1800, 100),
     ];
   });
 
   const [line] = useState(() => {
-    const c = new THREE.CatmullRomCurve3(points);
+    const c = new CatmullRomCurve3(points);
     c.tension = 1;
     c.arcLengthDivisions = 20000;
     c.curveType = "catmullrom";
@@ -150,8 +149,8 @@ const World = () => {
       .paperPlane.setInitialTrajectoryPointAnimationTime(fraction);
   }
 
-  const up = new THREE.Vector3(0, 0, -1);
-  const axis = new THREE.Vector3();
+  const up = new Vector3(0, 0, -1);
+  const axis = new Vector3();
   function movePlane({ fraction, isBackward, moveCamera }) {
     const point = line.getPoint(fraction);
     const { x, y, z } = point;
