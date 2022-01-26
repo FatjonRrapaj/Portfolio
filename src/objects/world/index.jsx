@@ -6,23 +6,16 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import { lerp } from "../../helpers/animation";
 import createSpiralPathFromCoordinateWithRadius from "./createPath";
+import anime from "animejs/lib/anime.es.js";
 
-import Planet from "../planet";
-import DirectionalLight from "../components/directionalLight";
-import PaperPlane from "../paperPlane";
-import Fatstronaut from "../fatstronaut";
-import Brain from "../brain";
 import Stars from "../stars";
 import Everything from "../Starter";
-import Plane from "../Plane";
 import TestPlane from "../TestOnlyPlane";
 import Sheet from "../Sheet";
 import Text from "../Text";
 import Effect from "../../postprocessing";
 
 //Paragraphs
-import TimeDefinition from "../paragraphs/TimeDefinition";
-import CreativityDefiniton from "../paragraphs/CreativityDefinition";
 
 import useStore from "../../store";
 
@@ -102,10 +95,6 @@ const World = () => {
 
     return c;
   });
-
-  const [lineGeometry] = useState(() =>
-    new THREE.BufferGeometry().setFromPoints(line.getSpacedPoints(20000))
-  );
 
   /** Window event listener handlers */
   const divContainer = document.getElementById("fold");
@@ -307,8 +296,6 @@ const World = () => {
     scroll(e);
   }
 
-  console.log("MB");
-
   useEffect(() => {
     //TODO: KEEP AN EYE ON THE PROGRESS WITH THIS.
     camera.position.z = 730;
@@ -346,39 +333,6 @@ const World = () => {
 
   return (
     <>
-      {/* <line ref={lineRef} geometry={lineGeometry}>
-        <lineDashedMaterial
-          emissive="red"
-          emissiveIntensity={10}
-          scale={1}
-          dashSize={0.5}
-          gapSize={0.5}
-          color="red"
-        />
-      </line> */}
-      {/* <Planet /> */}
-      {/* <Suspense fallback={null}>
-        <PaperPlane />
-      </Suspense>
-      <DirectionalLight />
-
-      <Suspense fallback={null}>
-        <Fatstronaut />
-      </Suspense>
-
-      <TimeDefinition />
-
-      <Suspense fallback={null}>
-        <Brain />
-      </Suspense>
-
-      <CreativityDefiniton />
-    */}
-
-      <Suspense fallback={null}>
-        <Stars />
-      </Suspense>
-
       <Effect />
       <Stats />
 
@@ -393,9 +347,6 @@ const World = () => {
         <Sheet />
       </Suspense>
       <directionalLight intensity={1} position={[2, 1, 697]} color="white" />
-      {/* <orbitControls ref={controls} args={[camera,domEle]} */}
-
-      {/* <axesHelper args={[1000000]} /> */}
     </>
   );
 };
