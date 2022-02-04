@@ -213,10 +213,10 @@ export default function Animator() {
       },
     });
 
-    //initial go (experience cubes) animation control
+    //initial go (experience cubes) animation control (GLTF anim)
     timeline.add({
       targets: empty,
-      duration: animationTimes.go * 1000, //TO MILLISECONDS
+      duration: 2000, //TO MILLISECONDS
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -267,10 +267,10 @@ export default function Animator() {
       },
     });
 
-    //to sheet animation controler
+    //to sheet animation controler (GLTF ANIM)
     timeline.add({
       targets: empty,
-      duration: animationTimes.toSheet * 1000, //TO MILLISECOND
+      duration: 2000,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -338,7 +338,8 @@ export default function Animator() {
   }
 
   useEffect(() => {
-    camera.position.z = 730;
+    camera.position.z = 725;
+    camera.position.y = 8;
 
     divContainer.scrollIntoView();
     //Scroll & resize event listeners

@@ -121,7 +121,8 @@ export default function Model({ ...props }) {
               toSheet,
               sheetProgress,
               sheetProgressChecker,
-              0.1
+              0.1,
+              2000
             );
             break;
           case "backRotateProgress":

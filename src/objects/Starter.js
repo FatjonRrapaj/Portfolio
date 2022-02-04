@@ -9,6 +9,8 @@ import useStore from "../store";
 import { useState } from "react/cjs/react.development";
 import anime from "animejs/lib/anime.es";
 
+import { seekGltfAnimation } from "../helpers/animation";
+
 export default function Model({ ...props }) {
   const mainContainer = useRef();
   const secondaryContainer = useRef();
@@ -230,7 +232,7 @@ export default function Model({ ...props }) {
       duration: 400,
       autoplay: false,
     });
-
+    const { go } = actions;
     const unsubscribeExperieneStore = useStore.subscribe(
       (state) => state.experience,
       ({
@@ -249,32 +251,20 @@ export default function Model({ ...props }) {
             break;
 
           case "initialGoProgress":
-            const { go } = actions;
-            go.reset();
-            go.clampWhenFinished = true;
-            go.timeScale = -1;
-            go.repetitions = 1;
-
-            if (initialGoProgressChecker.current > initialGoProgress) {
-              go.reset();
-              go.clampWhenFinished = true;
-              go.repetitions = 1;
-              go.timeScale = -1;
+            if (initialGoProgress > 90) {
+              mainContainer.current.visible = false;
             } else {
-              go.timeScale = 1;
+              mainContainer.current.visible = true;
             }
-            go.play();
-            if (go.timeScale === -1) {
-              go._mixer.setTime(go._clip.duration / initialGoProgress / 100);
-            } else {
-              go._mixer.time < go._mixer.time - 100 &&
-                go._mixer.setTime(
-                  (go._clip.duration * initialGoProgress) / 100
-                );
-            }
-            initialGoProgressChecker.current = initialGoProgress;
+            seekGltfAnimation(
+              go,
+              initialGoProgress,
+              initialGoProgressChecker,
+              0,
+              1000,
+              false
+            );
             break;
-
           default:
             break;
         }
@@ -291,11 +281,11 @@ export default function Model({ ...props }) {
   }, [mainContainer.current]);
 
   useFrame(() => {
-    //transform fixes
+    // transform fixes
     const { go } = actions;
-    if (go.time >= go._clip.duration - 0.1) {
-      go.paused = true;
-    }
+    // if (go.time >= go._clip.duration - 0.2) {
+    //   go.paused = true;
+    // }
     const { transform, move, moveInfinite, transformTweak, moveTweak } =
       actionsPointer.current;
     if (!transform) {

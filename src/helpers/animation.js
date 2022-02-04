@@ -9,38 +9,34 @@ export function lerp(a, b, t) {
  * @param {object} playbackControllerRef is a ref that is used to check if the naimation is being played backwards
  * @param {number} adjustment is an optional value provided to avoid animation glitches
  * @param {number | null} customAnimationDuration is an optional value provided to change the animation duration default value
+ * @param {boolean} clampWhenFinished is an optional value provided to set animation clampWhenFinished https://threejs.org/docs/#api/en/animation/AnimationAction.clampWhenFinished
  */
 export function seekGltfAnimation(
   animation,
   progress,
   playbackControllerRef,
   adjustment = 0.1,
-  customAnimationDuration = null
+  customAnimationDuration = 2000,
+  clampWhenFinished = true
 ) {
   if (!animation) return;
   animation.reset();
-  animation.clampWhenFinished = true;
+  animation.clampWhenFinished = clampWhenFinished;
   animation.repetitions = 1;
   if (customAnimationDuration) {
     animation.setDuration(customAnimationDuration);
   }
   //check if animation is playing backwards
   if (playbackControllerRef.current > progress) {
+    const factor = customAnimationDuration / 100;
     if (customAnimationDuration) {
-      //TODO: delete the lines 34-38, set custom glt animation durations to 1000 and replace them with this new functionality (line 31)
-      animation._mixer.setTime(progress * 100);
-      return;
+      animation._mixer.setTime(progress * factor);
     }
-    animation.timeScale = -1;
-    animation.time = adjustment;
-    animation.startAt(animation._clip.duration);
-    //TODO: seek the animation when playing backwards too
-    animation.play();
   } else {
     //animation is playing forward
     animation.timeScale = 1;
-    animation.play();
     animation._mixer.setTime((animation._clip.duration * progress) / 100);
+    animation.play();
   }
   //very important
   playbackControllerRef.current = progress;
