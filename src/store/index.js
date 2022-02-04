@@ -10,17 +10,167 @@ const useStore = create(
     ...useObject(set, get, "fatstronaut"),
     ...useObject(set, get, "sky"),
     ...useObject(set, get, "camera"),
-    experience: {
-      rotation: null,
-      rotationProgress: null,
-      setRotationProgress(rotationProgress) {
+
+    scrollStatus: {
+      isScrolling: false,
+      setIsSCrolling(isScrolling) {
         set((state) => ({
-          experience: {
-            ...state.experience,
-            lastChanged: "rotationProgress",
-            rotationProgress,
+          scrollStatus: {
+            ...state.scrollStatus,
+            isScrolling,
           },
         }));
+      },
+    },
+
+    //todo: change name to mutual animations
+    initialAnimation: {
+      //todo: change name to intial animations progress
+      progress: null,
+      planeAndSheetReverseOpacitiesProgress: null,
+      lastChanged: null,
+      setProgress(progress) {
+        set((state) => {
+          return {
+            initialAnimation: {
+              ...state.initialAnimation,
+              progress,
+              lastChanged: "progress",
+            },
+          };
+        });
+      },
+      setPlaneAndSheetReverseOpacitiesProgress(
+        planeAndSheetReverseOpacitiesProgress
+      ) {
+        set((state) => {
+          return {
+            initialAnimation: {
+              ...state.initialAnimation,
+              planeAndSheetReverseOpacitiesProgress,
+              lastChanged: "planeAndSheetReverseOpacitiesProgress",
+            },
+          };
+        });
+      },
+    },
+    experience: {
+      initialJoinProgress: null,
+      initialGoProgress: null,
+      lastChanged: null,
+      initialScaleProgress: null,
+      setInitialJoinProgress(initialJoinProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              initialJoinProgress,
+              lastChanged: "initialJoinProgress",
+            },
+          };
+        });
+      },
+      setInitialScaleProgress(initialScaleProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              initialScaleProgress,
+              lastChanged: "initialScaleProgress",
+            },
+          };
+        });
+      },
+      setInitialGoProgress(initialGoProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              initialGoProgress,
+              lastChanged: "initialGoProgress",
+            },
+          };
+        });
+      },
+    },
+    sheet: {
+      moveToCenterProgress: null,
+      rotateToSheetProgress: null,
+      sheetProgress: null,
+      backRotateProgress: null,
+      fixSheetPositonbeforeConvertingToSheetProgress: null,
+      lastChanged: null,
+      setMoveToCenterProgress(moveToCenterProgress) {
+        set((state) => {
+          return {
+            sheet: {
+              ...state.sheet,
+              moveToCenterProgress,
+              lastChanged: "moveToCenterProgress",
+            },
+          };
+        });
+      },
+      setRotateToSheetProgress(rotateToSheetProgress) {
+        set((state) => {
+          return {
+            sheet: {
+              ...state.sheet,
+              rotateToSheetProgress,
+              lastChanged: "rotateToSheetProgress",
+            },
+          };
+        });
+      },
+      setSheetProgress(sheetProgress) {
+        set((state) => {
+          return {
+            sheet: {
+              ...state.sheet,
+              sheetProgress,
+              lastChanged: "sheetProgress",
+            },
+          };
+        });
+      },
+      setBackRotateProgress(backRotateProgress) {
+        set((state) => {
+          return {
+            sheet: {
+              ...state.sheet,
+              backRotateProgress,
+              lastChanged: "backRotateProgress",
+            },
+          };
+        });
+      },
+      setFixSheetPositonbeforeConvertingToSheetProgress(
+        fixSheetPositonbeforeConvertingToSheetProgress
+      ) {
+        set((state) => {
+          return {
+            sheet: {
+              ...state.sheet,
+              fixSheetPositonbeforeConvertingToSheetProgress,
+              lastChanged: "fixSheetPositonbeforeConvertingToSheet",
+            },
+          };
+        });
+      },
+    },
+    plane: {
+      planeFoldingProgress: null,
+      lastChanged: null,
+      setPlaneFoldingProgress(planeFoldingProgress) {
+        set((state) => {
+          return {
+            plane: {
+              ...state.plane,
+              planeFoldingProgress,
+              lastChanged: "planeFoldingProgress",
+            },
+          };
+        });
       },
     },
   }))

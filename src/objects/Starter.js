@@ -11,12 +11,12 @@ import anime from "animejs/lib/anime.es";
 
 export default function Model({ ...props }) {
   const mainContainer = useRef();
+  const secondaryContainer = useRef();
+
   const { nodes, materials, animations } = useGLTF(
     process.env.PUBLIC_URL + "/all.glb"
   );
   const { actions } = useAnimations(animations, mainContainer);
-  console.log("actions: ", actions);
-  console.log("materials: ", materials);
 
   //refs
 
@@ -183,33 +183,96 @@ export default function Model({ ...props }) {
     go.play();
   };
 
-  let initialRotation = null;
+  function resetAnimationTime(animObject) {
+    const newTime = animObject._clip.duration * 1000 * 2;
+    animObject.setDuration(newTime);
+  }
 
-  useEffect(() => {
-    if (!mainContainer.current) return;
-
-    initialRotation = anime({
-      targets: mainContainer.current?.rotation,
-      x: 0,
-      y: 0,
-      z: 0,
-      duration: 400,
-    });
-  }, [mainContainer.current]);
+  let initialGoProgressChecker = useRef(0);
 
   useEffect(() => {
     // assignActions(6);
     // startAnimations();
     // endAnimations();
+    if (!mainContainer.current) return;
 
-    const unsubscribeStore = useStore.subscribe(
+    const initialRotation = anime({
+      targets: mainContainer.current?.rotation,
+      x: 0,
+      y: 0,
+      z: 0,
+      duration: 400,
+      autoplay: false,
+    });
+
+    const unsubscribeInitialAnimation = useStore.subscribe(
+      (state) => state.initialAnimation,
+      ({ progress }) => {
+        initialRotation.seek(progress);
+      }
+    );
+
+    //scaleDown
+    const scaleDown = anime({
+      targets: secondaryContainer.current.scale,
+      x: 1,
+      y: 1,
+      z: 1,
+      duration: 400,
+      autoplay: false,
+    });
+
+    const join = anime({
+      targets: secondaryContainer.current.position,
+      x: secondaryContainer.current.position.x - 2.6,
+      y: 0,
+      z: 0,
+      duration: 400,
+      autoplay: false,
+    });
+
+    const unsubscribeExperieneStore = useStore.subscribe(
       (state) => state.experience,
-      ({ rotationProgress, lastChanged }) => {
-        console.log("enters here");
+      ({
+        initialJoinProgress,
+        initialGoProgress,
+        initialScaleProgress,
+        lastChanged,
+      }) => {
         switch (lastChanged) {
-          case "rotationProgress":
-            console.log("Rotation progress: ", rotationProgress);
-            initialRotation.seek(rotationProgress);
+          case "initialJoinProgress":
+            join.seek(initialJoinProgress);
+            break;
+
+          case "initialScaleProgress":
+            scaleDown.seek(initialScaleProgress);
+            break;
+
+          case "initialGoProgress":
+            const { go } = actions;
+            go.reset();
+            go.clampWhenFinished = true;
+            go.timeScale = -1;
+            go.repetitions = 1;
+
+            if (initialGoProgressChecker.current > initialGoProgress) {
+              go.reset();
+              go.clampWhenFinished = true;
+              go.repetitions = 1;
+              go.timeScale = -1;
+            } else {
+              go.timeScale = 1;
+            }
+            go.play();
+            if (go.timeScale === -1) {
+              go._mixer.setTime(go._clip.duration / initialGoProgress / 100);
+            } else {
+              go._mixer.time < go._mixer.time - 100 &&
+                go._mixer.setTime(
+                  (go._clip.duration * initialGoProgress) / 100
+                );
+            }
+            initialGoProgressChecker.current = initialGoProgress;
             break;
 
           default:
@@ -219,15 +282,20 @@ export default function Model({ ...props }) {
     );
 
     return () => {
-      unsubscribeStore();
+      unsubscribeInitialAnimation();
+      unsubscribeExperieneStore();
       for (let i = 0; i < timeouts.current.length; i++) {
         clearTimeout(timeouts[i]);
       }
     };
-  }, []);
+  }, [mainContainer.current]);
 
   useFrame(() => {
     //transform fixes
+    const { go } = actions;
+    if (go.time >= go._clip.duration - 0.1) {
+      go.paused = true;
+    }
     const { transform, move, moveInfinite, transformTweak, moveTweak } =
       actionsPointer.current;
     if (!transform) {
@@ -295,7 +363,11 @@ export default function Model({ ...props }) {
           emissive="#fff000"
         />
       </mesh>
-      <group position={[4.25, -0.25, 0]} scale={[1.255, 1.255, 1.255]}>
+      <group
+        ref={secondaryContainer}
+        position={[3.25, -0.25, 0]}
+        scale={[1.255, 1.255, 1.255]}
+      >
         <mesh
           name="cube_2"
           geometry={nodes.cube_2.geometry}

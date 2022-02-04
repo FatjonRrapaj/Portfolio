@@ -15,8 +15,6 @@ export default function Model({ ...props }) {
   );
   const { actions } = useAnimations(animations, group);
 
-  console.log("PLANE materials: ", materials);
-
   const front = useLoader(TextureLoader, process.env.PUBLIC_URL + "/front.jpg");
   front.flipY = false;
   const back = useLoader(TextureLoader, process.env.PUBLIC_URL + "/back.jpg");
@@ -26,7 +24,6 @@ export default function Model({ ...props }) {
   );
 
   useEffect(() => {
-    console.log("actions", actions);
     const { toPlane, toSheet } = actions;
     toSheet.repetitions = 1;
     toSheet.clampWhenFinished = true;

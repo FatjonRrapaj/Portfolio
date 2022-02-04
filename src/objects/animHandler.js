@@ -21,7 +21,26 @@ export default function Animator() {
     (divContainer.clientHeight || divContainer.offsetHeight) -
     window.innerHeight;
 
+  let scrollTimeout = null;
+
+  const isScrolling = useRef(false);
+
   function onWheel(e) {
+    e.preventDefault();
+
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout);
+    }
+    scrollTimeout = setTimeout(() => {
+      scrollTimeout = null;
+      useStore.getState().scrollStatus.setIsSCrolling(false);
+      isScrolling.current = false;
+    }, 100);
+    if (!isScrolling.current) {
+      isScrolling.current = true;
+      useStore.getState().scrollStatus.setIsSCrolling(true);
+    }
+
     _event.current.deltaY = e.wheelDeltaY || e.deltaY * -1;
     // reduce by half the delta amount otherwise it scroll too fast (in a other way we could increase the height of the container too)
     _event.current.deltaY *= 0.5;
@@ -77,47 +96,244 @@ export default function Animator() {
     })
   );
 
+  /**
+   * Taken from actions, exported from blender. //TODO: check for automatization
+   */
+  const animationTimes = {
+    //experience
+    androidMove: 1.5833333730697632,
+    appleMove: 1.25,
+    camelMove: 1,
+    clockMove: 0.875,
+    come: 1.2916666269302368,
+    go: 1.5,
+    join: 1.7083333730697632,
+    toAndroid: 2.5416667461395264,
+    toApple: 3.375,
+    toCamel: 3.375,
+    toCannon: 2.4166667461395264,
+    toClock: 3.375,
+    toFlower: 2.5416667461395264,
+    toPineapple: 3.8333332538604736,
+    //sheet
+    toSheet: 2,
+  };
+
   const { camera } = useThree();
 
   const empty = {};
 
-  let rotationProgress = null;
+  const initialAnimationProgress = useRef(0);
+  const initialScaleProgress = useRef(0);
+  const initalCubeJoinProgress = useRef(0);
+  const initalCubeGoProgress = useRef(0);
+  const centerSheetProgress = useRef(0);
+  const rotateSheetProgress = useRef(0);
+  const toSheetProgress = useRef(0);
+  const sheetBackRotateProgress = useRef(0);
+  const planeAndSheetReverseOpacitiesProgress = useRef(0);
+  const planeFoldProgress = useRef(0);
+
+  /**
+   * handles the animation updates, making sure to play the animation even when going backwards
+   * @param {object} anim the animation received from update function on animeJS timeline
+   * @param {object} progressTracker a ref for each animation that prevents emiting unnecessary values
+   * @param {function} progressSetter a function with the logic that modifies the state for each animation
+   */
+  function handleUpdateAnimation(anim, progressTracker, progressSetter) {
+    if (!anim.completed) {
+      if (progressTracker.current !== 0) {
+        progressSetter(anim);
+      }
+      progressTracker.current = anim.progress;
+    } else {
+      if (anim.progress < 100) {
+        anim.completed = false;
+      }
+    }
+  }
 
   function addTimelineEvents() {
+    //set camera to middle of 3 cubes
     timeline.add({
       targets: camera.position,
-      x: 19,
+      x: 15,
       y: 0,
       z: 710,
       duration: 200,
     });
+
+    //rotate cubes & remove loading text from screen animation control
+    timeline.add({
+      //target is empty because we just control the timing, animation happens on other files via animation.seek()
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          initialAnimationProgress,
+          function progresSetter(anim) {
+            useStore.getState().initialAnimation.setProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //scale down experience helper cubes
     timeline.add({
       targets: empty,
       duration: 400,
-      begin: function (anim) {
-        console.log("began: ", anim.began);
-      },
       update: function (anim) {
-        if (!anim.completed) {
-          if (rotationProgress !== 0) {
-            console.log("before sending progress: ", anim.progress);
-            useStore.getState().experience.setRotationProgress(anim.progress);
+        handleUpdateAnimation(
+          anim,
+          initialScaleProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setInitialScaleProgress(anim.progress);
           }
-
-          rotationProgress = anim.progress;
-        } else {
-          if (anim.progress < 100) {
-            anim.completed = false;
-          }
-        }
-
-        //emit progress here.
-        //to single animation that updates the UI.
+        );
       },
     });
+
+    //join experience cubes animation control
     timeline.add({
       targets: empty,
-      duration: 600,
+      duration: 400,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          initalCubeJoinProgress,
+          function progresSetter(anim) {
+            useStore
+              .getState()
+              .experience.setInitialJoinProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //initial go (experience cubes) animation control
+    timeline.add({
+      targets: empty,
+      duration: animationTimes.go * 1000, //TO MILLISECONDS
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          initalCubeGoProgress,
+          function progresSetter(anim) {
+            useStore.getState().experience.setInitialGoProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    // set sheet to center animation control
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          centerSheetProgress,
+          function progresSetter(anim) {
+            useStore.getState().sheet.setMoveToCenterProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //zoom into sheet cube
+    timeline.add({
+      targets: camera.position,
+      x: 15,
+      y: 0,
+      z: 688,
+      duration: 500,
+    });
+
+    //rotate the sheet cube
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          rotateSheetProgress,
+          function progresSetter(anim) {
+            useStore.getState().sheet.setRotateToSheetProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //to sheet animation controler
+    timeline.add({
+      targets: empty,
+      duration: animationTimes.toSheet * 1000, //TO MILLISECOND
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          toSheetProgress,
+          function progresSetter(anim) {
+            useStore.getState().sheet.setSheetProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //rotate sheet back to place controller
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          sheetBackRotateProgress,
+          function progresSetter(anim) {
+            useStore.getState().sheet.setBackRotateProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //change sheet to plane
+    timeline.add({
+      targets: empty,
+      duration: 100,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          planeAndSheetReverseOpacitiesProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .initialAnimation.setPlaneAndSheetReverseOpacitiesProgress(
+                anim.progress
+              );
+          }
+        );
+      },
+    });
+
+    //the coolest plane folding animation ever
+    timeline.add({
+      targets: empty,
+      duration: 10000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          planeFoldProgress,
+          function progressSetter(anim) {
+            useStore.getState().plane.setPlaneFoldingProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    timeline.add({
+      targets: empty,
+      duration: 200,
     });
   }
 

@@ -1,4 +1,4 @@
-import { Suspense, useState, useEffect, useRef } from "react";
+import { Suspense, useState, useEffect, useRef, createRef } from "react";
 import { Vector3, CatmullRomCurve3 } from "three";
 import { useFrame, useThree, extend } from "@react-three/fiber";
 import { Stats } from "@react-three/drei";
@@ -10,7 +10,7 @@ import anime from "animejs/lib/anime.es.js";
 import Everything from "../Starter";
 import TestPlane from "../TestOnlyPlane";
 import Sheet from "../Sheet";
-import Text from "../Text";
+import Loading from "../Loading";
 import Effect from "../../postprocessing";
 import AnimHandler from "../animHandler";
 
@@ -18,10 +18,8 @@ import useStore from "../../store";
 
 const World = () => {
   const { camera, ...rest } = useThree();
-  console.log("rest: ", rest);
   const lineRef = useRef();
-
-  const controls = useRef();
+  const text = createRef();
 
   lineRef.current && lineRef.current.computeLineDistances();
 
@@ -329,13 +327,8 @@ const World = () => {
       <Effect />
       <Stats />
       <AnimHandler />
-
       <Suspense fallback={null}>
-        <Text
-          position={[0, 1, 688]}
-          rotation={[0, Math.PI / 8, 0]}
-          children="LOADING"
-        />
+        <Loading />
         <Everything />
         <TestPlane />
         <Sheet />

@@ -8,6 +8,9 @@ import { useEffect } from "react/cjs/react.development";
 import { useLoader } from "@react-three/fiber";
 import { FrontSide, TextureLoader } from "three";
 
+import useStore from "../store";
+import { seekGltfAnimation } from "../helpers/animation";
+
 export default function Model({ ...props }) {
   const group = useRef();
   const { nodes, animations } = useGLTF(
@@ -20,17 +23,54 @@ export default function Model({ ...props }) {
   const back = useLoader(TextureLoader, process.env.PUBLIC_URL + "/back.jpg");
   back.flipY = false;
 
-  useEffect(() => {
-    const { fold } = actions;
+  const planeFoldingProgressController = useRef(0);
 
-    // fold.repetitions = 1;
-    // fold.clampWhenFinished = true;
-    // fold.play();
-  }, []);
+  useEffect(() => {
+    if (!group.current) return;
+
+    const unsubcribeFromMutualAnimationListener = useStore.subscribe(
+      (state) => state.initialAnimation,
+      ({ planeAndSheetReverseOpacitiesProgress }) => {
+        if (planeAndSheetReverseOpacitiesProgress > 95) {
+          group.current.visible = true;
+        } else {
+          group.current.visible = false;
+        }
+      }
+    );
+
+    const unsubcribeFromPlaneAnimationListener = useStore.subscribe(
+      (state) => state.plane,
+      ({ planeFoldingProgress, lastChanged }) => {
+        switch (lastChanged) {
+          case "planeFoldingProgress":
+            const { fold } = actions;
+            console.log("planeFoldingProgress: ", planeFoldingProgress);
+            seekGltfAnimation(
+              fold,
+              planeFoldingProgress,
+              planeFoldingProgressController,
+              0,
+              10000
+            );
+            break;
+
+          default:
+            break;
+        }
+      }
+    );
+
+    return () => {
+      unsubcribeFromMutualAnimationListener();
+      unsubcribeFromPlaneAnimationListener();
+    };
+  }, [group.current]);
 
   return (
     <group
-      position={[0, -0.5, 696]}
+      //it's a very very very absolutley bad idea to change the position, only if you match it with the seet position, as they swap visibilies. incopetent blender trick just to save some time, please don't be judge too much :/
+      position={[15, -1.09, 682]}
       rotation={[0, 0, 0]}
       ref={group}
       {...props}
