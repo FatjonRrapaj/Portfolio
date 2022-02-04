@@ -26,6 +26,11 @@ export function seekGltfAnimation(
   }
   //check if animation is playing backwards
   if (playbackControllerRef.current > progress) {
+    if (customAnimationDuration) {
+      //TODO: delete the lines 34-38, set custom glt animation durations to 1000 and replace them with this new functionality (line 31)
+      animation._mixer.setTime(progress * 100);
+      return;
+    }
     animation.timeScale = -1;
     animation.time = adjustment;
     animation.startAt(animation._clip.duration);

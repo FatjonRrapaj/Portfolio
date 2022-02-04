@@ -38,14 +38,12 @@ export default function Model({ ...props }) {
         }
       }
     );
-
+    const { fold } = actions;
     const unsubcribeFromPlaneAnimationListener = useStore.subscribe(
       (state) => state.plane,
       ({ planeFoldingProgress, lastChanged }) => {
         switch (lastChanged) {
           case "planeFoldingProgress":
-            const { fold } = actions;
-            console.log("planeFoldingProgress: ", planeFoldingProgress);
             seekGltfAnimation(
               fold,
               planeFoldingProgress,
@@ -53,6 +51,7 @@ export default function Model({ ...props }) {
               0,
               10000
             );
+
             break;
 
           default:
