@@ -6,7 +6,7 @@ import React, { useRef, useState } from "react";
 import { Vector3, BufferGeometry, CatmullRomCurve3 } from "three";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useEffect } from "react/cjs/react.development";
-import { useLoader, useThree } from "@react-three/fiber";
+import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import anime from "animejs/lib/anime.es";
 import { FrontSide, TextureLoader } from "three";
 
@@ -28,11 +28,9 @@ export default function Model({ ...props }) {
   const back = useLoader(TextureLoader, process.env.PUBLIC_URL + "/back.jpg");
   back.flipY = false;
 
-  const up = new Vector3(0, 0, -1);
-  const axis = new Vector3();
-
   const planeFoldingProgressChecker = useRef(0);
   const planeToClockProgressChecker = useRef(0);
+  const moveCamera = useRef(false);
 
   const lineRef = useRef();
 
@@ -97,7 +95,7 @@ export default function Model({ ...props }) {
 
   const [line] = useState(() => {
     const c = new CatmullRomCurve3(points);
-    c.tension = 1;
+    c.tension = 10;
     c.arcLengthDivisions = 20000;
     c.curveType = "catmullrom";
 
@@ -108,30 +106,28 @@ export default function Model({ ...props }) {
     new BufferGeometry().setFromPoints(line.getSpacedPoints(20000))
   );
 
+  const planePosition = useRef(null);
+  const planeRotation = useRef(null);
+
+  const up = new Vector3(0, 1, 0);
+  const axis = new Vector3();
   function movePlane({ fraction, isBackward, moveCamera }) {
     if (!group.current) return;
 
     //move
-    const point = line.getPoint(fraction);
-    const { x, y, z } = point;
-    group.current.position.set(...[x, y, z]);
-
+    const position = line.getPoint(fraction);
+    // group.current.position.copy(position);
+    planePosition.current = { ...position };
     //rotate
     if (isBackward) {
-      up.z = 1;
+      up.y = -1;
     } else {
-      up.z = -1;
+      up.y = 1;
     }
     const tangent = line.getTangent(fraction);
     axis.crossVectors(up, tangent).normalize();
     const angle = Math.acos(up.dot(tangent));
-    group.current.quaternion.setFromAxisAngle(axis, angle);
-    //WORKS:
-    group.current.rotation.x = -Math.PI / 2;
-
-    if (moveCamera) {
-      camera.position.set(...[x, y + 3, z + 20]);
-    }
+    planeRotation.current = { axis, angle };
   }
 
   useEffect(() => {
@@ -140,7 +136,7 @@ export default function Model({ ...props }) {
     const unsubcribeFromMutualAnimationListener = useStore.subscribe(
       (state) => state.initialAnimation,
       ({ planeAndSheetReverseOpacitiesProgress }) => {
-        if (planeAndSheetReverseOpacitiesProgress > 95) {
+        if (planeAndSheetReverseOpacitiesProgress > 50) {
           group.current.visible = true;
         } else {
           group.current.visible = false;
@@ -148,9 +144,30 @@ export default function Model({ ...props }) {
       }
     );
 
-    const planeToInitialTrajectoryPoint = anime({
-      targets: [group.current.position, group.current.quaternion],
-      //todo: add these values
+    const planeToIntialPosition = anime({
+      targets: group.current.position,
+      x: 14.178674093594697,
+      y: -0.560381565596393,
+      z: 675.3947160427972,
+      duration: 500,
+      autoplay: false,
+    });
+
+    const planeToInitialRotation = anime({
+      targets: group.current.quaternion,
+      w: 0.823702215991931,
+      x: 0.05006559194915403,
+      y: 0.5648080168276323,
+      z: 0,
+      duration: 500,
+      autoplay: false,
+    });
+
+    const cameraToInitialPosition = anime({
+      targets: camera.position,
+      // x: 14.178674093594697,
+      // y: -0.560381565596393,
+      z: 690,
       duration: 500,
       autoplay: false,
     });
@@ -175,32 +192,19 @@ export default function Model({ ...props }) {
             );
             break;
           case "planeToInitialTrajectoryPointProgress":
-            planeToInitialTrajectoryPoint.seek(
-              planeToInitialTrajectoryPointProgress
-            );
+            planeToIntialPosition.seek(planeToInitialTrajectoryPointProgress);
+            planeToInitialRotation.seek(planeToInitialTrajectoryPointProgress);
+            // cameraToInitialPosition.seek(planeToInitialTrajectoryPointProgress);
             break;
           case "planeToClockProgress":
-            //NO NEED TO SEEK, use the porgress value here for updates.
-
-            // planeToClockMove.seek(planeToClockProgress);
-            // planeToClockRotate.seek(planeToClockProgress);
-
-            if (planeToClockProgressChecker.current > planeToClockProgress) {
-              //going backwards
-              movePlane({
-                fraction: planeToClockProgress / 2000,
-                isBackward: true,
-                moveCamera: true,
-              });
-            } else {
-              //going forward or staying in place
-              movePlane({
-                fraction: planeToClockProgress / 2000,
-                isBackward: false,
-                moveCamera: true,
-              });
-            }
-            planeToClockProgressChecker.current = planeToClockProgress / 2000;
+            const fraction = planeToClockProgress / 100;
+            movePlane({
+              fraction,
+              isBackward:
+                planeToClockProgressChecker.current > planeToClockProgress,
+            });
+            moveCamera.current = true;
+            planeToClockProgressChecker.current = planeToClockProgress;
             break;
           default:
             break;
@@ -214,16 +218,34 @@ export default function Model({ ...props }) {
     };
   }, [group.current]);
 
+  useFrame(() => {
+    if (group.current && planePosition.current && planeRotation.current) {
+      group.current.position.copy(planePosition.current);
+      group.current.quaternion.setFromAxisAngle(
+        planeRotation.current.axis,
+        planeRotation.current.angle
+      );
+
+      if (moveCamera.current) {
+        camera.position.copy({
+          x: planePosition.current.x,
+          y: planePosition.current.y + 3,
+          z: planePosition.current.z + 50,
+        });
+      }
+    }
+  }, 1);
+
   return (
     <>
       <line ref={lineRef} geometry={lineGeometry}>
         <lineDashedMaterial
-          emissive="red"
+          emissive="white"
           emissiveIntensity={10}
-          scale={1}
+          scale={10}
           dashSize={0.5}
           gapSize={0.5}
-          color="red"
+          color="white"
         />
       </line>
       <group
