@@ -59,6 +59,7 @@ const useStore = create(
       initialGoProgress: null,
       lastChanged: null,
       initialScaleProgress: null,
+      experienceCubesToClockPositionProgress: null,
       setInitialJoinProgress(initialJoinProgress) {
         set((state) => {
           return {
@@ -88,6 +89,19 @@ const useStore = create(
               ...state.experience,
               initialGoProgress,
               lastChanged: "initialGoProgress",
+            },
+          };
+        });
+      },
+      setExperienceCubesToClockPositionProgress(
+        experienceCubesToClockPositionProgress
+      ) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              experienceCubesToClockPositionProgress,
+              lastChanged: "experienceCubesToClockPositionProgress",
             },
           };
         });

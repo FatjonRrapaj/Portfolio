@@ -135,6 +135,7 @@ export default function Animator() {
   const planeFoldProgress = useRef(0);
   const planeToInitialTrajectoryPointProgress = useRef(0);
   const planeToClockProgress = useRef(0);
+  const experienceCubesToClockPositionProgress = useRef(0);
 
   /**
    * handles the animation updates, making sure to play the animation even when going backwards
@@ -355,7 +356,7 @@ export default function Animator() {
     //from here the plane movement anim progress will be each time increased with +100 in order to be consistent with the line progress.
     timeline.add({
       targets: empty,
-      duration: 10000,
+      duration: 2000,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -363,6 +364,25 @@ export default function Animator() {
           function progressSetter(anim) {
             useStore.getState().plane.setPlaneToClockProgress(anim.progress);
             //todo: add on finish function:  increase Plane movement along lines total progress by 100 each time mabe
+          }
+        );
+      },
+    });
+
+    //bring the clock to the position
+    timeline.add({
+      targets: empty,
+      duration: 1000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          experienceCubesToClockPositionProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setExperienceCubesToClockPositionProgress(
+                anim.progress
+              );
           }
         );
       },

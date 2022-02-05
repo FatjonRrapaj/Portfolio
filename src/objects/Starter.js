@@ -190,7 +190,8 @@ export default function Model({ ...props }) {
     animObject.setDuration(newTime);
   }
 
-  let initialGoProgressChecker = useRef(0);
+  const initialGoProgressChecker = useRef(0);
+  const cubesToClockPositionProgressChecker = useRef(0);
 
   useEffect(() => {
     // assignActions(6);
@@ -198,6 +199,7 @@ export default function Model({ ...props }) {
     // endAnimations();
     if (!mainContainer.current) return;
 
+    //initial rotation
     const initialRotation = anime({
       targets: mainContainer.current?.rotation,
       x: 0,
@@ -214,7 +216,7 @@ export default function Model({ ...props }) {
       }
     );
 
-    //scaleDown
+    //initial scaleDown for playing the go animation
     const scaleDown = anime({
       targets: secondaryContainer.current.scale,
       x: 1,
@@ -224,6 +226,7 @@ export default function Model({ ...props }) {
       autoplay: false,
     });
 
+    //joining the cubes.
     const join = anime({
       targets: secondaryContainer.current.position,
       x: secondaryContainer.current.position.x - 2.6,
@@ -232,7 +235,16 @@ export default function Model({ ...props }) {
       duration: 400,
       autoplay: false,
     });
-    const { go } = actions;
+
+    //bring cubes to the clock position
+    const cubesToClockPosition = anime({
+      targets: mainContainer.current.position,
+      // coordinate: [-200, 15, 490] received from the catmullRomCurve position @ plane.js
+
+      autoplay: false,
+    });
+
+    const { go, come } = actions;
     const unsubscribeExperieneStore = useStore.subscribe(
       (state) => state.experience,
       ({
@@ -240,6 +252,7 @@ export default function Model({ ...props }) {
         initialGoProgress,
         initialScaleProgress,
         lastChanged,
+        experienceCubesToClockPositionProgress,
       }) => {
         switch (lastChanged) {
           case "initialJoinProgress":
@@ -251,10 +264,20 @@ export default function Model({ ...props }) {
             break;
 
           case "initialGoProgress":
+            const mainContainerLastPosition = mainContainer.current.position;
+            const secondaryContainerLastPosition =
+              secondaryContainer.current.position;
             if (initialGoProgress > 90) {
               mainContainer.current.visible = false;
+              //set the container to the next position boi (and the secondary container to the default positition)
+              mainContainer.current.position.set({ x: -200, y: 15, z: 490 });
+              secondaryContainer.current.position.set({ x: 0, y: 0, z: 0 });
             } else {
               mainContainer.current.visible = true;
+              mainContainer.current.position.copy(mainContainerLastPosition);
+              secondaryContainer.current.position.copy(
+                secondaryContainerLastPosition
+              );
             }
             seekGltfAnimation(
               go,
@@ -263,6 +286,21 @@ export default function Model({ ...props }) {
               0,
               1000,
               false
+            );
+            break;
+          case "experienceCubesToClockPositionProgress":
+            // cubesToClockPosition.seek(experienceCubesToClockPositionProgress);
+            if (experienceCubesToClockPositionProgress > 30) {
+              mainContainer.current.visible = true;
+            } else {
+              mainContainer.current.visible = false;
+            }
+            seekGltfAnimation(
+              come,
+              experienceCubesToClockPositionProgress,
+              cubesToClockPositionProgressChecker,
+              0,
+              1000
             );
             break;
           default:

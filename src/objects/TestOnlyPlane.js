@@ -95,7 +95,7 @@ export default function Model({ ...props }) {
 
   const [line] = useState(() => {
     const c = new CatmullRomCurve3(points);
-    c.tension = 10;
+    c.tension = 1;
     c.arcLengthDivisions = 20000;
     c.curveType = "catmullrom";
 
@@ -165,8 +165,8 @@ export default function Model({ ...props }) {
 
     const cameraToInitialPosition = anime({
       targets: camera.position,
-      // x: 14.178674093594697,
-      // y: -0.560381565596393,
+      x: 14.178674093594697,
+      y: -0.560381565596393,
       z: 690,
       duration: 500,
       autoplay: false,
@@ -194,10 +194,10 @@ export default function Model({ ...props }) {
           case "planeToInitialTrajectoryPointProgress":
             planeToIntialPosition.seek(planeToInitialTrajectoryPointProgress);
             planeToInitialRotation.seek(planeToInitialTrajectoryPointProgress);
-            // cameraToInitialPosition.seek(planeToInitialTrajectoryPointProgress);
+            cameraToInitialPosition.seek(planeToInitialTrajectoryPointProgress);
             break;
           case "planeToClockProgress":
-            const fraction = planeToClockProgress / 100;
+            const fraction = planeToClockProgress / 700;
             movePlane({
               fraction,
               isBackward:
@@ -230,7 +230,7 @@ export default function Model({ ...props }) {
         camera.position.copy({
           x: planePosition.current.x,
           y: planePosition.current.y + 3,
-          z: planePosition.current.z + 50,
+          z: planePosition.current.z + 30,
         });
       }
     }
@@ -242,7 +242,7 @@ export default function Model({ ...props }) {
         <lineDashedMaterial
           emissive="white"
           emissiveIntensity={10}
-          scale={10}
+          scale={1}
           dashSize={0.5}
           gapSize={0.5}
           color="white"
