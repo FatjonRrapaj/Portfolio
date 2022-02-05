@@ -19,12 +19,9 @@ function createSpiralPathFromCoordinateWithRadius({
     vector3Array.push(new Vector3(x + radius, yCord, z + radius));
   }
 
-  // console.log(
-  //   "LAST POSITION OF THE SPIRAL PATH",
-  //   vector3Array[vector3Array.length - 1]
-  // );
+  const lastPosition = vector3Array[vector3Array.length - 1];
 
-  return vector3Array;
+  return { points: vector3Array, lastPosition };
 }
 
 export default createSpiralPathFromCoordinateWithRadius;

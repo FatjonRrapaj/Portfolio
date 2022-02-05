@@ -1,5 +1,5 @@
 import { Suspense, useState, useEffect, useRef, createRef } from "react";
-import { Vector3, CatmullRomCurve3 } from "three";
+import { Vector3, CatmullRomCurve3, BufferGeometry } from "three";
 import { useFrame, useThree, extend } from "@react-three/fiber";
 import { Stats } from "@react-three/drei";
 
@@ -18,76 +18,6 @@ import useStore from "../../store";
 
 const World = () => {
   const { camera, ...rest } = useThree();
-  const lineRef = useRef();
-  const text = createRef();
-
-  lineRef.current && lineRef.current.computeLineDistances();
-
-  /** Line */
-  const [points] = useState(() => {
-    return [
-      new Vector3(0, 0, 697),
-      new Vector3(10, 2, 640.0),
-      new Vector3(-10, -1, 600.0),
-      new Vector3(-40, -5, 580),
-      new Vector3(-100, 12, 550),
-      ...createSpiralPathFromCoordinateWithRadius({
-        coordinate: [-200, 15, 490],
-        radius: 15,
-        spirals: 3,
-        heightDivider: 3,
-      }),
-      new Vector3(-185, 0, 505),
-      new Vector3(-100, 2, 505),
-      new Vector3(50, 0, 500),
-      ...createSpiralPathFromCoordinateWithRadius({
-        coordinate: [200, 4, 430],
-        direction: 1,
-        radius: 16,
-        spirals: 3,
-        heightDivider: 3,
-      }),
-      new Vector3(100, 4, 400),
-      new Vector3(50, -4, 380),
-      new Vector3(0, 4, 380),
-      new Vector3(0, 0, 350),
-      new Vector3(0, 10, 300),
-      new Vector3(0, 20, 270),
-      new Vector3(0, 30, 220),
-      new Vector3(0, 40, 200),
-      new Vector3(0, 40, 200),
-      new Vector3(0, 40, 200),
-      new Vector3(0, 30, 200),
-      new Vector3(0, 30, 200),
-      new Vector3(0, 30, 210),
-      new Vector3(0, 30, 200),
-      new Vector3(0, 30, 200),
-      new Vector3(0, 30, 200),
-      new Vector3(0, 90, 200),
-      new Vector3(0, 90, 170),
-      new Vector3(0, 90, 170),
-      new Vector3(0, 90, 100),
-      new Vector3(0, 130, 100),
-      new Vector3(0, 130, 100),
-      new Vector3(0, 130, 100),
-      new Vector3(0, 180, 50),
-      new Vector3(0, 180, 50),
-      new Vector3(0, 180, 150),
-      new Vector3(0, 180, 150),
-      new Vector3(0, 180, 150),
-      new Vector3(0, 1800, 100),
-      new Vector3(0, 1800, 100),
-    ];
-  });
-
-  const [line] = useState(() => {
-    const c = new CatmullRomCurve3(points);
-    c.tension = 1;
-    c.arcLengthDivisions = 20000;
-    c.curveType = "catmullrom";
-
-    return c;
-  });
 
   /** Window event listener handlers */
   const divContainer = document.getElementById("fold");
@@ -148,22 +78,21 @@ const World = () => {
   const axis = new Vector3();
 
   function movePlane({ fraction, isBackward, moveCamera }) {
-    const point = line.getPoint(fraction);
-    const { x, y, z } = point;
-    useStore.getState().paperPlane.move([x, y, z]);
-    if (isBackward) {
-      up.z = 1;
-    } else {
-      up.z = -1;
-    }
-
-    const tangent = line.getTangent(fraction);
-    axis.crossVectors(up, tangent).normalize();
-    const radians = Math.acos(up.dot(tangent));
-    useStore.getState().paperPlane.setRotationAngle({ axis, angle: radians });
-    if (moveCamera) {
-      camera.position.set(...[x, y + 3, z + 10]);
-    }
+    // const point = line.getPoint(fraction);
+    // const { x, y, z } = point;
+    // useStore.getState().paperPlane.move([x, y, z]);
+    // if (isBackward) {
+    //   up.z = 1;
+    // } else {
+    //   up.z = -1;
+    // }
+    // const tangent = line.getTangent(fraction);
+    // axis.crossVectors(up, tangent).normalize();
+    // const radians = Math.acos(up.dot(tangent));
+    // useStore.getState().paperPlane.setRotationAngle({ axis, angle: radians });
+    // if (moveCamera) {
+    //   camera.position.set(...[x, y + 3, z + 10]);
+    // }
   }
 
   let oldProgress = -Infinity;
@@ -290,37 +219,6 @@ const World = () => {
     touchStartY = t.pageY;
     scroll(e);
   }
-
-  // useEffect(() => {
-  //   //TODO: KEEP AN EYE ON THE PROGRESS WITH THIS.
-  //   camera.position.z = 730;
-  //   divContainer.scrollIntoView();
-  //   //Scroll & resize event listeners
-  //   divContainer.addEventListener("wheel", onWheel, false);
-  //   window.addEventListener("resize", onResize, { passive: true });
-
-  //   //Zustand store subscriptions
-  //   const unSubscribeWorldChanges = useStore.subscribe(
-  //     (state) => state.world,
-  //     ({ progress, scrollingStopped }) => {
-  //       handleProgress(progress, scrollingStopped);
-  //     }
-  //   );
-
-  //   divContainer.addEventListener("touchstart", onTouchStart);
-  //   divContainer.addEventListener("touchmove", onTouchMove);
-
-  //   return () => {
-  //     divContainer.removeEventListener("wheel", onWheel);
-
-  //     window.removeEventListener("resize", onResize);
-  //     divContainer.removeEventListener("touchstart", onTouchStart);
-  //     divContainer.removeEventListener("touchmove", onTouchMove);
-  //     useStore.getState().world.setProgress(0);
-  //     useStore.getState().world.setScrollY(0);
-  //     unSubscribeWorldChanges();
-  //   };
-  // }, []);
 
   return (
     <>

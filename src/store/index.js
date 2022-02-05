@@ -160,6 +160,8 @@ const useStore = create(
     },
     plane: {
       planeFoldingProgress: null,
+      planeToInitialTrajectoryPointProgress: null,
+      planeToClockProgress: null,
       lastChanged: null,
       setPlaneFoldingProgress(planeFoldingProgress) {
         set((state) => {
@@ -168,6 +170,30 @@ const useStore = create(
               ...state.plane,
               planeFoldingProgress,
               lastChanged: "planeFoldingProgress",
+            },
+          };
+        });
+      },
+      setPlaneToInitialTrajectoryPointProgress(
+        planeToInitialTrajectoryPointProgress
+      ) {
+        set((state) => {
+          return {
+            plane: {
+              ...state.plane,
+              planeToInitialTrajectoryPointProgress,
+              lastChanged: "planeToInitialTrajectoryPointProgress",
+            },
+          };
+        });
+      },
+      setPlaneToClockProgress(planeToClockProgress) {
+        set((state) => {
+          return {
+            plane: {
+              ...state.plane,
+              planeToClockProgress,
+              lastChanged: "planeToClockProgress",
             },
           };
         });

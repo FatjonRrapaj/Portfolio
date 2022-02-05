@@ -133,6 +133,8 @@ export default function Animator() {
   const sheetBackRotateProgress = useRef(0);
   const planeAndSheetReverseOpacitiesProgress = useRef(0);
   const planeFoldProgress = useRef(0);
+  const planeToInitialTrajectoryPointProgress = useRef(0);
+  const planeToClockProgress = useRef(0);
 
   /**
    * handles the animation updates, making sure to play the animation even when going backwards
@@ -331,6 +333,41 @@ export default function Animator() {
       },
     });
 
+    //move plane to the initial trajectory point
+    //todo: this
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          planeToInitialTrajectoryPointProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .plane.setPlaneToInitialTrajectoryPointProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //move plane from intial point to the clock position
+    //from here the plane movement anim progress will be each time increased with +100 in order to be consistent with the line progress.
+    timeline.add({
+      targets: empty,
+      duration: 10000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          planeToClockProgress,
+          function progressSetter(anim) {
+            useStore.getState().plane.setPlaneToClockProgress(anim.progress);
+            //todo: add on finish function:  increase Plane movement along lines total progress by 100 each time mabe
+          }
+        );
+      },
+    });
+
     timeline.add({
       targets: empty,
       duration: 200,
@@ -341,7 +378,7 @@ export default function Animator() {
     camera.position.z = 725;
     camera.position.y = 8;
 
-    divContainer.scrollIntoView();
+    divContainer.scroll({ top: 0, left: 0 });
     //Scroll & resize event listeners
     divContainer.addEventListener("wheel", onWheel, false);
     window.addEventListener("resize", onResize, { passive: true });
@@ -358,6 +395,14 @@ export default function Animator() {
     //play the toSheetAnim for the sheet cube
     //replace the sheet cube with the plane cube on the same position
     //play the fold plane animation
+
+    //the above tasks are completed
+
+    //0. set up the path points
+    //1. move the plane to the initial trajectory point
+    //2. make the points path visible
+    //animate plane to the path points
+
     //move the plane to clock position
     //play the come animation for cubes
     //play the to clock position
