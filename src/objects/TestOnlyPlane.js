@@ -9,6 +9,7 @@ import { useEffect } from "react/cjs/react.development";
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import anime from "animejs/lib/anime.es";
 import { FrontSide, TextureLoader } from "three";
+import { useControls } from "leva";
 
 import useStore from "../store";
 import { seekGltfAnimation } from "../helpers/animation";
@@ -16,6 +17,35 @@ import createSpiralPathFromCoordinateWithRadius from "./world/createPath";
 
 export default function Model({ ...props }) {
   const { camera } = useThree();
+
+  useControls("Camera", {
+    x: {
+      value: camera.position.x,
+      min: -1000,
+      max: 1000,
+
+      onChange: (val) => {
+        camera.position.x = val;
+      },
+    },
+    y: {
+      value: camera.position.y,
+      min: -1000,
+      max: 1000,
+      onChange: (val) => {
+        camera.position.y = val;
+      },
+    },
+    z: {
+      value: camera.position.z,
+      min: -1000,
+      max: 1000,
+      onChange: (val) => {
+        camera.position.z = val;
+      },
+    },
+    a: {},
+  });
 
   const group = useRef();
   const { nodes, animations } = useGLTF(
@@ -30,6 +60,7 @@ export default function Model({ ...props }) {
 
   const planeFoldingProgressChecker = useRef(0);
   const planeToClockProgressChecker = useRef(0);
+  const planeToCamelProgressChecker = useRef(0);
   const moveCamera = useRef(false);
 
   const lineRef = useRef();
@@ -40,25 +71,19 @@ export default function Model({ ...props }) {
   const [points] = useState(() => {
     return [
       new Vector3(15, -1.09, 682),
-      new Vector3(10, 2, 640.0),
-      new Vector3(10, -1, 600.0),
-      new Vector3(40, -5, 580),
       new Vector3(100, 12, 550),
       ...createSpiralPathFromCoordinateWithRadius({
-        coordinate: [-200, 15, 490],
+        coordinate: [-100, 15, 490],
         radius: 15,
         spirals: 3,
         heightDivider: 3,
       }).points,
-      new Vector3(-185, 0, 505),
-      new Vector3(-100, 2, 505),
-      new Vector3(50, 0, 500),
       ...createSpiralPathFromCoordinateWithRadius({
-        coordinate: [200, 4, 430],
+        coordinate: [80, 4, 430],
         direction: 1,
-        radius: 16,
-        spirals: 3,
-        heightDivider: 3,
+        radius: 12,
+        spirals: 2,
+        heightDivider: 2,
       }).points,
       new Vector3(100, 4, 400),
       new Vector3(50, -4, 380),
@@ -133,13 +158,13 @@ export default function Model({ ...props }) {
   useEffect(() => {
     if (!group.current) return;
 
-    const unsubcribeFromMutualAnimationListener = useStore.subscribe(
-      (state) => state.initialAnimation,
-      ({ planeAndSheetReverseOpacitiesProgress }) => {
-        if (planeAndSheetReverseOpacitiesProgress > 50) {
-          group.current.visible = true;
-        } else {
-          group.current.visible = false;
+    //switch between plane & sheet visibilities
+    const unsubscribeFromSheetListener = useStore.subscribe(
+      (state) => state.sheet,
+      ({ lastChanged }) => {
+        if (lastChanged === "sheetProgress") {
+          if (group.current.visible) group.current.visible = false;
+          if (lineRef.current.visible) lineRef.current.visible = false;
         }
       }
     );
@@ -180,14 +205,17 @@ export default function Model({ ...props }) {
         lastChanged,
         planeToInitialTrajectoryPointProgress,
         planeToClockProgress,
+        planeToCamelProgres,
       }) => {
         switch (lastChanged) {
           case "planeFoldingProgress":
+            if (!group.current.visible) group.current.visible = true;
+            if (!lineRef.current.visible) lineRef.current.visible = true;
+
             seekGltfAnimation(
               fold,
               planeFoldingProgress,
               planeFoldingProgressChecker,
-              0,
               10000
             );
             break;
@@ -197,24 +225,50 @@ export default function Model({ ...props }) {
             cameraToInitialPosition.seek(planeToInitialTrajectoryPointProgress);
             break;
           case "planeToClockProgress":
-            const fraction = planeToClockProgress / 700;
-            movePlane({
-              fraction,
-              isBackward:
-                planeToClockProgressChecker.current > planeToClockProgress,
-            });
-            moveCamera.current = true;
-            planeToClockProgressChecker.current = planeToClockProgress;
+            handleMovePlane(
+              planeToClockProgress,
+              planeToClockProgressChecker,
+              true
+            );
+            // const fraction = planeToClockProgress / 700;
+            // movePlane({
+            //   fraction,
+            //   isBackward:
+            //     planeToClockProgressChecker.current > planeToClockProgress,
+            // });
+            // moveCamera.current = true;
+            // planeToClockProgressChecker.current = planeToClockProgress;
             break;
+          case "planeToCamelProgres":
+            handleMovePlane(
+              planeToCamelProgres,
+              planeToCamelProgressChecker,
+              true
+            );
           default:
             break;
         }
       }
     );
 
+    function handleMovePlane(
+      progress,
+      sheetProgressCheckerRef,
+      shouldCameraMove
+    ) {
+      const fraction = progress / 700;
+      const isBackward = sheetProgressCheckerRef.current > progress;
+      movePlane({
+        fraction,
+        isBackward,
+      });
+      moveCamera.current = shouldCameraMove;
+      sheetProgressCheckerRef.current = progress;
+    }
+
     return () => {
-      unsubcribeFromMutualAnimationListener();
       unsubcribeFromPlaneAnimationListener();
+      unsubscribeFromSheetListener();
     };
   }, [group.current]);
 

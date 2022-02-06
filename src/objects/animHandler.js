@@ -136,6 +136,16 @@ export default function Animator() {
   const planeToInitialTrajectoryPointProgress = useRef(0);
   const planeToClockProgress = useRef(0);
   const experienceCubesToClockPositionProgress = useRef(0);
+  const toClockProgress = useRef(0);
+  const clockMoveProgress = useRef(0);
+  const timeDefinitionProgress = useRef(0);
+  const clockGoProgress = useRef(0);
+  const timeDefinitionCloseProgress = useRef(0);
+  const planeToCamelProgres = useRef(0);
+  const experienceCubesToCamelPosition = useRef(0);
+  const toCamelProgress = useRef(0);
+  const camelMoveProgress = useRef(0);
+  const patienceDefitionProgress = useRef(0);
 
   /**
    * handles the animation updates, making sure to play the animation even when going backwards
@@ -185,7 +195,7 @@ export default function Animator() {
     //scale down experience helper cubes
     timeline.add({
       targets: empty,
-      duration: 400,
+      duration: 500,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -202,7 +212,7 @@ export default function Animator() {
     //join experience cubes animation control
     timeline.add({
       targets: empty,
-      duration: 400,
+      duration: 500,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -369,10 +379,10 @@ export default function Animator() {
       },
     });
 
-    //bring the clock to the position
+    //bring the cubes to clock position
     timeline.add({
       targets: empty,
-      duration: 1000,
+      duration: 500,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -388,6 +398,179 @@ export default function Animator() {
       },
     });
 
+    //convert to clock (GLTF)
+    timeline.add({
+      targets: empty,
+      duration: 2000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          toClockProgress,
+          function progressSetter(anim) {
+            useStore.getState().experience.setToClockProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //show time definition
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          timeDefinitionProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setTimeDefinitionProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //clockMove (GLTF)
+    timeline.add({
+      targets: empty,
+      duration: 300,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          clockMoveProgress,
+          function progressSetter(anim) {
+            useStore.getState().experience.setClockMoveProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //give it some time
+    timeline.add({
+      targets: empty,
+      duration: 3000,
+    });
+
+    //clock go (GLTF)
+    timeline.add({
+      targets: empty,
+      duration: 1000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          clockGoProgress,
+          function progressSetter(anim) {
+            useStore.getState().experience.setClockCloseProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //remove timeDefinition
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          timeDefinitionCloseProgress,
+          function progresSetter(anim) {
+            useStore
+              .getState()
+              .experience.setTimeDefintionCloseProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //move plane to camel position
+    timeline.add({
+      targets: empty,
+      duration: 3000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          planeToCamelProgres,
+          function progresSetter(anim) {
+            useStore
+              .getState()
+              .plane.setPlaneToCamelProgress(100 + anim.progress); //add +100 because plane has moved 100 units from the last position
+          }
+        );
+      },
+    });
+
+    //bring the cubes to camel position
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          experienceCubesToCamelPosition,
+          function progresSetter(anim) {
+            useStore
+              .getState()
+              .experience.setCubesToCamelPositionProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //transform cubes to camel (GLTF)
+    timeline.add({
+      targets: empty,
+      duration: 2000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          toCamelProgress,
+          function progresSetter(anim) {
+            useStore.getState().experience.setToCamelProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //show patienceDefinition
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          patienceDefitionProgress,
+          function progresSetter(anim) {
+            useStore
+              .getState()
+              .experience.setPatienceDefinitonProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //play camel move animation (GLTF)
+    timeline.add({
+      targets: empty,
+      duration: 300,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          camelMoveProgress,
+          function progresSetter(anim) {
+            useStore.getState().experience.setCamelMoveProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //give it some extra time
+    timeline.add({
+      targets: empty,
+      duration: 3000,
+    });
+
+    //****************** just for fixing the timeline */
     timeline.add({
       targets: empty,
       duration: 200,
@@ -397,7 +580,6 @@ export default function Animator() {
   useEffect(() => {
     camera.position.z = 725;
     camera.position.y = 8;
-
     divContainer.scroll({ top: 0, left: 0 });
     //Scroll & resize event listeners
     divContainer.addEventListener("wheel", onWheel, false);

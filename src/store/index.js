@@ -60,6 +60,38 @@ const useStore = create(
       lastChanged: null,
       initialScaleProgress: null,
       experienceCubesToClockPositionProgress: null,
+      toClockProgress: null,
+      visible: false,
+      clockMoveProgress: null,
+      timeDefinitionProgress: null,
+      clockCloseProgress: null,
+      timeDefinitionCloseProgress: null,
+      cubesToCamelPositionProgress: null,
+      toCamelProgress: null,
+      camelMoveProgress: null,
+      patienceDefinitionProgress: null,
+      hide() {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              visible: false,
+              lastChanged: "visible",
+            },
+          };
+        });
+      },
+      show() {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              visible: true,
+              lastChanged: "visible",
+            },
+          };
+        });
+      },
       setInitialJoinProgress(initialJoinProgress) {
         set((state) => {
           return {
@@ -102,6 +134,105 @@ const useStore = create(
               ...state.experience,
               experienceCubesToClockPositionProgress,
               lastChanged: "experienceCubesToClockPositionProgress",
+            },
+          };
+        });
+      },
+      setToClockProgress(toClockProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              toClockProgress,
+              lastChanged: "toClockProgress",
+            },
+          };
+        });
+      },
+      setClockMoveProgress(clockMoveProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              clockMoveProgress,
+              lastChanged: "clockMoveProgress",
+            },
+          };
+        });
+      },
+      setTimeDefinitionProgress(timeDefinitionProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              timeDefinitionProgress,
+              lastChanged: "timeDefinitionProgress",
+            },
+          };
+        });
+      },
+      setClockCloseProgress(clockCloseProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              clockCloseProgress,
+              lastChanged: "clockCloseProgress",
+            },
+          };
+        });
+      },
+      setTimeDefintionCloseProgress(timeDefinitionCloseProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              timeDefinitionCloseProgress,
+              lastChanged: "timeDefinitionCloseProgress",
+            },
+          };
+        });
+      },
+      setCubesToCamelPositionProgress(cubesToCamelPositionProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              cubesToCamelPositionProgress,
+              lastChanged: "cubesToCamelPositionProgress",
+            },
+          };
+        });
+      },
+      setToCamelProgress(toCamelProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              toCamelProgress,
+              lastChanged: "toCamelProgress",
+            },
+          };
+        });
+      },
+      setCamelMoveProgress(camelMoveProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              camelMoveProgress,
+              lastChanged: "camelMoveProgress",
+            },
+          };
+        });
+      },
+      setPatienceDefinitonProgress(patienceDefinitionProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              patienceDefinitionProgress,
+              lastChanged: "patienceDefinitionProgress",
             },
           };
         });
@@ -177,6 +308,7 @@ const useStore = create(
       planeToInitialTrajectoryPointProgress: null,
       planeToClockProgress: null,
       lastChanged: null,
+      planeToCamelProgres: null,
       setPlaneFoldingProgress(planeFoldingProgress) {
         set((state) => {
           return {
@@ -208,6 +340,17 @@ const useStore = create(
               ...state.plane,
               planeToClockProgress,
               lastChanged: "planeToClockProgress",
+            },
+          };
+        });
+      },
+      setPlaneToCamelProgress(planeToCamelProgres) {
+        set((state) => {
+          return {
+            plane: {
+              ...state.plane,
+              planeToCamelProgres,
+              lastChanged: "planeToCamelProgres",
             },
           };
         });

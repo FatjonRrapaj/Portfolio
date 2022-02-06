@@ -38,21 +38,19 @@ export default function Model({ ...props }) {
 
     const unsubscribeInitialAnimation = useStore.subscribe(
       (state) => state.initialAnimation,
-      ({ progress, lastChanged, planeAndSheetReverseOpacitiesProgress }) => {
-        switch (lastChanged) {
-          case "progress":
-            initialRotation.seek(progress);
-            break;
-          case "planeAndSheetReverseOpacitiesProgress":
-            if (planeAndSheetReverseOpacitiesProgress > 95) {
-              group.current.visible = false;
-            } else {
-              group.current.visible = true;
-            }
-            break;
+      ({ progress, lastChanged }) => {
+        if (lastChanged === "progress") {
+          initialRotation.seek(progress);
+        }
+      }
+    );
 
-          default:
-            break;
+    //switch between shet & plane visibilities
+    const unsubscribeFromPlaneListener = useStore.subscribe(
+      (state) => state.plane,
+      ({ lastChanged }) => {
+        if (lastChanged === "planeFoldingProgress") {
+          if (group.current.visible) group.current.visible = false;
         }
       }
     );
@@ -116,12 +114,12 @@ export default function Model({ ...props }) {
 
           //this is a gltf animation seeking case:
           case "sheetProgress":
+            if (!group.current.visible) group.current.visible = true;
             const { toSheet } = actions;
             seekGltfAnimation(
               toSheet,
               sheetProgress,
               sheetProgressChecker,
-              0.1,
               2000
             );
             break;
@@ -136,8 +134,9 @@ export default function Model({ ...props }) {
     );
 
     return () => {
-      unsubscribeInitialAnimation(false);
+      unsubscribeInitialAnimation();
       unsubscribeSheetStore();
+      unsubscribeFromPlaneListener();
     };
   }, [group.current]);
 
