@@ -11,6 +11,9 @@ const useStore = create(
     ...useObject(set, get, "sky"),
     ...useObject(set, get, "camera"),
 
+    //TODO: set scrollstatus checks before each update.
+    //TODO: separate initialAnimation,experience,shet,plane to different files
+    //TODO: create state modifier function with key string as arguments (or don't do that)
     scrollStatus: {
       isScrolling: false,
       setIsSCrolling(isScrolling) {
@@ -55,35 +58,66 @@ const useStore = create(
       },
     },
     experience: {
+      visible: false,
+
+      //initial animations progress values
       initialJoinProgress: null,
       initialGoProgress: null,
       lastChanged: null,
       initialScaleProgress: null,
       experienceCubesToClockPositionProgress: null,
+
+      //clock animation progress values
       toClockProgress: null,
-      visible: false,
       clockMoveProgress: null,
       timeDefinitionProgress: null,
       clockCloseProgress: null,
       timeDefinitionCloseProgress: null,
+
+      //camel animation progress values
       cubesToCamelPositionProgress: null,
       toCamelProgress: null,
       camelMoveProgress: null,
       patienceDefinitionProgress: null,
       camelGoProgress: null,
       patienceDefitionCloseProgress: null,
+
+      //android animation progress values
       cubesToAndroidPositionProgress: null,
       toAndroidProgress: null,
       androidParagraphProgress: null,
       androidMoveProgress: null,
       androidGoProgress: null,
       androidParagraphCloseProgress: null,
+
+      //apple animation progress values
       experienceCubesToApplePositionProgress: null,
       toAppleProgress: null,
       appleParagraphProgress: null,
       appleParagraphCloseProgress: null,
       appleMoveProgress: null,
       appleGoProgress: null,
+
+      //react animation progress values
+      cubesToReactPositionProgress: null,
+
+      //flower
+      flowerColorsProgress: null,
+      toFlowerProgress: null,
+      flowerParagraphProgress: null,
+      flowerParagraphCloseProgress: null,
+
+      //pineapple
+      pineappleColorsProgress: null,
+      toPineAppleProgress: null,
+      pineappleParagraphProgress: null,
+      pineappleParagraphCloseProgress: null,
+
+      //cannon
+      cannonColorsProgress: null,
+      toCannonProgress: null,
+      cannonParagraphProgress: null,
+      cannonParagraphCloseProgress: null,
 
       hide() {
         set((state) => {
@@ -408,6 +442,149 @@ const useStore = create(
           };
         });
       },
+      setCubesToReactPositionProgress(cubesToReactPositionProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              cubesToReactPositionProgress,
+              lastChanged: "cubesToReactPositionProgress",
+            },
+          };
+        });
+      },
+      setFlowerColorsProgress(flowerColorsProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              flowerColorsProgress,
+              lastChanged: "flowerColorsProgress",
+            },
+          };
+        });
+      },
+      setToFLowerProgress(toFlowerProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              toFlowerProgress,
+              lastChanged: "toFlowerProgress",
+            },
+          };
+        });
+      },
+      setFlowerParagraphProgress(flowerParagraphProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              flowerParagraphProgress,
+              lastChanged: "flowerParagraphProgress",
+            },
+          };
+        });
+      },
+      setFlowerParagraphCloseProgress(flowerParagraphCloseProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              flowerParagraphCloseProgress,
+              lastChanged: "flowerParagraphCloseProgress",
+            },
+          };
+        });
+      },
+      setPineappleColorsProgress(pineappleColorsProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              pineappleColorsProgress,
+              lastChanged: "pineappleColorsProgress",
+            },
+          };
+        });
+      },
+      setToPinappleProgress(toPineAppleProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              toPineAppleProgress,
+              lastChanged: "toPineAppleProgress",
+            },
+          };
+        });
+      },
+      setPineappleParagraphProgress(pineappleParagraphProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              pineappleParagraphProgress,
+              lastChanged: "pineappleParagraphProgress",
+            },
+          };
+        });
+      },
+      setPineappleParagraphCloseProgress(pineappleParagraphCloseProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              pineappleParagraphCloseProgress,
+              lastChanged: "pineappleParagraphCloseProgress",
+            },
+          };
+        });
+      },
+      setCannonColorsProgress(cannonColorsProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              cannonColorsProgress,
+              lastChanged: "cannonColorsProgress",
+            },
+          };
+        });
+      },
+      setToCannonProgress(toCannonProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              toCannonProgress,
+              lastChanged: "toCannonProgress",
+            },
+          };
+        });
+      },
+      setCannonParagraphProgress(cannonParagraphProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              cannonParagraphProgress,
+              lastChanged: "cannonParagraphProgress",
+            },
+          };
+        });
+      },
+      setCannonParagraphCloseProgress(cannonParagraphCloseProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              cannonParagraphCloseProgress,
+              lastChanged: "cannonParagraphCloseProgress",
+            },
+          };
+        });
+      },
     },
     sheet: {
       moveToCenterProgress: null,
@@ -482,6 +659,7 @@ const useStore = create(
       planeToCamelProgres: null,
       planeToAndroidProgress: null,
       planeToAppleProgress: null,
+      planeToReactPositionProgress: null,
       setPlaneFoldingProgress(planeFoldingProgress) {
         set((state) => {
           return {
@@ -546,6 +724,17 @@ const useStore = create(
               ...state.plane,
               planeToAppleProgress,
               lastChanged: "planeToAppleProgress",
+            },
+          };
+        });
+      },
+      setPlaneToReactPositionProgress(planeToReactPositionProgress) {
+        set((state) => {
+          return {
+            plane: {
+              ...state.plane,
+              planeToReactPositionProgress,
+              lastChanged: "planeToReactPositionProgress",
             },
           };
         });

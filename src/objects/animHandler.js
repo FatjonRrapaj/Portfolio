@@ -123,6 +123,9 @@ export default function Animator() {
 
   const empty = {};
 
+  //these refs control animations to avoid emitting multiple times 0's and 100's progress from onUpdate(animation.progress) function from anime js
+
+  //intitial animations
   const initialAnimationProgress = useRef(0);
   const initialScaleProgress = useRef(0);
   const initalCubeJoinProgress = useRef(0);
@@ -132,8 +135,14 @@ export default function Animator() {
   const toSheetProgress = useRef(0);
   const sheetBackRotateProgress = useRef(0);
   const planeAndSheetReverseOpacitiesProgress = useRef(0);
+
+  //plane folding progress
   const planeFoldProgress = useRef(0);
+
+  //plane to intial trajectory point progress
   const planeToInitialTrajectoryPointProgress = useRef(0);
+
+  //to clock animations group progress
   const planeToClockProgress = useRef(0);
   const experienceCubesToClockPositionProgress = useRef(0);
   const toClockProgress = useRef(0);
@@ -141,6 +150,8 @@ export default function Animator() {
   const timeDefinitionProgress = useRef(0);
   const clockGoProgress = useRef(0);
   const timeDefinitionCloseProgress = useRef(0);
+
+  //camel animations group progress handlers
   const planeToCamelProgres = useRef(0);
   const experienceCubesToCamelPosition = useRef(0);
   const toCamelProgress = useRef(0);
@@ -148,6 +159,8 @@ export default function Animator() {
   const patienceDefitionProgress = useRef(0);
   const camelGoProgress = useRef(0);
   const patienceDefitionCloseProgress = useRef(0);
+
+  //android animations group progress
   const planeToAndroidProgress = useRef(0);
   const cubesToAndroidPositionProgress = useRef(0);
   const toAndroidProgress = useRef(0);
@@ -155,6 +168,8 @@ export default function Animator() {
   const androidMoveProgress = useRef(0);
   const androidGoProgress = useRef(0);
   const androidParagraphCloseProgress = useRef(0);
+
+  //apple animations group progress
   const planeToAppleProgress = useRef(0);
   const experienceCubesToApplePositionProgress = useRef(0);
   const toAppleProgress = useRef(0);
@@ -162,6 +177,28 @@ export default function Animator() {
   const appleMoveProgress = useRef(0);
   const appleGoProgress = useRef(0);
   const appleParagraphCloseProgress = useRef(0);
+
+  //react animations group progress
+  const planeToReactPositionProgress = useRef(0);
+  const cubesToReactPositionProgress = useRef(0);
+
+  //flower
+  const flowerColorsProgress = useRef(0);
+  const toFlowerProgress = useRef(0);
+  const flowerParagraphProgress = useRef(0);
+  const flowerParagraphCloseProgress = useRef(0);
+
+  //pineapple
+  const pineappleColorsProgress = useRef(0);
+  const toPineAppleProgress = useRef(0);
+  const pineappleParagraphProgress = useRef(0);
+  const pineappleParagraphCloseProgress = useRef(0);
+
+  //cannon
+  const cannonColorsProgress = useRef(0);
+  const toCannonProgress = useRef(0);
+  const cannonParagraphProgress = useRef(0);
+  const cannonParagraphCloseProgress = useRef(0);
 
   /**
    * handles the animation updates, making sure to play the animation even when going backwards
@@ -856,6 +893,240 @@ export default function Animator() {
             useStore
               .getState()
               .experience.setAppleParagraphCloseProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //set plane to react position
+    timeline.add({
+      targets: empty,
+      duration: 3000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          planeToReactPositionProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .plane.setPlaneToReactPositionProgress(400 + anim.progress); //+400 in order for the plane to continue where it left of (in the trajectory)
+          }
+        );
+      },
+    });
+
+    //bring cubes to react position
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          cubesToReactPositionProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setCubesToReactPositionProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //set flower colors
+    timeline.add({
+      targets: empty,
+      duration: 1000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          flowerColorsProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setFlowerColorsProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //transform to flower
+    timeline.add({
+      targets: empty,
+      duration: 2000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          toFlowerProgress,
+          function progressSetter(anim) {
+            useStore.getState().experience.setToFLowerProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //TODO: try setting colors before animation???
+
+    //show flowerParagraph
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          flowerParagraphProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setFlowerParagraphProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //set pineAppleColors
+    timeline.add({
+      targets: empty,
+      duration: 1000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          pineappleColorsProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setPineappleColorsProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //hide flowerParagraph
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          flowerParagraphCloseProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setFlowerParagraphCloseProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //transform to pineAPple
+    timeline.add({
+      targets: empty,
+      duration: 2000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          toPineAppleProgress,
+          function progressSetter(anim) {
+            useStore.getState().experience.setToPinappleProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //show pineapple paragraph
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          pineappleParagraphProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setPineappleParagraphProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //hide pineapple paragraph
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          pineappleParagraphCloseProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setPineappleParagraphCloseProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //set cannon colors
+    timeline.add({
+      targets: empty,
+      duration: 1000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          cannonColorsProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setCannonColorsProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //transform to Cannon
+    timeline.add({
+      targets: empty,
+      duration: 2000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          toCannonProgress,
+          function progressSetter(anim) {
+            useStore.getState().experience.setToCannonProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //show cannon paragraph
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          cannonParagraphProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setCannonParagraphProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //hide cannon paragraph
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          cannonParagraphCloseProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setCannonParagraphCloseProgress(anim.progress);
           }
         );
       },

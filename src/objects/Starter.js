@@ -199,30 +199,34 @@ export default function Model({ ...props }) {
     go.play();
   };
 
-  function resetAnimationTime(animObject) {
-    const newTime = animObject._clip.duration * 1000 * 2;
-    animObject.setDuration(newTime);
-  }
-
   //for controling backward and forward playing of GLTF animations
   //initial animation
   const initialGoProgressChecker = useRef(0);
+
   //clock
   const toClockProgressChecker = useRef(0);
   const clockMoveProgressChecker = useRef(0);
   const clockCloseProgressChecker = useRef(0);
+
   //camel
   const toCamelProgressChecker = useRef(0);
   const camelMoveProgressChecker = useRef(0);
   const camelGoProgressChecker = useRef(0);
+
   //android
   const toAndroidProgressChecker = useRef(0);
   const androidMoveProgressChecker = useRef(0);
   const androidGoProgressChecker = useRef(0);
+
   //apple
   const toAppleProgressChecker = useRef(0);
   const appleMoveProgressChecker = useRef(0);
   const appleGoProgressChecker = useRef(0);
+
+  //react
+  const toFlowerProgressChecker = useRef(0);
+  const toPineappleProgressChecker = useRef(0);
+  const toCannonProgressChecker = useRef(0);
 
   useControls("Experience", {
     x: {
@@ -261,6 +265,8 @@ export default function Model({ ...props }) {
     // assignActions(6);
     // startAnimations();
     // endAnimations();
+
+    //return refs are not do not have values yet.
     if (!mainContainer.current) return;
 
     //initial rotation
@@ -273,6 +279,7 @@ export default function Model({ ...props }) {
       autoplay: false,
     });
 
+    //store listener for intial anim
     const unsubscribeInitialAnimation = useStore.subscribe(
       (state) => state.initialAnimation,
       ({ progress }) => {
@@ -353,6 +360,7 @@ export default function Model({ ...props }) {
       autoplay: false,
     });
 
+    //secondary cubes andjustment for camel animation
     const subCubesToCamelPosition = anime({
       targets: secondaryContainer.current.position,
       x: 0.5,
@@ -362,6 +370,7 @@ export default function Model({ ...props }) {
       autoplay: false,
     });
 
+    //rotate cubes for camel anim
     const rotateCubesForCamelAnim = anime({
       targets: mainContainer.current.rotation,
       y: -Math.PI / 3,
@@ -470,6 +479,44 @@ export default function Model({ ...props }) {
       duration: 500,
       autoplay: false,
     });
+
+    //cubes to react animation
+    const cubesToReactPosition = anime({
+      targets: mainContainer.current.position,
+      //TODO: change this
+      x: 0,
+      y: 0,
+      z: 0,
+      duration: 500,
+      autoplay: false,
+    });
+
+    //secondaryCubes cubes to react animation
+    const subCubesToReactPosition = anime({
+      targets: secondaryContainer.current.position,
+      //TODO: change this
+      x: 0,
+      y: 0,
+      z: 0,
+      duration: 500,
+      autoplay: false,
+    });
+
+    //cubes to react rotation
+    const cubesToReactRotation = anime({
+      targets: mainContainer.current.rotation,
+      y: Math.PI / 2, //TODO: check this
+      duration: 500,
+      autoplay: false,
+    });
+
+    //flower colors
+    //TODO: add refs for cube materials or fowradref them from another file or use context and have them reused for performance
+    //this initial time just go with local refs to save time (23:35 pm me to next day's 8:00 am me)
+
+
+    //LEFT HERE. <= check the file on the left and add the animation handlers at the swiths tatement here, also at the plane.
+    q2#!!A>Sd
 
     const {
       go,
@@ -821,7 +868,6 @@ export default function Model({ ...props }) {
       const moveAnimDuration = actionsPointer.current.move._clip.duration;
       const moveAnimTweak = actionsPointer.current.moveTweak;
       // const moveInfinite = actionsPointer.current.moveInfinite;
-
       // if (moveInfinite) {
       //   if (moveAnimTime >= moveAnimDuration - moveAnimTweak) {
       //     actionsPointer.current.move.paused = true;
