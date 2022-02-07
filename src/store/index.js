@@ -73,6 +73,7 @@ const useStore = create(
       camelGoProgress: null,
       patienceDefitionCloseProgress: null,
       cubesToAndroidPositionProgress: null,
+      toAndroidProgress: null,
       hide() {
         set((state) => {
           return {
@@ -269,6 +270,17 @@ const useStore = create(
               ...state.experience,
               cubesToAndroidPositionProgress,
               lastChanged: "cubesToAndroidPositionProgress",
+            },
+          };
+        });
+      },
+      setToAndroidProgress(toAndroidProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              toAndroidProgress,
+              lastChanged: "toAndroidProgress",
             },
           };
         });

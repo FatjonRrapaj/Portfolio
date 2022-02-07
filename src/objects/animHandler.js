@@ -149,7 +149,8 @@ export default function Animator() {
   const camelGoProgress = useRef(0);
   const patienceDefitionCloseProgress = useRef(0);
   const planeToAndroidProgress = useRef(0);
-  const cubesToAndroidPosition = useRef(0);
+  const cubesToAndroidPositionProgress = useRef(0);
+  const toAndroidProgress = useRef(0);
 
   /**
    * handles the animation updates, making sure to play the animation even when going backwards
@@ -630,11 +631,26 @@ export default function Animator() {
       update: function (anim) {
         handleUpdateAnimation(
           anim,
-          cubesToAndroidPosition,
+          cubesToAndroidPositionProgress,
           function progresSetter(anim) {
             useStore
               .getState()
               .experience.setCubesToAndroidPositionProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //transform to android(GLTF)
+    timeline.add({
+      targets: empty,
+      duration: 2000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          toAndroidProgress,
+          function progresSetter(anim) {
+            useStore.getState().experience.setToAndroidProgress(anim.progress);
           }
         );
       },

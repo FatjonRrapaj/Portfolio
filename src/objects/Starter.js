@@ -210,6 +210,7 @@ export default function Model({ ...props }) {
   const toCamelProgressChecker = useRef(0);
   const camelMoveProgressChecker = useRef(0);
   const camelGoProgressChecker = useRef(0);
+  const toAndroidProgressChecker = useRef(0);
 
   useControls("Experience", {
     x: {
@@ -427,6 +428,7 @@ export default function Model({ ...props }) {
         camelGoProgress,
         patienceDefitionCloseProgress,
         cubesToAndroidPositionProgress,
+        toAndroidProgress,
       }) => {
         switch (lastChanged) {
           case "initialJoinProgress":
@@ -571,7 +573,21 @@ export default function Model({ ...props }) {
             cubesToAndroidPosition.seek(cubesToAndroidPositionProgress);
             subCubesToAndroidPosition.seek(cubesToAndroidPositionProgress);
             rotateCubesForAndroidAnimation.seek(cubesToAndroidPositionProgress);
+
+            //TODO ADD CORRECT TRANSFORM TWEAKS
+            actionsPointer.current.transform = toAndroid;
+            actionsPointer.current.transformTweak = 0.1;
             //TODO: animate color chages for cube materials and mabybe environment
+            break;
+          case "toAndroidProgress":
+            seekGltfAnimation(
+              actionsPointer.current.transform,
+              toAndroidProgress,
+              toAndroidProgressChecker,
+              2000,
+              true,
+              1
+            );
             break;
 
           default:
