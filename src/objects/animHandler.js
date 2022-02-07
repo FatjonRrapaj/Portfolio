@@ -153,6 +153,9 @@ export default function Animator() {
   const toAndroidProgress = useRef(0);
   const showAndroidParagraphProgress = useRef(0);
   const androidMoveProgress = useRef(0);
+  const androidGoProgress = useRef(0);
+  const androidParagraphCloseProgress = useRef(0);
+  const planeToAppleProgress = useRef(0);
 
   /**
    * handles the animation updates, making sure to play the animation even when going backwards
@@ -678,7 +681,7 @@ export default function Animator() {
     //android move (GLTF)
     timeline.add({
       targets: empty,
-      duration: 2000,
+      duration: 300,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -687,6 +690,62 @@ export default function Animator() {
             useStore
               .getState()
               .experience.setAndroidMoveProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //TODO: check if it's waiting on backwars play too
+    //wait some time
+    timeline.add({
+      targets: empty,
+      duration: 3000,
+    });
+
+    //androd go (GLTF)
+    timeline.add({
+      targets: empty,
+      duration: 1000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          androidGoProgress,
+          function progresSetter(anim) {
+            useStore.getState().experience.setAndroidGoProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //hide android paragraph
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          androidParagraphCloseProgress,
+          function progresSetter(anim) {
+            useStore
+              .getState()
+              .experience.setAndroidParagraphCloseProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //move the plane to apple position
+    timeline.add({
+      targets: empty,
+      duration: 3000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          planeToAppleProgress,
+          function progresSetter(anim) {
+            useStore
+              .getState()
+              .plane.setPlaneToAppleProgress(300 + anim.progress); //+300 for the plane to continue it's journey when it left off
           }
         );
       },
@@ -739,6 +798,8 @@ export default function Animator() {
       window.removeEventListener("resize", onResize);
       divContainer.removeEventListener("touchstart", onTouchStart);
       divContainer.removeEventListener("touchmove", onTouchMove);
+
+      //TODO: CHECK IF CAN CLEAR REF????
     };
   }, []);
 

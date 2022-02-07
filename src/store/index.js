@@ -76,6 +76,9 @@ const useStore = create(
       toAndroidProgress: null,
       androidParagraphProgress: null,
       androidMoveProgress: null,
+      androidGoProgress: null,
+      androidParagraphCloseProgress: null,
+
       hide() {
         set((state) => {
           return {
@@ -309,6 +312,28 @@ const useStore = create(
           };
         });
       },
+      setAndroidGoProgress(androidGoProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              androidGoProgress,
+              lastChanged: "androidGoProgress",
+            },
+          };
+        });
+      },
+      setAndroidParagraphCloseProgress(androidParagraphCloseProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              androidParagraphCloseProgress,
+              lastChanged: "androidParagraphCloseProgress",
+            },
+          };
+        });
+      },
     },
     sheet: {
       moveToCenterProgress: null,
@@ -382,6 +407,7 @@ const useStore = create(
       lastChanged: null,
       planeToCamelProgres: null,
       planeToAndroidProgress: null,
+      planeToAppleProgress: null,
       setPlaneFoldingProgress(planeFoldingProgress) {
         set((state) => {
           return {
@@ -435,6 +461,17 @@ const useStore = create(
               ...state.plane,
               planeToAndroidProgress,
               lastChanged: "planeToAndroidProgress",
+            },
+          };
+        });
+      },
+      setPlaneToAppleProgress(planeToAppleProgress) {
+        set((state) => {
+          return {
+            plane: {
+              ...state.plane,
+              planeToAppleProgress,
+              lastChanged: "planeToAppleProgress",
             },
           };
         });

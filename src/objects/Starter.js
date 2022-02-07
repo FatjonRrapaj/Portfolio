@@ -213,6 +213,7 @@ export default function Model({ ...props }) {
   const camelGoProgressChecker = useRef(0);
   const toAndroidProgressChecker = useRef(0);
   const androidMoveProgressChecker = useRef(0);
+  const androidGoProgressChecker = useRef(0);
 
   useControls("Experience", {
     x: {
@@ -409,8 +410,6 @@ export default function Model({ ...props }) {
       autoplay: false,
     });
 
-    //android go?
-
     //hide android paragraph
     const hideAndroidParagraph = anime({
       targets: andoridParagraph.current.style,
@@ -451,6 +450,8 @@ export default function Model({ ...props }) {
         toAndroidProgress,
         androidParagraphProgress,
         androidMoveProgress,
+        androidGoProgress,
+        androidParagraphCloseProgress,
       }) => {
         switch (lastChanged) {
           case "initialJoinProgress":
@@ -621,10 +622,31 @@ export default function Model({ ...props }) {
               actionsPointer.current.move,
               androidMoveProgress,
               androidMoveProgressChecker,
-              2000,
-              true,
+              30,
+              false,
+              3
+            );
+            break;
+
+          case "androidGoProgress":
+            actionsPointer.current.paused = true;
+            actionsPointer.current.transform = go;
+            if (androidGoProgress > 90) {
+              mainContainer.current.visible = false;
+            } else {
+              mainContainer.current.visible = true;
+            }
+            seekGltfAnimation(
+              actionsPointer.current.transform,
+              androidGoProgress,
+              androidGoProgressChecker,
+              1000,
+              false,
               1
             );
+            break;
+          case "androidParagraphCloseProgress":
+            hideAndroidParagraph.seek(androidParagraphCloseProgress);
             break;
           default:
             break;

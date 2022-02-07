@@ -63,6 +63,8 @@ export default function Model({ ...props }) {
   const planeToClockProgressChecker = useRef(0);
   const planeToCamelProgressChecker = useRef(0);
   const planeToAndroidProgressChecker = useRef(0);
+  const planeToAppleProgressChecker = useRef(0);
+
   const moveCamera = useRef(false);
 
   const lineRef = useRef();
@@ -92,6 +94,13 @@ export default function Model({ ...props }) {
       }).points,
       new Vector3(60, 10, 400),
       new Vector3(50, 12, 380),
+      ...createSpiralPathFromCoordinateWithRadius({
+        coordinate: [10, 4, 300],
+        direction: 1,
+        radius: 5,
+        spirals: 2,
+        heightDivider: 3,
+      }).points,
       new Vector3(0, 4, 380),
       new Vector3(0, 0, 350),
       new Vector3(0, 10, 300),
@@ -102,13 +111,6 @@ export default function Model({ ...props }) {
       new Vector3(0, 40, 200),
       new Vector3(0, 30, 200),
       new Vector3(0, 30, 200),
-      new Vector3(0, 30, 210),
-      new Vector3(0, 30, 200),
-      new Vector3(0, 30, 200),
-      new Vector3(0, 30, 200),
-      new Vector3(0, 90, 200),
-      new Vector3(0, 90, 170),
-      new Vector3(0, 90, 170),
       new Vector3(0, 90, 100),
       new Vector3(0, 130, 100),
       new Vector3(0, 130, 100),
@@ -216,6 +218,7 @@ export default function Model({ ...props }) {
         planeToClockProgress,
         planeToCamelProgres,
         planeToAndroidProgress,
+        planeToAppleProgress,
       }) => {
         switch (lastChanged) {
           case "planeFoldingProgress":
@@ -240,14 +243,6 @@ export default function Model({ ...props }) {
               planeToClockProgressChecker,
               true
             );
-            // const fraction = planeToClockProgress / 700;
-            // movePlane({
-            //   fraction,
-            //   isBackward:
-            //     planeToClockProgressChecker.current > planeToClockProgress,
-            // });
-            // moveCamera.current = true;
-            // planeToClockProgressChecker.current = planeToClockProgress;
             break;
           case "planeToCamelProgres":
             handleMovePlane(
@@ -260,6 +255,13 @@ export default function Model({ ...props }) {
             handleMovePlane(
               planeToAndroidProgress,
               planeToAndroidProgressChecker,
+              true
+            );
+            break;
+          case "planeToAppleProgress":
+            handleMovePlane(
+              planeToAppleProgress,
+              planeToAppleProgressChecker,
               true
             );
           default:
