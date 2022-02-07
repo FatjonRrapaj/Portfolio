@@ -435,7 +435,7 @@ export default function Model({ ...props }) {
               clockMoveProgressChecker,
               30,
               false,
-              10
+              3
             );
             break;
           case "timeDefinitionProgress":
@@ -468,9 +468,10 @@ export default function Model({ ...props }) {
             cubesToCamelPosition.seek(cubesToCamelPositionProgress);
             subCubesToCamelPosition.seek(cubesToCamelPositionProgress);
             rotateCubesForCamelAnim.seek(cubesToCamelPositionProgress);
+            actionsPointer.current.transform = toCamel;
+
             break;
           case "toCamelProgress":
-            actionsPointer.current.transform = toCamel;
             actionsPointer.current.transformTweak = 0.1;
             seekGltfAnimation(
               actionsPointer.current.transform,

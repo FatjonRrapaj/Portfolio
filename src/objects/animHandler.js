@@ -413,6 +413,26 @@ export default function Animator() {
       },
     });
 
+    //clockMove (GLTF)
+    timeline.add(
+      {
+        targets: empty,
+        duration: 300,
+        update: function (anim) {
+          handleUpdateAnimation(
+            anim,
+            clockMoveProgress,
+            function progressSetter(anim) {
+              useStore
+                .getState()
+                .experience.setClockMoveProgress(anim.progress);
+            }
+          );
+        },
+      },
+      "-=200"
+    );
+
     //show time definition
     timeline.add({
       targets: empty,
@@ -425,21 +445,6 @@ export default function Animator() {
             useStore
               .getState()
               .experience.setTimeDefinitionProgress(anim.progress);
-          }
-        );
-      },
-    });
-
-    //clockMove (GLTF)
-    timeline.add({
-      targets: empty,
-      duration: 300,
-      update: function (anim) {
-        handleUpdateAnimation(
-          anim,
-          clockMoveProgress,
-          function progressSetter(anim) {
-            useStore.getState().experience.setClockMoveProgress(anim.progress);
           }
         );
       },
@@ -532,6 +537,26 @@ export default function Animator() {
       },
     });
 
+    //play camel move animation (GLTF)
+    timeline.add(
+      {
+        targets: empty,
+        duration: 300,
+        update: function (anim) {
+          handleUpdateAnimation(
+            anim,
+            camelMoveProgress,
+            function progresSetter(anim) {
+              useStore
+                .getState()
+                .experience.setCamelMoveProgress(anim.progress);
+            }
+          );
+        },
+      },
+      "-=200"
+    );
+
     //show patienceDefinition
     timeline.add({
       targets: empty,
@@ -544,21 +569,6 @@ export default function Animator() {
             useStore
               .getState()
               .experience.setPatienceDefinitonProgress(anim.progress);
-          }
-        );
-      },
-    });
-
-    //play camel move animation (GLTF)
-    timeline.add({
-      targets: empty,
-      duration: 300,
-      update: function (anim) {
-        handleUpdateAnimation(
-          anim,
-          camelMoveProgress,
-          function progresSetter(anim) {
-            useStore.getState().experience.setCamelMoveProgress(anim.progress);
           }
         );
       },
