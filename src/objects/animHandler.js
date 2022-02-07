@@ -146,6 +146,10 @@ export default function Animator() {
   const toCamelProgress = useRef(0);
   const camelMoveProgress = useRef(0);
   const patienceDefitionProgress = useRef(0);
+  const camelGoProgress = useRef(0);
+  const patienceDefitionCloseProgress = useRef(0);
+  const planeToAndroidProgress = useRef(0);
+  const cubesToAndroidPosition = useRef(0);
 
   /**
    * handles the animation updates, making sure to play the animation even when going backwards
@@ -413,26 +417,6 @@ export default function Animator() {
       },
     });
 
-    //clockMove (GLTF)
-    timeline.add(
-      {
-        targets: empty,
-        duration: 300,
-        update: function (anim) {
-          handleUpdateAnimation(
-            anim,
-            clockMoveProgress,
-            function progressSetter(anim) {
-              useStore
-                .getState()
-                .experience.setClockMoveProgress(anim.progress);
-            }
-          );
-        },
-      },
-      "-=200"
-    );
-
     //show time definition
     timeline.add({
       targets: empty,
@@ -445,6 +429,21 @@ export default function Animator() {
             useStore
               .getState()
               .experience.setTimeDefinitionProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //clockMove (GLTF)
+    timeline.add({
+      targets: empty,
+      duration: 300,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          clockMoveProgress,
+          function progressSetter(anim) {
+            useStore.getState().experience.setClockMoveProgress(anim.progress);
           }
         );
       },
@@ -537,26 +536,6 @@ export default function Animator() {
       },
     });
 
-    //play camel move animation (GLTF)
-    timeline.add(
-      {
-        targets: empty,
-        duration: 300,
-        update: function (anim) {
-          handleUpdateAnimation(
-            anim,
-            camelMoveProgress,
-            function progresSetter(anim) {
-              useStore
-                .getState()
-                .experience.setCamelMoveProgress(anim.progress);
-            }
-          );
-        },
-      },
-      "-=200"
-    );
-
     //show patienceDefinition
     timeline.add({
       targets: empty,
@@ -574,10 +553,91 @@ export default function Animator() {
       },
     });
 
+    //play camel move animation (GLTF)
+    timeline.add({
+      targets: empty,
+      duration: 300,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          camelMoveProgress,
+          function progresSetter(anim) {
+            useStore.getState().experience.setCamelMoveProgress(anim.progress);
+          }
+        );
+      },
+    });
+
     //give it some extra time
     timeline.add({
       targets: empty,
       duration: 3000,
+    });
+
+    //camel go (GLTF)
+    timeline.add({
+      targets: empty,
+      duration: 1000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          camelGoProgress,
+          function progresSetter(anim) {
+            useStore.getState().experience.setCamelGoProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //remove patience definition
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          patienceDefitionCloseProgress,
+          function progresSetter(anim) {
+            useStore
+              .getState()
+              .experience.setPatinceDefinitionCloseProgres(anim.progress);
+          }
+        );
+      },
+    });
+
+    //move the plane to android position
+    timeline.add({
+      targets: empty,
+      duration: 2000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          planeToAndroidProgress,
+          function progresSetter(anim) {
+            useStore
+              .getState()
+              .plane.setPlaneToAndroidProgress(200 + anim.progress); //+200 because of the two previous plane movements
+          }
+        );
+      },
+    });
+
+    //bring the cubes to camel position
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          cubesToAndroidPosition,
+          function progresSetter(anim) {
+            useStore
+              .getState()
+              .experience.setCubesToAndroidPositionProgress(anim.progress);
+          }
+        );
+      },
     });
 
     //****************** just for fixing the timeline */

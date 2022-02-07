@@ -70,6 +70,9 @@ const useStore = create(
       toCamelProgress: null,
       camelMoveProgress: null,
       patienceDefinitionProgress: null,
+      camelGoProgress: null,
+      patienceDefitionCloseProgress: null,
+      cubesToAndroidPositionProgress: null,
       hide() {
         set((state) => {
           return {
@@ -237,6 +240,39 @@ const useStore = create(
           };
         });
       },
+      setCamelGoProgress(camelGoProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              camelGoProgress,
+              lastChanged: "camelGoProgress",
+            },
+          };
+        });
+      },
+      setPatinceDefinitionCloseProgres(patienceDefitionCloseProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              patienceDefitionCloseProgress,
+              lastChanged: "patienceDefitionCloseProgress",
+            },
+          };
+        });
+      },
+      setCubesToAndroidPositionProgress(cubesToAndroidPositionProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              cubesToAndroidPositionProgress,
+              lastChanged: "cubesToAndroidPositionProgress",
+            },
+          };
+        });
+      },
     },
     sheet: {
       moveToCenterProgress: null,
@@ -309,6 +345,7 @@ const useStore = create(
       planeToClockProgress: null,
       lastChanged: null,
       planeToCamelProgres: null,
+      planeToAndroidProgress: null,
       setPlaneFoldingProgress(planeFoldingProgress) {
         set((state) => {
           return {
@@ -351,6 +388,17 @@ const useStore = create(
               ...state.plane,
               planeToCamelProgres,
               lastChanged: "planeToCamelProgres",
+            },
+          };
+        });
+      },
+      setPlaneToAndroidProgress(planeToAndroidProgress) {
+        set((state) => {
+          return {
+            plane: {
+              ...state.plane,
+              planeToAndroidProgress,
+              lastChanged: "planeToAndroidProgress",
             },
           };
         });

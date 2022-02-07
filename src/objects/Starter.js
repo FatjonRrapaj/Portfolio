@@ -209,6 +209,7 @@ export default function Model({ ...props }) {
   const clockCloseProgressChecker = useRef(0);
   const toCamelProgressChecker = useRef(0);
   const camelMoveProgressChecker = useRef(0);
+  const camelGoProgressChecker = useRef(0);
 
   useControls("Experience", {
     x: {
@@ -363,7 +364,49 @@ export default function Model({ ...props }) {
       autoplay: false,
     });
 
-    const { go, toClock, clockMove, toCamel, camelMove } = actions;
+    //hide patience definition
+    const hidePatienceDefinition = anime({
+      targets: patienceDefintion.current.style,
+      opacity: 0,
+      duration: 500,
+      autoplay: false,
+    });
+
+    //bring the cubes to android position
+    const cubesToAndroidPosition = anime({
+      targets: mainContainer.current.position,
+      x: 48,
+      y: 12,
+      z: 450,
+      duration: 500,
+      autoplay: false,
+    });
+
+    const subCubesToAndroidPosition = anime({
+      targets: secondaryContainer.current.position,
+      x: 0.5,
+      y: 0,
+      z: 0,
+      duration: 500,
+      autoplay: false,
+    });
+
+    const rotateCubesForAndroidAnimation = anime({
+      targets: mainContainer.current.rotation,
+      y: Math.PI / 3,
+      duration: 500,
+      autoplay: false,
+    });
+
+    const {
+      go,
+      toClock,
+      clockMove,
+      toCamel,
+      camelMove,
+      toAndroid,
+      androidMove,
+    } = actions;
     const unsubscribeExperieneStore = useStore.subscribe(
       (state) => state.experience,
       ({
@@ -381,6 +424,9 @@ export default function Model({ ...props }) {
         toCamelProgress,
         patienceDefinitionProgress,
         camelMoveProgress,
+        camelGoProgress,
+        patienceDefitionCloseProgress,
+        cubesToAndroidPositionProgress,
       }) => {
         switch (lastChanged) {
           case "initialJoinProgress":
@@ -442,15 +488,13 @@ export default function Model({ ...props }) {
             timeDefinitionShow.seek(timeDefinitionProgress);
             break;
           case "clockCloseProgress":
+            actionsPointer.current.paused = true;
+            actionsPointer.current.transform = go;
             if (clockCloseProgress > 90) {
               mainContainer.current.visible = false;
             } else {
               mainContainer.current.visible = true;
             }
-            actionsPointer.current.transform.reset();
-            actionsPointer.current.paused = true;
-            actionsPointer.current.transform = go;
-
             seekGltfAnimation(
               actionsPointer.current.transform,
               clockCloseProgress,
@@ -468,11 +512,12 @@ export default function Model({ ...props }) {
             cubesToCamelPosition.seek(cubesToCamelPositionProgress);
             subCubesToCamelPosition.seek(cubesToCamelPositionProgress);
             rotateCubesForCamelAnim.seek(cubesToCamelPositionProgress);
+            //point the animation object to the next one
             actionsPointer.current.transform = toCamel;
+            actionsPointer.current.transformTweak = 0.0;
 
             break;
           case "toCamelProgress":
-            actionsPointer.current.transformTweak = 0.1;
             seekGltfAnimation(
               actionsPointer.current.transform,
               toCamelProgress,
@@ -487,16 +532,48 @@ export default function Model({ ...props }) {
             break;
           case "camelMoveProgress":
             actionsPointer.current.move = camelMove;
-            actionsPointer.current.moveTweak = 0.055;
+            actionsPointer.current.moveTweak = 0.06;
             seekGltfAnimation(
               actionsPointer.current.move,
               camelMoveProgress,
               camelMoveProgressChecker,
               30,
               false,
-              10
+              3
             );
             break;
+          case "camelGoProgress":
+            actionsPointer.current.paused = true;
+            actionsPointer.current.transform = go;
+            if (camelGoProgress > 90) {
+              mainContainer.current.visible = false;
+            } else {
+              mainContainer.current.visible = true;
+            }
+            seekGltfAnimation(
+              actionsPointer.current.transform,
+              camelGoProgress,
+              camelGoProgressChecker,
+              1000,
+              false,
+              1
+            );
+            break;
+          case "patienceDefitionCloseProgress":
+            hidePatienceDefinition.seek(patienceDefitionCloseProgress);
+            break;
+          case "cubesToAndroidPositionProgress":
+            console.log(
+              "cubesToAndroidPositionProgress: ",
+              cubesToAndroidPositionProgress
+            );
+            mainContainer.current.visible = true;
+            cubesToAndroidPosition.seek(cubesToAndroidPositionProgress);
+            subCubesToAndroidPosition.seek(cubesToAndroidPositionProgress);
+            rotateCubesForAndroidAnimation.seek(cubesToAndroidPositionProgress);
+            //TODO: animate color chages for cube materials and mabybe environment
+            break;
+
           default:
             break;
         }

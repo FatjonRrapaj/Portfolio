@@ -58,9 +58,11 @@ export default function Model({ ...props }) {
   const back = useLoader(TextureLoader, process.env.PUBLIC_URL + "/back.jpg");
   back.flipY = false;
 
+  //animation progress checkers for handling going backwards
   const planeFoldingProgressChecker = useRef(0);
   const planeToClockProgressChecker = useRef(0);
   const planeToCamelProgressChecker = useRef(0);
+  const planeToAndroidProgressChecker = useRef(0);
   const moveCamera = useRef(false);
 
   const lineRef = useRef();
@@ -75,18 +77,21 @@ export default function Model({ ...props }) {
       ...createSpiralPathFromCoordinateWithRadius({
         coordinate: [-100, 15, 490],
         radius: 15,
-        spirals: 3,
+        spirals: 2,
         heightDivider: 3,
       }).points,
+      new Vector3(0, 0, 450),
+      new Vector3(10, 2, 450),
+      new Vector3(20, 4, 450),
       ...createSpiralPathFromCoordinateWithRadius({
         coordinate: [80, 4, 430],
         direction: 1,
-        radius: 12,
+        radius: 5,
         spirals: 2,
-        heightDivider: 2,
+        heightDivider: 3,
       }).points,
-      new Vector3(100, 4, 400),
-      new Vector3(50, -4, 380),
+      new Vector3(60, 10, 400),
+      new Vector3(50, 12, 380),
       new Vector3(0, 4, 380),
       new Vector3(0, 0, 350),
       new Vector3(0, 10, 300),
@@ -145,6 +150,7 @@ export default function Model({ ...props }) {
     planePosition.current = { ...position };
     //rotate
     if (isBackward) {
+      //TODO: take care of this when the all journey is completed.
       up.y = -1;
     } else {
       up.y = 1;
@@ -169,6 +175,7 @@ export default function Model({ ...props }) {
       }
     );
 
+    //TODO: fix this
     const planeToIntialPosition = anime({
       targets: group.current.position,
       x: 14.178674093594697,
@@ -178,6 +185,7 @@ export default function Model({ ...props }) {
       autoplay: false,
     });
 
+    //TODO: fix this
     const planeToInitialRotation = anime({
       targets: group.current.quaternion,
       w: 0.823702215991931,
@@ -188,6 +196,7 @@ export default function Model({ ...props }) {
       autoplay: false,
     });
 
+    //TODO: fix or remove this
     const cameraToInitialPosition = anime({
       targets: camera.position,
       x: 14.178674093594697,
@@ -206,6 +215,7 @@ export default function Model({ ...props }) {
         planeToInitialTrajectoryPointProgress,
         planeToClockProgress,
         planeToCamelProgres,
+        planeToAndroidProgress,
       }) => {
         switch (lastChanged) {
           case "planeFoldingProgress":
@@ -243,6 +253,13 @@ export default function Model({ ...props }) {
             handleMovePlane(
               planeToCamelProgres,
               planeToCamelProgressChecker,
+              true
+            );
+            break;
+          case "planeToAndroidProgress":
+            handleMovePlane(
+              planeToAndroidProgress,
+              planeToAndroidProgressChecker,
               true
             );
           default:
