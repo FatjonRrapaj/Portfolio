@@ -78,6 +78,12 @@ const useStore = create(
       androidMoveProgress: null,
       androidGoProgress: null,
       androidParagraphCloseProgress: null,
+      experienceCubesToApplePositionProgress: null,
+      toAppleProgress: null,
+      appleParagraphProgress: null,
+      appleParagraphCloseProgress: null,
+      appleMoveProgress: null,
+      appleGoProgress: null,
 
       hide() {
         set((state) => {
@@ -330,6 +336,74 @@ const useStore = create(
               ...state.experience,
               androidParagraphCloseProgress,
               lastChanged: "androidParagraphCloseProgress",
+            },
+          };
+        });
+      },
+      setExperienceCubesToApplePositionProgress(
+        experienceCubesToApplePositionProgress
+      ) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              experienceCubesToApplePositionProgress,
+              lastChanged: "experienceCubesToApplePositionProgress",
+            },
+          };
+        });
+      },
+      setToAppleProgress(toAppleProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              toAppleProgress,
+              lastChanged: "toAppleProgress",
+            },
+          };
+        });
+      },
+      setAppleParagraphProgress(appleParagraphProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              appleParagraphProgress,
+              lastChanged: "appleParagraphProgress",
+            },
+          };
+        });
+      },
+      setAppleMoveProgress(appleMoveProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              appleMoveProgress,
+              lastChanged: "appleMoveProgress",
+            },
+          };
+        });
+      },
+      setAppleGoProgress(appleGoProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              appleGoProgress,
+              lastChanged: "appleGoProgress",
+            },
+          };
+        });
+      },
+      setAppleParagraphCloseProgress(appleParagraphCloseProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              appleParagraphCloseProgress,
+              lastChanged: "appleParagraphCloseProgress",
             },
           };
         });

@@ -156,6 +156,12 @@ export default function Animator() {
   const androidGoProgress = useRef(0);
   const androidParagraphCloseProgress = useRef(0);
   const planeToAppleProgress = useRef(0);
+  const experienceCubesToApplePositionProgress = useRef(0);
+  const toAppleProgress = useRef(0);
+  const appleParagraphProgress = useRef(0);
+  const appleMoveProgress = useRef(0);
+  const appleGoProgress = useRef(0);
+  const appleParagraphCloseProgress = useRef(0);
 
   /**
    * handles the animation updates, making sure to play the animation even when going backwards
@@ -484,7 +490,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           timeDefinitionCloseProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore
               .getState()
               .experience.setTimeDefintionCloseProgress(anim.progress);
@@ -501,7 +507,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           planeToCamelProgres,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore
               .getState()
               .plane.setPlaneToCamelProgress(100 + anim.progress); //add +100 because plane has moved 100 units from the last position
@@ -518,7 +524,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           experienceCubesToCamelPosition,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore
               .getState()
               .experience.setCubesToCamelPositionProgress(anim.progress);
@@ -535,7 +541,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           toCamelProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore.getState().experience.setToCamelProgress(anim.progress);
           }
         );
@@ -550,7 +556,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           patienceDefitionProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore
               .getState()
               .experience.setPatienceDefinitonProgress(anim.progress);
@@ -567,7 +573,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           camelMoveProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore.getState().experience.setCamelMoveProgress(anim.progress);
           }
         );
@@ -588,7 +594,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           camelGoProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore.getState().experience.setCamelGoProgress(anim.progress);
           }
         );
@@ -603,7 +609,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           patienceDefitionCloseProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore
               .getState()
               .experience.setPatinceDefinitionCloseProgres(anim.progress);
@@ -620,7 +626,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           planeToAndroidProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore
               .getState()
               .plane.setPlaneToAndroidProgress(200 + anim.progress); //+200 because of the two previous plane movements
@@ -637,7 +643,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           cubesToAndroidPositionProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore
               .getState()
               .experience.setCubesToAndroidPositionProgress(anim.progress);
@@ -654,7 +660,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           toAndroidProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore.getState().experience.setToAndroidProgress(anim.progress);
           }
         );
@@ -669,7 +675,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           showAndroidParagraphProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore
               .getState()
               .experience.setAndroidParagraphProgress(anim.progress);
@@ -686,7 +692,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           androidMoveProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore
               .getState()
               .experience.setAndroidMoveProgress(anim.progress);
@@ -710,7 +716,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           androidGoProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore.getState().experience.setAndroidGoProgress(anim.progress);
           }
         );
@@ -725,7 +731,7 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           androidParagraphCloseProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore
               .getState()
               .experience.setAndroidParagraphCloseProgress(anim.progress);
@@ -742,10 +748,114 @@ export default function Animator() {
         handleUpdateAnimation(
           anim,
           planeToAppleProgress,
-          function progresSetter(anim) {
+          function progressSetter(anim) {
             useStore
               .getState()
               .plane.setPlaneToAppleProgress(300 + anim.progress); //+300 for the plane to continue it's journey when it left off
+          }
+        );
+      },
+    });
+
+    //bring the cubes to apple position
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          experienceCubesToApplePositionProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setExperienceCubesToApplePositionProgress(
+                anim.progress
+              );
+          }
+        );
+      },
+    });
+
+    //transform the cubes to apple
+    timeline.add({
+      targets: empty,
+      duration: 2000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          toAppleProgress,
+          function progressSetter(anim) {
+            useStore.getState().experience.setToAppleProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    // show apple paragraph
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          appleParagraphProgress,
+          function progressSeter(anim) {
+            useStore
+              .getState()
+              .experience.setAppleParagraphProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //move apple
+    timeline.add({
+      targets: empty,
+      duration: 300,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          appleMoveProgress,
+          function progressSetter(anim) {
+            useStore.getState().experience.setAppleMoveProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //give it some extra time
+    timeline.add({
+      targets: empty,
+      duration: 3000,
+    });
+
+    //apple go
+    timeline.add({
+      targets: empty,
+      duration: 1000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          appleGoProgress,
+          function progressSetter(anim) {
+            useStore.getState().experience.setAppleGoProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //remove apple paragraph
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          appleParagraphCloseProgress,
+          function progressSeter(anim) {
+            useStore
+              .getState()
+              .experience.setAppleParagraphCloseProgress(anim.progress);
           }
         );
       },

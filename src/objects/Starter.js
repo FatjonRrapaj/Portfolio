@@ -33,6 +33,7 @@ export default function Model({ ...props }) {
   const timeDefinition = useRef();
   const patienceDefintion = useRef();
   const andoridParagraph = useRef();
+  const appleParagraph = useRef();
 
   const delay = (seconds) =>
     new Promise((resolve) => {
@@ -204,16 +205,24 @@ export default function Model({ ...props }) {
   }
 
   //for controling backward and forward playing of GLTF animations
+  //initial animation
   const initialGoProgressChecker = useRef(0);
+  //clock
   const toClockProgressChecker = useRef(0);
   const clockMoveProgressChecker = useRef(0);
   const clockCloseProgressChecker = useRef(0);
+  //camel
   const toCamelProgressChecker = useRef(0);
   const camelMoveProgressChecker = useRef(0);
   const camelGoProgressChecker = useRef(0);
+  //android
   const toAndroidProgressChecker = useRef(0);
   const androidMoveProgressChecker = useRef(0);
   const androidGoProgressChecker = useRef(0);
+  //apple
+  const toAppleProgressChecker = useRef(0);
+  const appleMoveProgressChecker = useRef(0);
+  const appleGoProgressChecker = useRef(0);
 
   useControls("Experience", {
     x: {
@@ -418,6 +427,50 @@ export default function Model({ ...props }) {
       autoplay: false,
     });
 
+    //bring the cubes to apple position
+    const cubesToApplePosition = anime({
+      targets: mainContainer.current.position,
+      x: 10,
+      y: 4,
+      z: 380,
+      duration: 500,
+      autoplay: false,
+    });
+    //adjust helper cubes 4 apple animation
+    //TODO: adjust
+    const subCubesToApplePosition = anime({
+      targets: secondaryContainer.current.position,
+      x: 0,
+      y: 0,
+      z: 0,
+      duration: 500,
+      autoplay: false,
+    });
+    //rotate main cubes for apple animation
+    //TODO: adjust
+    const cubesToAppleRotation = anime({
+      targets: mainContainer.current.rotation,
+      y: Math.PI / 3,
+      duration: 500,
+      autoplay: false,
+    });
+
+    //show apple paragraph
+    const showAppleParagraph = anime({
+      targets: appleParagraph.current.style,
+      opacity: 1,
+      duration: 500,
+      autoplay: false,
+    });
+
+    //hideAppleParagraph
+    const hideAppleParagraph = anime({
+      targets: appleParagraph.current.style,
+      opacity: 0,
+      duration: 500,
+      autoplay: false,
+    });
+
     const {
       go,
       toClock,
@@ -426,32 +479,46 @@ export default function Model({ ...props }) {
       camelMove,
       toAndroid,
       androidMove,
+      toApple,
+      appleMove,
     } = actions;
     const unsubscribeExperieneStore = useStore.subscribe(
       (state) => state.experience,
       ({
+        //last changed (very important)
+        lastChanged,
+        //intial animation
         initialJoinProgress,
         initialGoProgress,
         initialScaleProgress,
-        lastChanged,
+        //clock
         experienceCubesToClockPositionProgress,
         toClockProgress,
         clockMoveProgress,
         timeDefinitionProgress,
         clockCloseProgress,
         timeDefinitionCloseProgress,
+        //camel
         cubesToCamelPositionProgress,
         toCamelProgress,
         patienceDefinitionProgress,
         camelMoveProgress,
         camelGoProgress,
         patienceDefitionCloseProgress,
+        //android
         cubesToAndroidPositionProgress,
         toAndroidProgress,
         androidParagraphProgress,
         androidMoveProgress,
         androidGoProgress,
         androidParagraphCloseProgress,
+        //apple
+        experienceCubesToApplePositionProgress,
+        toAppleProgress,
+        appleParagraphProgress,
+        appleMoveProgress,
+        appleGoProgress,
+        appleParagraphCloseProgress,
       }) => {
         switch (lastChanged) {
           case "initialJoinProgress":
@@ -645,8 +712,91 @@ export default function Model({ ...props }) {
               1
             );
             break;
+
+          //********************************************************************************* */
+          //********************************************************************************* */
+          //********************************************************************************* */
+          //********************************************************************************* */
+          //********************************************************************************* */
+          //***************** */                                           //**************** */
+          //***************** */                                           //**************** */
+          //***************** */                                           //**************** */
+          //***************** */ COPY THE CAMEL ANIMATIONS FOR             //**************** */
+          //***************** */ ALL THE ANIMATIONS, AND use the -= to the //**************** */
+          //***************** */ main timeile                              //**************** */
+          //***************** */                                           //**************** */
+          //***************** */                                           //**************** */
+          //********************************************************************************* */
+          //********************************************************************************* */
+          //********************************************************************************* */
+          //********************************************************************************* */
+          //********************************************************************************* */
+          //********************************************************************************* */
+
           case "androidParagraphCloseProgress":
             hideAndroidParagraph.seek(androidParagraphCloseProgress);
+            break;
+          case "experienceCubesToApplePositionProgress":
+            //TODO: FIX THE FISIBILITIY 4 WHEN GOING BACKWARDS
+            mainContainer.current.visible = true;
+            //adjust cubes
+            //TODO: ADJUST ALL CUBES AND ALSO ANIMATE THE COLORS HERE & MAYBE CHANGE THE DURATION TO 1000
+            cubesToApplePosition.seek(experienceCubesToApplePositionProgress);
+            subCubesToApplePosition.seek(
+              experienceCubesToApplePositionProgress
+            );
+            cubesToAppleRotation.seek(experienceCubesToApplePositionProgress);
+            //assign actions to apple animation (transform & move)
+            break;
+          case "toAppleProgress":
+            actionsPointer.current.transform = toApple;
+            actionsPointer.current.transformTweak = 0.1;
+            seekGltfAnimation(
+              actionsPointer.current.transform,
+              toAppleProgress,
+              toAppleProgressChecker,
+              2000,
+              true,
+              1
+            );
+            break;
+          case "appleParagraphProgress":
+            showAppleParagraph.seek(appleParagraphProgress);
+
+            //assign transform action to go
+            actionsPointer.current.transform = go;
+            actionsPointer.current.transformTweak = 0.1;
+            break;
+          case "appleMoveProgress":
+            actionsPointer.current.move = appleMove;
+            actionsPointer.current.moveTweak = 0.1;
+            seekGltfAnimation(
+              actionsPointer.current.move,
+              appleMoveProgress,
+              appleMoveProgressChecker,
+              30,
+              false,
+              3
+            );
+            break;
+          case "appleGoProgress":
+            //TODO: REMOVE THIS UGLY HACK
+            if (appleGoProgress > 90) {
+              mainContainer.current.visible = false;
+            } else {
+              mainContainer.current.visible = true;
+            }
+            seekGltfAnimation(
+              actionsPointer.current.transform,
+              appleGoProgress,
+              appleGoProgressChecker,
+              1000,
+              true,
+              1
+            );
+            break;
+          case "appleParagraphCloseProgress":
+            hideAppleParagraph.seek(appleParagraphCloseProgress);
             break;
           default:
             break;
@@ -816,6 +966,9 @@ export default function Model({ ...props }) {
         sentence2="Don't worry, I tend not to do this in work-related stuff"
         conclusion="If we don't train our patience, we cannot acomplish bigger things"
       />
+      {/**TODO: EDIt the EXPERIENCE PARAGRAPHS IN THE RIGHT WAY */}
+
+      <Paragraph ref={appleParagraph} title="Apple/iOS" />
     </group>
   );
 }
