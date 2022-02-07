@@ -74,6 +74,8 @@ const useStore = create(
       patienceDefitionCloseProgress: null,
       cubesToAndroidPositionProgress: null,
       toAndroidProgress: null,
+      androidParagraphProgress: null,
+      androidMoveProgress: null,
       hide() {
         set((state) => {
           return {
@@ -281,6 +283,28 @@ const useStore = create(
               ...state.experience,
               toAndroidProgress,
               lastChanged: "toAndroidProgress",
+            },
+          };
+        });
+      },
+      setAndroidParagraphProgress(androidParagraphProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              androidParagraphProgress,
+              lastChanged: "androidParagraphProgress",
+            },
+          };
+        });
+      },
+      setAndroidMoveProgress(androidMoveProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              androidMoveProgress,
+              lastChanged: "androidMoveProgress",
             },
           };
         });

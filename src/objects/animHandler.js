@@ -151,6 +151,8 @@ export default function Animator() {
   const planeToAndroidProgress = useRef(0);
   const cubesToAndroidPositionProgress = useRef(0);
   const toAndroidProgress = useRef(0);
+  const showAndroidParagraphProgress = useRef(0);
+  const androidMoveProgress = useRef(0);
 
   /**
    * handles the animation updates, making sure to play the animation even when going backwards
@@ -651,6 +653,40 @@ export default function Animator() {
           toAndroidProgress,
           function progresSetter(anim) {
             useStore.getState().experience.setToAndroidProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //show android paragraph
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          showAndroidParagraphProgress,
+          function progresSetter(anim) {
+            useStore
+              .getState()
+              .experience.setAndroidParagraphProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //android move (GLTF)
+    timeline.add({
+      targets: empty,
+      duration: 2000,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          androidMoveProgress,
+          function progresSetter(anim) {
+            useStore
+              .getState()
+              .experience.setAndroidMoveProgress(anim.progress);
           }
         );
       },

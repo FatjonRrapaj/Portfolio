@@ -32,6 +32,7 @@ export default function Model({ ...props }) {
   //paragraphs ref
   const timeDefinition = useRef();
   const patienceDefintion = useRef();
+  const andoridParagraph = useRef();
 
   const delay = (seconds) =>
     new Promise((resolve) => {
@@ -211,6 +212,7 @@ export default function Model({ ...props }) {
   const camelMoveProgressChecker = useRef(0);
   const camelGoProgressChecker = useRef(0);
   const toAndroidProgressChecker = useRef(0);
+  const androidMoveProgressChecker = useRef(0);
 
   useControls("Experience", {
     x: {
@@ -399,6 +401,24 @@ export default function Model({ ...props }) {
       autoplay: false,
     });
 
+    //show android paragraph
+    const showAndroidParagraph = anime({
+      targets: andoridParagraph.current.style,
+      opacity: 1,
+      duration: 500,
+      autoplay: false,
+    });
+
+    //android go?
+
+    //hide android paragraph
+    const hideAndroidParagraph = anime({
+      targets: andoridParagraph.current.style,
+      opacity: 0,
+      duration: 500,
+      autoplay: false,
+    });
+
     const {
       go,
       toClock,
@@ -429,6 +449,8 @@ export default function Model({ ...props }) {
         patienceDefitionCloseProgress,
         cubesToAndroidPositionProgress,
         toAndroidProgress,
+        androidParagraphProgress,
+        androidMoveProgress,
       }) => {
         switch (lastChanged) {
           case "initialJoinProgress":
@@ -476,6 +498,7 @@ export default function Model({ ...props }) {
             break;
           case "clockMoveProgress":
             actionsPointer.current.move = clockMove;
+            actionsPointer.current.moveInfinite = true;
             actionsPointer.current.moveTweak = 0.05;
             seekGltfAnimation(
               actionsPointer.current.move,
@@ -517,7 +540,6 @@ export default function Model({ ...props }) {
             //point the animation object to the next one
             actionsPointer.current.transform = toCamel;
             actionsPointer.current.transformTweak = 0.0;
-
             break;
           case "toCamelProgress":
             seekGltfAnimation(
@@ -534,6 +556,7 @@ export default function Model({ ...props }) {
             break;
           case "camelMoveProgress":
             actionsPointer.current.move = camelMove;
+            actionsPointer.current.moveInfinite = true;
             actionsPointer.current.moveTweak = 0.06;
             seekGltfAnimation(
               actionsPointer.current.move,
@@ -565,21 +588,17 @@ export default function Model({ ...props }) {
             hidePatienceDefinition.seek(patienceDefitionCloseProgress);
             break;
           case "cubesToAndroidPositionProgress":
-            console.log(
-              "cubesToAndroidPositionProgress: ",
-              cubesToAndroidPositionProgress
-            );
             mainContainer.current.visible = true;
             cubesToAndroidPosition.seek(cubesToAndroidPositionProgress);
             subCubesToAndroidPosition.seek(cubesToAndroidPositionProgress);
             rotateCubesForAndroidAnimation.seek(cubesToAndroidPositionProgress);
-
             //TODO ADD CORRECT TRANSFORM TWEAKS
             actionsPointer.current.transform = toAndroid;
             actionsPointer.current.transformTweak = 0.1;
             //TODO: animate color chages for cube materials and mabybe environment
             break;
           case "toAndroidProgress":
+            //preset the next animation
             seekGltfAnimation(
               actionsPointer.current.transform,
               toAndroidProgress,
@@ -590,6 +609,23 @@ export default function Model({ ...props }) {
             );
             break;
 
+          case "androidParagraphProgress":
+            showAndroidParagraph.seek(androidParagraphProgress);
+            actionsPointer.current.move = androidMove;
+            actionsPointer.current.moveInfinite = false;
+            actionsPointer.current.moveTweak = 0.1;
+            break;
+
+          case "androidMoveProgress":
+            seekGltfAnimation(
+              actionsPointer.current.move,
+              androidMoveProgress,
+              androidMoveProgressChecker,
+              2000,
+              true,
+              1
+            );
+            break;
           default:
             break;
         }
@@ -612,9 +648,17 @@ export default function Model({ ...props }) {
       const moveAnimTime = actionsPointer.current.move.time;
       const moveAnimDuration = actionsPointer.current.move._clip.duration;
       const moveAnimTweak = actionsPointer.current.moveTweak;
+      // const moveInfinite = actionsPointer.current.moveInfinite;
+
+      // if (moveInfinite) {
+      //   if (moveAnimTime >= moveAnimDuration - moveAnimTweak) {
+      //     actionsPointer.current.move.paused = true;
+      //   }
+      // } else {
       if (moveAnimTime >= moveAnimDuration - moveAnimTweak) {
         actionsPointer.current.move.time = moveAnimTweak;
       }
+      // }
     }
 
     //transform anim fixes
@@ -735,6 +779,17 @@ export default function Model({ ...props }) {
         title="Patience"
         pronounciation="/ˈpeɪʃ(ə)ns/"
         definition="Sometimes I put myself in difficult circumstances 😤"
+        sentence1="Just to endure them 💪"
+        sentence2="Don't worry, I tend not to do this in work-related stuff"
+        conclusion="If we don't train our patience, we cannot acomplish bigger things"
+      />
+
+      {/**TODO: EDIt the EXPERIENCE PARAGRAPHS IN THE RIGHT WAY */}
+      <Paragraph
+        ref={andoridParagraph}
+        title="Android"
+        pronounciation="/ˈandrɔɪd/"
+        definition="I started my career as an Android Developer"
         sentence1="Just to endure them 💪"
         sentence2="Don't worry, I tend not to do this in work-related stuff"
         conclusion="If we don't train our patience, we cannot acomplish bigger things"
