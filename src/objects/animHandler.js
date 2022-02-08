@@ -1,4 +1,4 @@
-//source: https://codeburst.io/scroll-based-animate-timeline-with-easing-functions-on-a-webgl-scene-ef7c3f5a8d9b
+//the lifesaver (source): https://codeburst.io/scroll-based-animate-timeline-with-easing-functions-on-a-webgl-scene-ef7c3f5a8d9b
 
 import { useEffect, useState, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
@@ -419,7 +419,7 @@ export default function Animator() {
     //from here the plane movement anim progress will be each time increased with +100 in order to be consistent with the line progress.
     timeline.add({
       targets: empty,
-      duration: 2000,
+      duration: 5000,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -539,7 +539,7 @@ export default function Animator() {
     //move plane to camel position
     timeline.add({
       targets: empty,
-      duration: 3000,
+      duration: 5000,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -658,7 +658,7 @@ export default function Animator() {
     //move the plane to android position
     timeline.add({
       targets: empty,
-      duration: 2000,
+      duration: 5000,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -780,7 +780,7 @@ export default function Animator() {
     //move the plane to apple position
     timeline.add({
       targets: empty,
-      duration: 3000,
+      duration: 5000,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -901,7 +901,7 @@ export default function Animator() {
     //set plane to react position
     timeline.add({
       targets: empty,
-      duration: 3000,
+      duration: 5000,
       update: function (anim) {
         handleUpdateAnimation(
           anim,

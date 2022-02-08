@@ -18,8 +18,17 @@ export default function Model({ ...props }) {
   const { camera } = useThree();
   console.log("camera: ", camera.position);
 
+  //cube refs
   const mainContainer = useRef();
   const secondaryContainer = useRef();
+
+  //material refs
+  const mainCubeMaterial = useRef();
+  const mainCubeFaceMaterial = useRef();
+  const cube1Material = useRef();
+  const cube2Material = useRef();
+  const cube3Material = useRef();
+  const cube4Material = useRef();
 
   const { nodes, materials, animations } = useGLTF(
     process.env.PUBLIC_URL + "/all.glb"
@@ -514,9 +523,12 @@ export default function Model({ ...props }) {
     //TODO: add refs for cube materials or fowradref them from another file or use context and have them reused for performance
     //this initial time just go with local refs to save time (23:35 pm me to next day's 8:00 am me)
 
+    const mainCubeMaterialToXColor = anime({
+      targets: mainCubeFaceMaterial.current.color,
+    });
 
     //LEFT HERE. <= check the file on the left and add the animation handlers at the swiths tatement here, also at the plane.
-    q2#!!A>Sd
+    // q2#!!A>Sd
 
     const {
       go,
@@ -917,6 +929,7 @@ export default function Model({ ...props }) {
           roughness={0.8}
           metalness={0.2}
           emissive="green"
+          ref={mainCubeMaterial}
         />
       </mesh>
       <mesh
@@ -931,6 +944,7 @@ export default function Model({ ...props }) {
           {...nodes.cube_1.material}
           layers={2}
           emissive="#fff000"
+          ref={mainCubeFaceMaterial}
         />
       </mesh>
       <group
@@ -949,6 +963,7 @@ export default function Model({ ...props }) {
             {...nodes.cube_2.material}
             layers={2}
             emissive="#00ff00"
+            ref={cube1Material}
           />
         </mesh>
         <mesh
@@ -962,6 +977,7 @@ export default function Model({ ...props }) {
             {...nodes.cube_3.material}
             layers={2}
             emissive="#ff00ff"
+            ref={cube2Material}
           />
         </mesh>
         <mesh
@@ -971,7 +987,7 @@ export default function Model({ ...props }) {
           morphTargetDictionary={nodes.cube_4.morphTargetDictionary}
           morphTargetInfluences={nodes.cube_4.morphTargetInfluences}
         >
-          <meshStandardMaterial layers={2} emissive="red" />
+          <meshStandardMaterial layers={2} emissive="red" ref={cube3Material} />
         </mesh>
         <mesh
           name="cube_5"
@@ -984,6 +1000,7 @@ export default function Model({ ...props }) {
             {...nodes.cube_5.material}
             layers={2}
             emissive="#ff00aa"
+            ref={cube4Material}
           />
         </mesh>
       </group>

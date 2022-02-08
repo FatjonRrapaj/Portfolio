@@ -13,7 +13,7 @@ const Scene = () => {
         <Canvas
           shadows
           camera={{
-            far: 80, //important to have a clean view from the curve path (plane trajectory)
+            far: 50, //important to have a clean view from the curve path (plane trajectory)
             near: 1,
             fov: 45,
             aspect: window.innerWidth / window.innerHeight,
