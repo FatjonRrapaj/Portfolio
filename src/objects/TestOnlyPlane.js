@@ -16,6 +16,7 @@ import { useControls } from "leva";
 import useStore from "../store";
 import { seekGltfAnimation } from "../helpers/animation";
 import createSpiralPathFromCoordinateWithRadius from "./world/createPath";
+import { objectPositionsInSpace } from "./constants";
 
 export default function Model({ ...props }) {
   const { camera } = useThree();
@@ -67,22 +68,28 @@ export default function Model({ ...props }) {
   const planeToAndroidProgressChecker = useRef(0);
   const planeToAppleProgressChecker = useRef(0);
   const planeToReactPositionProgressChecker = useRef(0);
-
   const moveCamera = useRef(false);
 
   const lineRef = useRef();
 
   lineRef.current && lineRef.current.computeLineDistances();
 
+  const {
+    planeInitialPosition: p,
+    clock,
+    camel,
+    android,
+    ios,
+    react,
+  } = objectPositionsInSpace;
+
   /** Line */
   const [points] = useState(() => {
     return [
-      new Vector3(15, -1.09, 682),
-      new Vector3(10, 0, 650),
-      new Vector3(5, 0, 600),
+      new Vector3(p.x, p.y, p.z),
       //clock
       ...createSpiralPathFromCoordinateWithRadius({
-        coordinate: [0, 0, 500],
+        coordinate: [clock.x, clock.y, clock.z],
         radius: 10,
         direction: 1,
         spirals: 4,
@@ -90,7 +97,7 @@ export default function Model({ ...props }) {
       }).points,
       //camel
       ...createSpiralPathFromCoordinateWithRadius({
-        coordinate: [50, 10, 400],
+        coordinate: [camel.x, camel.y, camel.z],
         direction: 1,
         radius: 10,
         spirals: 2,
@@ -99,7 +106,7 @@ export default function Model({ ...props }) {
       }).points,
       //android
       ...createSpiralPathFromCoordinateWithRadius({
-        coordinate: [100, 0, 300],
+        coordinate: [android.x, android.y, android.z],
         direction: -1,
         radius: 10,
         spirals: 2,
@@ -108,7 +115,7 @@ export default function Model({ ...props }) {
       }).points,
       //ios
       ...createSpiralPathFromCoordinateWithRadius({
-        coordinate: [0, 10, 200],
+        coordinate: [ios.x, ios.y, ios.z],
         direction: -1,
         radius: 10,
         spirals: 2,
@@ -117,7 +124,7 @@ export default function Model({ ...props }) {
       }).points,
       //react
       ...createSpiralPathFromCoordinateWithRadius({
-        coordinate: [0, 0, 100],
+        coordinate: [react.x, react.y, react.z],
         direction: 1,
         radius: 10,
         spirals: 2,
@@ -232,7 +239,10 @@ export default function Model({ ...props }) {
               fold,
               planeFoldingProgress,
               planeFoldingProgressChecker,
-              10000
+              10000,
+              true,
+              1,
+              true
             );
             break;
           case "planeToInitialTrajectoryPointProgress":

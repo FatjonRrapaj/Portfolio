@@ -672,7 +672,7 @@ export default function Animator() {
       },
     });
 
-    //bring the cubes to camel position
+    //bring the cubes to android position
     timeline.add({
       targets: empty,
       duration: 500,
@@ -901,7 +901,7 @@ export default function Animator() {
     //set plane to react position
     timeline.add({
       targets: empty,
-      duration: 5000,
+      duration: 3000,
       update: function (anim) {
         handleUpdateAnimation(
           anim,

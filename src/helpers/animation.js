@@ -23,6 +23,7 @@ export function seekGltfAnimation(
 ) {
   if (!animation) return;
   animation.reset();
+
   animation.clampWhenFinished = clampWhenFinished;
   animation.repetitions = repetitions;
 

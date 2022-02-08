@@ -10,9 +10,8 @@ import anime from "animejs/lib/anime.es";
 import { useControls } from "leva";
 
 import Paragraph from "./paragraphs/Paragraph";
-
 import { seekGltfAnimation } from "../helpers/animation";
-import { AnimationActionLoopStyles } from "three";
+import { objectPositionsInSpace } from "./constants";
 
 export default function Model({ ...props }) {
   const { camera } = useThree();
@@ -278,9 +277,27 @@ export default function Model({ ...props }) {
     //return refs are not do not have values yet.
     if (!mainContainer.current) return;
 
+    const {
+      planeInitialPosition: initialPosition,
+      clock,
+      camel,
+      android,
+      ios,
+      react,
+    } = objectPositionsInSpace;
+
+    const _ = anime({
+      targets: mainContainer.current.position,
+      x: [15.45, 15.45],
+      y: [-0.6, -0.6],
+      z: [681.4, 681.4],
+      duration: 1,
+      autoplay: true,
+    });
+
     //initial rotation
     const initialRotation = anime({
-      targets: mainContainer.current?.rotation,
+      targets: mainContainer.current.rotation,
       x: 0,
       y: 0,
       z: 0,
@@ -319,9 +336,10 @@ export default function Model({ ...props }) {
     //bring cubes to the clock position
     const cubesToClockPosition = anime({
       targets: mainContainer.current.position,
-      x: -85,
-      y: 10,
-      z: 562,
+      //small adjustments for the camera
+      x: [15.45, clock.x - 2],
+      y: [-0.6, clock.y + 8],
+      z: [681.4, clock.z + 50],
       duration: 500,
       autoplay: false,
     });
@@ -359,12 +377,14 @@ export default function Model({ ...props }) {
       autoplay: false,
     });
 
+    //TODO: set clock colors
+
     //bring cubes to the camel position
     const cubesToCamelPosition = anime({
       targets: mainContainer.current.position,
-      x: 80,
-      y: 5,
-      z: 484,
+      x: [clock.x - 4, camel.x - 10],
+      y: [clock.y + 8, camel.y + 5],
+      z: [clock.z + 20, camel.z + 40],
       duration: 500,
       autoplay: false,
     });
@@ -406,9 +426,9 @@ export default function Model({ ...props }) {
     //bring the cubes to android position
     const cubesToAndroidPosition = anime({
       targets: mainContainer.current.position,
-      x: 48,
-      y: 12,
-      z: 450,
+      x: [camel.x - 10, android.x - 6],
+      y: [camel.y + 5, android.y + 3],
+      z: [camel.z + 10, android.z + 36],
       duration: 500,
       autoplay: false,
     });
@@ -448,9 +468,9 @@ export default function Model({ ...props }) {
     //bring the cubes to apple position
     const cubesToApplePosition = anime({
       targets: mainContainer.current.position,
-      x: 10,
-      y: 4,
-      z: 380,
+      x: [android.x - 8, ios.x + 15],
+      y: [android.y + 2, ios.y],
+      z: [android.z + 10, ios.z + 40],
       duration: 500,
       autoplay: false,
     });
@@ -492,10 +512,9 @@ export default function Model({ ...props }) {
     //cubes to react animation
     const cubesToReactPosition = anime({
       targets: mainContainer.current.position,
-      //TODO: change this
-      x: 0,
-      y: 0,
-      z: 0,
+      x: [ios.x + 15, react.x - 2],
+      y: [ios.y, react.y + 4],
+      z: [ios.z + 20, react.z + 50],
       duration: 500,
       autoplay: false,
     });
@@ -504,7 +523,7 @@ export default function Model({ ...props }) {
     const subCubesToReactPosition = anime({
       targets: secondaryContainer.current.position,
       //TODO: change this
-      x: 0,
+      x: -0.2,
       y: 0,
       z: 0,
       duration: 500,
@@ -514,7 +533,7 @@ export default function Model({ ...props }) {
     //cubes to react rotation
     const cubesToReactRotation = anime({
       targets: mainContainer.current.rotation,
-      y: Math.PI / 2, //TODO: check this
+      // y: Math.PI / 2, //TODO: check this
       duration: 500,
       autoplay: false,
     });
@@ -540,6 +559,9 @@ export default function Model({ ...props }) {
       androidMove,
       toApple,
       appleMove,
+      toFlower,
+      toPineapple,
+      toCannon,
     } = actions;
     const unsubscribeExperieneStore = useStore.subscribe(
       (state) => state.experience,
@@ -550,6 +572,7 @@ export default function Model({ ...props }) {
         initialJoinProgress,
         initialGoProgress,
         initialScaleProgress,
+
         //clock
         experienceCubesToClockPositionProgress,
         toClockProgress,
@@ -557,6 +580,7 @@ export default function Model({ ...props }) {
         timeDefinitionProgress,
         clockCloseProgress,
         timeDefinitionCloseProgress,
+
         //camel
         cubesToCamelPositionProgress,
         toCamelProgress,
@@ -564,6 +588,7 @@ export default function Model({ ...props }) {
         camelMoveProgress,
         camelGoProgress,
         patienceDefitionCloseProgress,
+
         //android
         cubesToAndroidPositionProgress,
         toAndroidProgress,
@@ -571,6 +596,7 @@ export default function Model({ ...props }) {
         androidMoveProgress,
         androidGoProgress,
         androidParagraphCloseProgress,
+
         //apple
         experienceCubesToApplePositionProgress,
         toAppleProgress,
@@ -578,6 +604,24 @@ export default function Model({ ...props }) {
         appleMoveProgress,
         appleGoProgress,
         appleParagraphCloseProgress,
+
+        //react
+        cubesToReactPositionProgress,
+        //fower
+        toFlowerProgress,
+        flowerColorsProgress,
+        flowerParagraphProgress,
+        flowerParagraphCloseProgress,
+        //pineapple
+        toPineAppleProgress,
+        pineappleColorsProgress,
+        pineappleParagraphProgress,
+        pineappleParagraphCloseProgress,
+        //cannon
+        toCannonProgress,
+        cannonColorsProgress,
+        cannonParagraphProgress,
+        cannonParagraphCloseProgress,
       }) => {
         switch (lastChanged) {
           case "initialJoinProgress":
@@ -742,7 +786,6 @@ export default function Model({ ...props }) {
             actionsPointer.current.moveInfinite = false;
             actionsPointer.current.moveTweak = 0.1;
             break;
-
           case "androidMoveProgress":
             seekGltfAnimation(
               actionsPointer.current.move,
@@ -771,7 +814,6 @@ export default function Model({ ...props }) {
               1
             );
             break;
-
           //********************************************************************************* */
           //********************************************************************************* */
           //********************************************************************************* */
@@ -821,7 +863,6 @@ export default function Model({ ...props }) {
             break;
           case "appleParagraphProgress":
             showAppleParagraph.seek(appleParagraphProgress);
-
             //assign transform action to go
             actionsPointer.current.transform = go;
             actionsPointer.current.transformTweak = 0.1;
@@ -845,17 +886,46 @@ export default function Model({ ...props }) {
             } else {
               mainContainer.current.visible = true;
             }
-            seekGltfAnimation(
-              actionsPointer.current.transform,
-              appleGoProgress,
-              appleGoProgressChecker,
-              1000,
-              true,
-              1
-            );
+            // seekGltfAnimation(
+            //   actionsPointer.current.transform,
+            //   appleGoProgress,
+            //   appleGoProgressChecker,
+            //   1000,
+            //   true,
+            //   1
+            // );
             break;
           case "appleParagraphCloseProgress":
             hideAppleParagraph.seek(appleParagraphCloseProgress);
+            break;
+          case "cubesToReactPositionProgress":
+            actionsPointer.current.transform = toFlower;
+            mainContainer.current.visible = true;
+            cubesToReactPosition.seek(cubesToReactPositionProgress);
+            break;
+          case "toFlowerProgress":
+            break;
+          case "flowerColorsProgress":
+            break;
+          case "flowerParagraphProgress":
+            break;
+          case "flowerParagraphCloseProgress":
+            break;
+          case "toPineAppleProgress":
+            break;
+          case "pineappleColorsProgress":
+            break;
+          case "pineappleParagraphProgress":
+            break;
+          case "pineappleParagraphCloseProgress":
+            break;
+          case "toCannonProgress":
+            break;
+          case "cannonColorsProgress":
+            break;
+          case "cannonParagraphProgress":
+            break;
+          case "cannonParagraphCloseProgress":
             break;
           default:
             break;
@@ -1022,6 +1092,7 @@ export default function Model({ ...props }) {
       {/**TODO: EDIt the EXPERIENCE PARAGRAPHS IN THE RIGHT WAY */}
       <Paragraph
         ref={andoridParagraph}
+        position={[30, 0, 0]}
         title="Android"
         pronounciation="/ˈandrɔɪd/"
         definition="I started my career as an Android Developer"
