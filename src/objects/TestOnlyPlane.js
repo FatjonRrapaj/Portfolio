@@ -78,6 +78,8 @@ export default function Model({ ...props }) {
   const [points] = useState(() => {
     return [
       new Vector3(15, -1.09, 682),
+      new Vector3(10, 0, 650),
+      new Vector3(5, 0, 600),
       //clock
       ...createSpiralPathFromCoordinateWithRadius({
         coordinate: [0, 0, 500],
@@ -91,7 +93,8 @@ export default function Model({ ...props }) {
         coordinate: [50, 10, 400],
         direction: 1,
         radius: 10,
-        spirals: 4,
+        spirals: 2,
+        type: "twisted",
         heightDivider: 3,
       }).points,
       //android
@@ -99,23 +102,25 @@ export default function Model({ ...props }) {
         coordinate: [100, 0, 300],
         direction: -1,
         radius: 10,
-        spirals: 4,
+        spirals: 2,
         heightDivider: 3,
+        type: "double",
       }).points,
       //ios
       ...createSpiralPathFromCoordinateWithRadius({
         coordinate: [0, 10, 200],
         direction: -1,
         radius: 10,
-        spirals: 4,
+        spirals: 2,
         heightDivider: 4,
+        type: "twistedDown",
       }).points,
       //react
       ...createSpiralPathFromCoordinateWithRadius({
         coordinate: [0, 0, 100],
         direction: 1,
         radius: 10,
-        spirals: 4,
+        spirals: 2,
         heightDivider: 5,
       }).points,
       new Vector3(0, 0, 0),
