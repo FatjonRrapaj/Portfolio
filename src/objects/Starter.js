@@ -53,7 +53,7 @@ export default function Model({ ...props }) {
   const actionsPointer = useRef({
     transform: null,
     move: null,
-    moveInfinite: false, //if the moving animation is repeating or not.
+    move0: false, //if the moving animation is repeating or not.
     fromLastPosition: false, //animation should start from where the object is, not from moving.
     transformTweak: 0, //from manually testing the animations... sorry for the inconvience.
     moveTweak: 0, //from manually testing the animations... sorry for the inconvience.
@@ -83,7 +83,7 @@ export default function Model({ ...props }) {
         //asign clock animations
         actionsPointer.current.transform = toClock;
         actionsPointer.current.move = clockMove;
-        actionsPointer.current.moveInfinite = true;
+        actionsPointer.current.move0 = true;
         actionsPointer.current.transformTweak = 0.1;
         actionsPointer.current.moveTweak = 0.05;
         actionsPointer.current.reverseDelay = 7.75;
@@ -93,7 +93,7 @@ export default function Model({ ...props }) {
         //assign camel animations
         actionsPointer.current.transform = toCamel;
         actionsPointer.current.move = camelMove;
-        actionsPointer.current.moveInfinite = true;
+        actionsPointer.current.move0 = true;
         actionsPointer.current.transformTweak = 0.1;
         actionsPointer.current.moveTweak = 0.055;
         actionsPointer.current.reverseDelay = 7.75;
@@ -103,7 +103,7 @@ export default function Model({ ...props }) {
         //assign android animations
         actionsPointer.current.transform = toAndroid;
         actionsPointer.current.move = androidMove;
-        actionsPointer.current.moveInfinite = false;
+        actionsPointer.current.move0 = false;
         actionsPointer.current.transformTweak = 0;
         actionsPointer.current.moveTweak = 0.05;
         actionsPointer.current.reverseDelay = 7.75;
@@ -113,7 +113,7 @@ export default function Model({ ...props }) {
         //assign apple animations
         actionsPointer.current.transform = toApple;
         actionsPointer.current.move = appleMove;
-        actionsPointer.current.moveInfinite = true;
+        actionsPointer.current.move0 = true;
         actionsPointer.current.transformTweak = 0.1; //try also 0
         actionsPointer.current.moveTweak = 0.1; //try also 0.05
         actionsPointer.current.reverseDelay = 7.75;
@@ -150,27 +150,27 @@ export default function Model({ ...props }) {
       transform,
       transformTweak,
       move,
-      moveInfinite,
+      move0,
       moveTweak,
       fromLastPosition,
     } = actionsPointer.current;
 
     if (!fromLastPosition) {
       //come
-      come.repetitions = 1;
+      come.repetitions = 0;
       come.play();
       await delay(come._clip.duration); //wait for animation to finish
     }
 
     //transform animation
-    transform.repetitions = 1;
+    transform.repetitions = 0;
     transform.play();
     await delay(transform._clip.duration - transformTweak);
 
     //move animation
     if (move) {
-      if (moveInfinite) move.time = moveTweak;
-      if (!moveInfinite) move.repetitions = 1;
+      if (move0) move.time = moveTweak;
+      if (!move0) move.repetitions = 0;
       move.play();
     }
   };
@@ -189,20 +189,20 @@ export default function Model({ ...props }) {
     move.reset();
     move.time = moveTweak;
     move.timeScale = -1;
-    move.repetitions = 1;
+    move.repetitions = 0;
     move.startAt(reverseDelay);
     move.play();
     await delay(move._clip.duration);
 
     //reverse transform
     transform.reset();
-    transform.repetitions = 1;
+    transform.repetitions = 0;
     transform.timeScale = -1;
     transform.startAt(reverseDelay);
     transform.play(); //+2 needed when going backwards
     await delay(2.75);
 
-    go.repetitions = 1;
+    go.repetitions = 0;
     go.clampWhenFinished = true;
     go.play();
   };
@@ -546,9 +546,6 @@ export default function Model({ ...props }) {
       targets: mainCubeFaceMaterial.current.color,
     });
 
-    //LEFT HERE. <= check the file on the left and add the animation handlers at the swiths tatement here, also at the plane.
-    // q2#!!A>Sd
-
     const {
       go,
       toClock,
@@ -638,9 +635,8 @@ export default function Model({ ...props }) {
             } else {
               mainContainer.current.visible = true;
             }
-            actionsPointer.current.transform = go;
             seekGltfAnimation(
-              actionsPointer.current.transform,
+              go,
               initialGoProgress,
               initialGoProgressChecker,
               1000,
@@ -651,15 +647,26 @@ export default function Model({ ...props }) {
             mainContainer.current.visible = true;
             cubesToClockPosition.seek(experienceCubesToClockPositionProgress);
             cubesToClockRotation.seek(experienceCubesToClockPositionProgress);
-            subCubesToClockPosition.seek(
-              experienceCubesToClockPositionProgress
-            );
+            if (
+              secondaryContainer.current.position.x !==
+              mainContainer.current.position.x
+            ) {
+              secondaryContainer.current.position.copy(
+                mainContainer.current.position
+              );
+            }
+
             break;
           case "toClockProgress":
-            actionsPointer.current.transform = toClock;
-            actionsPointer.current.transformTweak = 0.1;
+            toCamel.setEffectiveWeight(0);
+            toCamel.reset(0);
+            camelMove.setEffectiveWeight(0);
+            camelMove.reset(0);
+            go.reset();
+
+            // actionsPointer.current.transformTweak = 0.1;
             seekGltfAnimation(
-              actionsPointer.current.transform,
+              toClock,
               toClockProgress,
               toClockProgressChecker,
               2000,
@@ -669,10 +676,9 @@ export default function Model({ ...props }) {
             break;
           case "clockMoveProgress":
             actionsPointer.current.move = clockMove;
-            actionsPointer.current.moveInfinite = true;
             actionsPointer.current.moveTweak = 0.05;
             seekGltfAnimation(
-              actionsPointer.current.move,
+              clockMove,
               clockMoveProgress,
               clockMoveProgressChecker,
               30,
@@ -692,11 +698,11 @@ export default function Model({ ...props }) {
               mainContainer.current.visible = true;
             }
             seekGltfAnimation(
-              actionsPointer.current.transform,
+              go,
               clockCloseProgress,
               clockCloseProgressChecker,
               1000,
-              false,
+              true,
               1
             );
             break;
@@ -714,23 +720,24 @@ export default function Model({ ...props }) {
             break;
           case "toCamelProgress":
             seekGltfAnimation(
-              actionsPointer.current.transform,
+              toCamel,
               toCamelProgress,
               toCamelProgressChecker,
               2000,
               false,
-              0
+              1
             );
             break;
           case "patienceDefinitionProgress":
             showPatienceDefinition.seek(patienceDefinitionProgress);
             break;
           case "camelMoveProgress":
-            actionsPointer.current.move = camelMove;
-            actionsPointer.current.moveInfinite = true;
-            actionsPointer.current.moveTweak = 0.06;
+            // actionsPointer.current.move = camelMove;
+            // actionsPointer.current.move0 = true;
+            // actionsPointer.current.moveTweak = 0.06;
+            console.log("TO APPLE TIME", toCamel.time);
             seekGltfAnimation(
-              actionsPointer.current.move,
+              camelMove,
               camelMoveProgress,
               camelMoveProgressChecker,
               30,
@@ -747,7 +754,7 @@ export default function Model({ ...props }) {
               mainContainer.current.visible = true;
             }
             seekGltfAnimation(
-              actionsPointer.current.transform,
+              go,
               camelGoProgress,
               camelGoProgressChecker,
               1000,
@@ -771,7 +778,7 @@ export default function Model({ ...props }) {
           case "toAndroidProgress":
             //preset the next animation
             seekGltfAnimation(
-              actionsPointer.current.transform,
+              toAndroid,
               toAndroidProgress,
               toAndroidProgressChecker,
               2000,
@@ -783,12 +790,12 @@ export default function Model({ ...props }) {
           case "androidParagraphProgress":
             showAndroidParagraph.seek(androidParagraphProgress);
             actionsPointer.current.move = androidMove;
-            actionsPointer.current.moveInfinite = false;
+            actionsPointer.current.move0 = false;
             actionsPointer.current.moveTweak = 0.1;
             break;
           case "androidMoveProgress":
             seekGltfAnimation(
-              actionsPointer.current.move,
+              androidMove,
               androidMoveProgress,
               androidMoveProgressChecker,
               30,
@@ -806,7 +813,7 @@ export default function Model({ ...props }) {
               mainContainer.current.visible = true;
             }
             seekGltfAnimation(
-              actionsPointer.current.transform,
+              go,
               androidGoProgress,
               androidGoProgressChecker,
               1000,
@@ -850,50 +857,61 @@ export default function Model({ ...props }) {
             //assign actions to apple animation (transform & move)
             break;
           case "toAppleProgress":
-            actionsPointer.current.transform = toApple;
-            actionsPointer.current.transformTweak = 0.1;
-            seekGltfAnimation(
-              actionsPointer.current.transform,
-              toAppleProgress,
-              toAppleProgressChecker,
-              2000,
-              true,
-              1
-            );
+            // actionsPointer.current.transform = toApple;
+            // actionsPointer.current.transformTweak = 0.1;
+            // toApple.play();
+            // toApple.repetitions = 1;
+            // seekGltfAnimation(
+            //   toApple,
+            //   toAppleProgress,
+            //   toAppleProgressChecker,
+            //   2000,
+            //   false,
+            //   1
+            // );
             break;
           case "appleParagraphProgress":
-            showAppleParagraph.seek(appleParagraphProgress);
-            //assign transform action to go
-            actionsPointer.current.transform = go;
-            actionsPointer.current.transformTweak = 0.1;
+            toAndroid.stop(0);
+            androidMove.stop(0);
+            if ((toApple.paused = true && toApple.time === 0)) {
+              toApple.reset();
+            }
+            toApple.repetitions = 1;
+            toApple.play();
+            if (toApple.time > 3.6) {
+              toApple.paused = true;
+            }
             break;
           case "appleMoveProgress":
-            actionsPointer.current.move = appleMove;
-            actionsPointer.current.moveTweak = 0.1;
-            seekGltfAnimation(
-              actionsPointer.current.move,
-              appleMoveProgress,
-              appleMoveProgressChecker,
-              30,
-              false,
-              3
-            );
+            // toApple.time = toApple._clip.duration - 0.1;
+            // toApple.paused = true;
+            appleMove.time = 0.5;
+            appleMove.play();
+            // seekGltfAnimation(
+            //   appleMove,
+            //   appleMoveProgress,
+            //   appleMoveProgressChecker,
+            //   30,
+            //   false,
+            //   3
+            // );
             break;
           case "appleGoProgress":
+            appleMove.stop(0);
             //TODO: REMOVE THIS UGLY HACK
             if (appleGoProgress > 90) {
               mainContainer.current.visible = false;
             } else {
               mainContainer.current.visible = true;
             }
-            // seekGltfAnimation(
-            //   actionsPointer.current.transform,
-            //   appleGoProgress,
-            //   appleGoProgressChecker,
-            //   1000,
-            //   true,
-            //   1
-            // );
+            seekGltfAnimation(
+              go,
+              appleGoProgress,
+              appleGoProgressChecker,
+              1000,
+              true,
+              1
+            );
             break;
           case "appleParagraphCloseProgress":
             hideAppleParagraph.seek(appleParagraphCloseProgress);
@@ -949,8 +967,8 @@ export default function Model({ ...props }) {
       const moveAnimTime = actionsPointer.current.move.time;
       const moveAnimDuration = actionsPointer.current.move._clip.duration;
       const moveAnimTweak = actionsPointer.current.moveTweak;
-      // const moveInfinite = actionsPointer.current.moveInfinite;
-      // if (moveInfinite) {
+      // const move0 = actionsPointer.current.move0;
+      // if (move0) {
       //   if (moveAnimTime >= moveAnimDuration - moveAnimTweak) {
       //     actionsPointer.current.move.paused = true;
       //   }

@@ -1,4 +1,4 @@
-import { LoopRepeat } from "three";
+import { LoopPingPong, LoopRepeat } from "three";
 
 export function lerp(a, b, t) {
   return (1 - t) * a + t * b;
@@ -25,6 +25,7 @@ export function seekGltfAnimation(
   animation.reset();
 
   animation.clampWhenFinished = clampWhenFinished;
+
   animation.repetitions = repetitions;
 
   if (customAnimationDuration) {
