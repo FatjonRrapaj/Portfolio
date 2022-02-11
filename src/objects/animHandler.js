@@ -486,7 +486,7 @@ export default function Animator() {
     //clockMove (GLTF)
     timeline.add({
       targets: empty,
-      duration: 3000,
+      duration: 2000,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -605,7 +605,7 @@ export default function Animator() {
     //play camel move animation (GLTF)
     timeline.add({
       targets: empty,
-      duration: 300,
+      duration: 2000,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -724,7 +724,7 @@ export default function Animator() {
     //android move (GLTF)
     timeline.add({
       targets: empty,
-      duration: 300,
+      duration: 2000,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
@@ -848,7 +848,7 @@ export default function Animator() {
     //move apple
     timeline.add({
       targets: empty,
-      duration: 300,
+      duration: 2000,
       update: function (anim) {
         handleUpdateAnimation(
           anim,

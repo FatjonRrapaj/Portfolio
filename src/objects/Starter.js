@@ -302,48 +302,44 @@ export default function Model({ ...props }) {
       prevAction: AnimationAction | null, //the previous anmation action, should be a ref
     }
   ) {
-    return new Promise((resolve) => {
-      action.reset();
+    action.reset();
+    action.timeScale = 1;
+    action.clampWhenFinished = true;
+    action.repetitions = repetitions;
+    action.setLoop(animationLoop);
+
+    if (customAnimationDuration) {
+      action.setDuration(customAnimationDuration);
+    }
+    if (prevAction.current) {
+      prevAction.current.fadeOut(0); // Set the influence of the previous action to 0
+    }
+
+    // The animation finished playing
+    mixer.addEventListener(
+      "finished",
+      () => {
+        prevAction.current = action; // Save a reference to the previous action
+      },
+      true
+    );
+
+    if (playbackController.current > progress) {
+      const factor = customAnimationDuration / 100;
+      mixer.setTime(progress * factor);
+    } else {
+      //animation is playing forward
       action.timeScale = 1;
-      action.clampWhenFinished = true;
-      action.repetitions = repetitions;
-      action.setLoop(animationLoop);
-
-      if (customAnimationDuration) {
-        action.setDuration(customAnimationDuration);
-      }
-      if (prevAction.current) {
-        prevAction.current.fadeOut(0); // Set the influence of the previous action to 0
-      }
-
-      // The animation finished playing
-      mixer.addEventListener(
-        "finished",
-        () => {
-          prevAction.current = action; // Save a reference to the previous action
-          resolve();
-        },
-        true
-      );
-
-      if (playbackController.current > progress) {
-        const factor = customAnimationDuration / 100;
-        mixer.setTime(progress * factor);
-      } else {
-        //animation is playing forward
-        action.timeScale = 1;
-        const currTime = (action._clip.duration * progress) / 100;
-        mixer.setTime(currTime);
-      }
+      const currTime = (action._clip.duration * progress) / 100;
+      mixer.setTime(currTime);
       action.play();
-      //very important
-      playbackController.current = progress;
+    }
+    //very important
+    playbackController.current = progress;
 
-      if (progress === 100 && customAnimationDuration) {
-        prevAction.current = action;
-        resolve();
-      }
-    });
+    if (progress === 100 && customAnimationDuration) {
+      prevAction.current = action;
+    }
   }
 
   useEffect(async () => {
@@ -757,7 +753,6 @@ export default function Model({ ...props }) {
               prevAction,
               mixer,
             });
-            currAction.current = toClock;
 
             // seekGltfAnimation(
             //   actionsPointer.current.transform,
@@ -773,18 +768,16 @@ export default function Model({ ...props }) {
             actionsPointer.current.moveInfinite = true;
             actionsPointer.current.moveTweak = 0.05;
             play({
-              currAction,
               action: clockMove,
               progress: clockMoveProgress,
               playbackController: clockMoveProgressChecker,
-              customAnimationDuration: 20,
+              customAnimationDuration: 200,
               repetitions: 10,
               prevAction,
               clampWhenFinished: false,
               animationLoop: LoopRepeat,
               mixer,
             });
-            currAction.current = clockMove;
 
             // seekGltfAnimation(
             //   actionsPointer.current.move,
@@ -818,7 +811,6 @@ export default function Model({ ...props }) {
               animationLoop: LoopOnce,
               mixer,
             });
-            currAction.current = go;
             // seekGltfAnimation(
             //   actionsPointer.current.transform,
             //   clockCloseProgress,
@@ -853,7 +845,6 @@ export default function Model({ ...props }) {
               animationLoop: LoopOnce,
               mixer,
             });
-            currAction.current = toCamel;
 
             // seekGltfAnimation(
             //   actionsPointer.current.transform,
@@ -877,8 +868,8 @@ export default function Model({ ...props }) {
               action: camelMove,
               progress: camelMoveProgress,
               playbackController: camelMoveProgressChecker,
-              customAnimationDuration: 3000,
-              repetitions: 20,
+              customAnimationDuration: 200,
+              repetitions: 10,
               prevAction,
               clampWhenFinished: false,
               animationLoop: LoopRepeat,
@@ -975,7 +966,7 @@ export default function Model({ ...props }) {
               prevAction,
               clampWhenFinished: false,
               animationLoop: LoopRepeat,
-              customAnimationDuration: 2,
+              customAnimationDuration: 200,
               progress: androidMoveProgress,
               playbackController: androidMoveProgressChecker,
             });
@@ -1066,7 +1057,7 @@ export default function Model({ ...props }) {
               clampWhenFinished: true,
               animationLoop: LoopOnce,
               customAnimationDuration: 2000,
-              progress: toApple,
+              progress: toAppleProgress,
               playbackController: toAppleProgressChecker,
             });
             // seekGltfAnimation(
@@ -1095,7 +1086,7 @@ export default function Model({ ...props }) {
               prevAction,
               clampWhenFinished: false,
               animationLoop: LoopRepeat,
-              customAnimationDuration: 2,
+              customAnimationDuration: 200,
               progress: appleMoveProgress,
               playbackController: appleMoveProgressChecker,
             });
