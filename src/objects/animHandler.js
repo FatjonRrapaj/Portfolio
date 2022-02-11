@@ -43,7 +43,7 @@ export default function Animator() {
 
     _event.current.deltaY = e.wheelDeltaY || e.deltaY * -1;
     // reduce by half the delta amount otherwise it scroll too fast (in a other way we could increase the height of the container too)
-    _event.current.deltaY *= 0.5;
+    _event.current.deltaY *= 0.3;
     scroll(e);
   }
 
