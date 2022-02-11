@@ -302,7 +302,7 @@ export default function Model({ ...props }) {
       prevAction: AnimationAction | null, //the previous anmation action, should be a ref
     }
   ) {
-    action.reset();
+    action.reset().play();
     action.timeScale = 1;
     action.clampWhenFinished = false;
     action.repetitions = repetitions;
@@ -323,7 +323,6 @@ export default function Model({ ...props }) {
       const currTime = (action._clip.duration * progress) / 100;
       mixer.setTime(currTime);
     }
-    action.play();
 
     //very important
     playbackController.current = progress;
@@ -687,23 +686,15 @@ export default function Model({ ...props }) {
           case "initialJoinProgress":
             join.seek(initialJoinProgress);
             break;
-
           case "initialScaleProgress":
             scaleDown.seek(initialScaleProgress);
             break;
-
           case "initialGoProgress":
             if (initialGoProgress > 90) {
               mainContainer.current.visible = false;
             } else {
               mainContainer.current.visible = true;
             }
-
-            // if (initialGoProgressChecker > initialGoProgress) {
-            //   prevAction.current = toClock;
-            // } else {
-            //   prevAction.current = clockMove;
-            // }
             if (actionsPointer.current.transform != go) {
               mixer.stopAllAction();
             }
@@ -714,7 +705,7 @@ export default function Model({ ...props }) {
               progress: initialGoProgress,
               playbackController: initialGoProgressChecker,
               timeTweak: 0,
-              clampWhenFinished: false,
+              clampWhenFinished: true,
               repetitions: 1,
               customAnimationDuration: 1000,
               prevAction: prevAction,
@@ -734,14 +725,7 @@ export default function Model({ ...props }) {
               mixer.stopAllAction();
             }
             actionsPointer.current.transform = toClock;
-
             actionsPointer.current.transformTweak = 10;
-
-            // if (toClockProgressChecker > toClockProgress) {
-            //   prevAction.current = clockMove;
-            // } else {
-            //   prevAction.current = go;
-            // }
             play({
               currAction,
               action: toClock,
@@ -753,7 +737,6 @@ export default function Model({ ...props }) {
               prevAction,
               mixer,
             });
-
             break;
           case "clockMoveProgress":
             if (
@@ -763,16 +746,6 @@ export default function Model({ ...props }) {
               mixer.stopAllAction();
             }
             actionsPointer.current.transform = clockMove;
-
-            // actionsPointer.current.move = clockMove;
-            // actionsPointer.current.moveInfinite = true;
-            // actionsPointer.current.moveTweak = 0.05;
-
-            // if (clockMoveProgressChecker > clockMoveProgress) {
-            //   prevAction.current = go;
-            // } else {
-            //   prevAction.current = toClock;
-            // }
 
             play({
               action: clockMove,
@@ -801,12 +774,6 @@ export default function Model({ ...props }) {
             } else {
               mainContainer.current.visible = true;
             }
-
-            // if (clockCloseProgressChecker > clockCloseProgress) {
-            //   prevAction.current = toCamel;
-            // } else {
-            //   prevAction.current = clockMove;
-            // }
             play({
               currAction,
               action: go,
@@ -826,16 +793,10 @@ export default function Model({ ...props }) {
           case "cubesToCamelPositionProgress":
             mainContainer.current.visible = true;
             cubesToCamelPosition.seek(cubesToCamelPositionProgress);
-            subCubesToCamelPosition.seek(cubesToCamelPositionProgress);
+            // subCubesToCamelPosition.seek(cubesToCamelPositionProgress);
             rotateCubesForCamelAnim.seek(cubesToCamelPositionProgress);
-
             break;
           case "toCamelProgress":
-            // if (toAndroidProgressChecker > toCamelProgress) {
-            //   prevAction.current = camelMove;
-            // } else {
-            //   prevAction.current = go;
-            // }
             if (actionsPointer.current.transform != toCamel) {
               mixer.stopAllAction();
             }
@@ -866,11 +827,6 @@ export default function Model({ ...props }) {
             actionsPointer.current.transform = camelMove;
             actionsPointer.current.move = camelMove;
             actionsPointer.current.moveTweak = 0.06;
-            // if (camelMoveProgressChecker > camelMoveProgress) {
-            //   prevAction.current = go;
-            // } else {
-            //   prevAction.current = toCamel;
-            // }
             play({
               action: camelMove,
               progress: camelMoveProgress,
@@ -893,11 +849,6 @@ export default function Model({ ...props }) {
             } else {
               mainContainer.current.visible = true;
             }
-            // if (camelGoProgressChecker > camelGoProgress) {
-            //   prevAction.current = toAndroid;
-            // } else {
-            //   prevAction.current = camelMove;
-            // }
             play({
               currAction,
               action: go,
@@ -906,7 +857,7 @@ export default function Model({ ...props }) {
               customAnimationDuration: 1000,
               repetitions: 1,
               prevAction,
-              clampWhenFinished: false,
+              clampWhenFinished: true,
               animationLoop: LoopOnce,
               mixer,
             });
@@ -919,18 +870,9 @@ export default function Model({ ...props }) {
             cubesToAndroidPosition.seek(cubesToAndroidPositionProgress);
             subCubesToAndroidPosition.seek(cubesToAndroidPositionProgress);
             rotateCubesForAndroidAnimation.seek(cubesToAndroidPositionProgress);
-            //TODO ADD CORRECT TRANSFORM TWEAKS
-            actionsPointer.current.transform = toAndroid;
-            actionsPointer.current.transformTweak = 0.1;
             //TODO: animate color chages for cube materials and mabybe environment
             break;
           case "toAndroidProgress":
-            //preset the next animation
-            // if (toAndroidProgressChecker > toAndroidProgress) {
-            //   prevAction.current = androidMove;
-            // } else {
-            //   prevAction.current = go;
-            // }
             if (actionsPointer.current.transform != toAndroid) {
               mixer.stopAllAction();
             }
@@ -953,11 +895,6 @@ export default function Model({ ...props }) {
             actionsPointer.current.moveTweak = 0.1;
             break;
           case "androidMoveProgress":
-            // if (androidMoveProgressChecker > androidMoveProgress) {
-            //   prevAction.current = go;
-            // } else {
-            //   prevAction.current = toAndroid;
-            // }
             if (
               actionsPointer.current.transform != toAndroid &&
               actionsPointer.current.transform != androidMove
@@ -999,7 +936,7 @@ export default function Model({ ...props }) {
               action: go,
               repetitions: 1,
               prevAction,
-              clampWhenFinished: false,
+              clampWhenFinished: true,
               animationLoop: LoopOnce,
               customAnimationDuration: 1000,
               progress: androidGoProgress,
@@ -1065,7 +1002,7 @@ export default function Model({ ...props }) {
               action: appleMove,
               repetitions: 1,
               prevAction,
-              clampWhenFinished: false,
+              clampWhenFinished: true,
               animationLoop: LoopRepeat,
               customAnimationduration: 1,
               progress: appleMoveProgress,
@@ -1073,7 +1010,6 @@ export default function Model({ ...props }) {
             });
             break;
           case "appleGoProgress":
-            //TODO: REMOVE THIS UGLY HACK
             if (actionsPointer.current.transform != go) {
               mixer.stopAllAction();
             }
@@ -1088,7 +1024,7 @@ export default function Model({ ...props }) {
               action: go,
               repetitions: 1,
               prevAction,
-              clampWhenFinished: false,
+              clampWhenFinished: true,
               animationLoop: LoopOnce,
               customAnimationDuration: 1000,
               progress: appleGoProgress,
@@ -1113,6 +1049,7 @@ export default function Model({ ...props }) {
               playbackController: toFlowerProgressChecker,
               customAnimationDuration: 2000,
               animationLoop: LoopOnce,
+              clampWhenFinished: true,
               mixer,
               repetitions: 1,
             });
@@ -1134,6 +1071,7 @@ export default function Model({ ...props }) {
               playbackController: toPineappleProgressChecker,
               customAnimationDuration: 2000,
               animationLoop: LoopOnce,
+              clampWhenFinished: true,
               mixer,
               repetitions: 1,
             });
@@ -1155,6 +1093,7 @@ export default function Model({ ...props }) {
               playbackController: toCannonProgressChecker,
               customAnimationDuration: 2000,
               animationLoop: LoopOnce,
+              clampWhenFinished: true,
               mixer,
               repetitions: 1,
             });
