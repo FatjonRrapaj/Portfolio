@@ -241,39 +241,6 @@ export default function Model({ ...props }) {
   const toPineappleProgressChecker = useRef(0);
   const toCannonProgressChecker = useRef(0);
 
-  // useControls("Experience", {
-  //   x: {
-  //     value: 15.45,
-  //     min: -1000,
-  //     max: 1000,
-  //     onChange: (val) => {
-  //       if (mainContainer?.current?.position.x) {
-  //         mainContainer.current.position.x = val;
-  //       }
-  //     },
-  //   },
-  //   y: {
-  //     value: -0.6,
-  //     min: -1000,
-  //     max: 1000,
-  //     onChange: (val) => {
-  //       if (mainContainer?.current?.position.y) {
-  //         mainContainer.current.position.y = val;
-  //       }
-  //     },
-  //   },
-  //   z: {
-  //     value: 681.4,
-  //     min: -1000,
-  //     max: 1000,
-  //     onChange: (val) => {
-  //       if (mainContainer?.current?.position.z) {
-  //         mainContainer.current.position.z = val;
-  //       }
-  //     },
-  //   },
-  // });
-
   const currAction = useRef(null);
   const prevAction = useRef(null);
 
