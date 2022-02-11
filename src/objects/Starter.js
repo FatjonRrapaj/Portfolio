@@ -12,6 +12,10 @@ import { useControls } from "leva";
 import Paragraph from "./paragraphs/Paragraph";
 import { seekGltfAnimation } from "../helpers/animation";
 import { objectPositionsInSpace } from "./constants";
+import { AnimationMixer, LoopRepeat, LoopOnce, LoopPingPong } from "three";
+import { AnimationAction } from "three/src/animation/AnimationAction";
+
+//https://discourse.threejs.org/t/playing-an-animation-changes-behaviour-of-next-animation/14928/7
 
 export default function Model({ ...props }) {
   const { camera } = useThree();
@@ -32,7 +36,8 @@ export default function Model({ ...props }) {
   const { nodes, materials, animations } = useGLTF(
     process.env.PUBLIC_URL + "/all.glb"
   );
-  const { actions } = useAnimations(animations, mainContainer);
+  const { actions, mixer } = useAnimations(animations, mainContainer);
+  console.log("mixer: ", mixer);
 
   //refs
   const timeouts = useRef([]);
@@ -236,40 +241,112 @@ export default function Model({ ...props }) {
   const toPineappleProgressChecker = useRef(0);
   const toCannonProgressChecker = useRef(0);
 
-  useControls("Experience", {
-    x: {
-      value: 15.45,
-      min: -1000,
-      max: 1000,
-      onChange: (val) => {
-        if (mainContainer?.current?.position.x) {
-          mainContainer.current.position.x = val;
-        }
-      },
-    },
-    y: {
-      value: -0.6,
-      min: -1000,
-      max: 1000,
-      onChange: (val) => {
-        if (mainContainer?.current?.position.y) {
-          mainContainer.current.position.y = val;
-        }
-      },
-    },
-    z: {
-      value: 681.4,
-      min: -1000,
-      max: 1000,
-      onChange: (val) => {
-        if (mainContainer?.current?.position.z) {
-          mainContainer.current.position.z = val;
-        }
-      },
-    },
-  });
+  // useControls("Experience", {
+  //   x: {
+  //     value: 15.45,
+  //     min: -1000,
+  //     max: 1000,
+  //     onChange: (val) => {
+  //       if (mainContainer?.current?.position.x) {
+  //         mainContainer.current.position.x = val;
+  //       }
+  //     },
+  //   },
+  //   y: {
+  //     value: -0.6,
+  //     min: -1000,
+  //     max: 1000,
+  //     onChange: (val) => {
+  //       if (mainContainer?.current?.position.y) {
+  //         mainContainer.current.position.y = val;
+  //       }
+  //     },
+  //   },
+  //   z: {
+  //     value: 681.4,
+  //     min: -1000,
+  //     max: 1000,
+  //     onChange: (val) => {
+  //       if (mainContainer?.current?.position.z) {
+  //         mainContainer.current.position.z = val;
+  //       }
+  //     },
+  //   },
+  // });
 
-  useEffect(() => {
+  const currAction = useRef(null);
+  const prevAction = useRef(null);
+
+  function play(
+    {
+      mixer,
+      action,
+      progress = 0,
+      timeTweak = 0,
+      clampWhenFinished,
+      repetitions = 1,
+      playbackController,
+      customAnimationDuration = 2000,
+      animationLoop = LoopOnce,
+      prevAction = null,
+    } = {
+      action: [AnimationAction], //the actions, auto genearated by pmndrs-drei (gltfjsx)
+      mixer: AnimationMixer, //the animation mixer auto genearated by pmndrs-drei (gltfjsx)
+      progress: Number, // the progress passed from the timeline progress
+      timeTweak: Number, //tweak to pause before time
+      clampWhenFinished: Boolean, //https://threejs.org/docs/#api/en/animation/AnimationAction.clampWhenFinished
+      repetitions: Number,
+      playbackController: Number, //a ref that check if the animation is playing backwards
+      customAnimationDuration: Number | null, //provided if there's a custom animation duration. should be the same as the timeile duration in animationHandler.js
+      animationLoop: Number, //Animation action loop styles
+      prevAction: AnimationAction | null, //the previous anmation action, should be a ref
+    }
+  ) {
+    return new Promise((resolve) => {
+      action.reset();
+      action.timeScale = 1;
+      action.clampWhenFinished = true;
+      action.repetitions = repetitions;
+      action.setLoop(animationLoop);
+
+      if (customAnimationDuration) {
+        action.setDuration(customAnimationDuration);
+      }
+      if (prevAction.current) {
+        prevAction.current.fadeOut(0); // Set the influence of the previous action to 0
+      }
+
+      // The animation finished playing
+      mixer.addEventListener(
+        "finished",
+        () => {
+          prevAction.current = action; // Save a reference to the previous action
+          resolve();
+        },
+        true
+      );
+
+      if (playbackController.current > progress) {
+        const factor = customAnimationDuration / 100;
+        mixer.setTime(progress * factor);
+      } else {
+        //animation is playing forward
+        action.timeScale = 1;
+        const currTime = (action._clip.duration * progress) / 100;
+        mixer.setTime(currTime);
+      }
+      action.play();
+      //very important
+      playbackController.current = progress;
+
+      if (progress === 100 && customAnimationDuration) {
+        prevAction.current = action;
+        resolve();
+      }
+    });
+  }
+
+  useEffect(async () => {
     // assignActions(6);
     // startAnimations();
     // endAnimations();
@@ -638,14 +715,26 @@ export default function Model({ ...props }) {
             } else {
               mainContainer.current.visible = true;
             }
-            actionsPointer.current.transform = go;
-            seekGltfAnimation(
-              actionsPointer.current.transform,
-              initialGoProgress,
-              initialGoProgressChecker,
-              1000,
-              false
-            );
+            play({
+              action: go,
+              mixer,
+              progress: initialGoProgress,
+              playbackController: initialGoProgressChecker,
+              timeTweak: 0,
+              clampWhenFinished: true,
+              repetitions: 1,
+              customAnimationDuration: 1000,
+              prevAction: prevAction,
+            });
+
+            // actionsPointer.current.transform = go;
+            // seekGltfAnimation(
+            //   actionsPointer.current.transform,
+            //   initialGoProgress,
+            //   initialGoProgressChecker,
+            //   1000,
+            //   false
+            // );
             break;
           case "experienceCubesToClockPositionProgress":
             mainContainer.current.visible = true;
@@ -658,27 +747,53 @@ export default function Model({ ...props }) {
           case "toClockProgress":
             actionsPointer.current.transform = toClock;
             actionsPointer.current.transformTweak = 0.1;
-            seekGltfAnimation(
-              actionsPointer.current.transform,
-              toClockProgress,
-              toClockProgressChecker,
-              2000,
-              false,
-              1
-            );
+            play({
+              currAction,
+              action: toClock,
+              progress: toClockProgress,
+              playbackController: toClockProgressChecker,
+              customAnimationDuration: 2000,
+              repetitions: 1,
+              prevAction,
+              mixer,
+            });
+            currAction.current = toClock;
+
+            // seekGltfAnimation(
+            //   actionsPointer.current.transform,
+            //   toClockProgress,
+            //   toClockProgressChecker,
+            //   2000,
+            //   false,
+            //   1
+            // );
             break;
           case "clockMoveProgress":
             actionsPointer.current.move = clockMove;
             actionsPointer.current.moveInfinite = true;
             actionsPointer.current.moveTweak = 0.05;
-            seekGltfAnimation(
-              actionsPointer.current.move,
-              clockMoveProgress,
-              clockMoveProgressChecker,
-              30,
-              false,
-              3
-            );
+            play({
+              currAction,
+              action: clockMove,
+              progress: clockMoveProgress,
+              playbackController: clockMoveProgressChecker,
+              customAnimationDuration: 20,
+              repetitions: 10,
+              prevAction,
+              clampWhenFinished: false,
+              animationLoop: LoopRepeat,
+              mixer,
+            });
+            currAction.current = clockMove;
+
+            // seekGltfAnimation(
+            //   actionsPointer.current.move,
+            //   clockMoveProgress,
+            //   clockMoveProgressChecker,
+            //   30,
+            //   false,
+            //   3
+            // );
             break;
           case "timeDefinitionProgress":
             timeDefinitionShow.seek(timeDefinitionProgress);
@@ -691,14 +806,27 @@ export default function Model({ ...props }) {
             } else {
               mainContainer.current.visible = true;
             }
-            seekGltfAnimation(
-              actionsPointer.current.transform,
-              clockCloseProgress,
-              clockCloseProgressChecker,
-              1000,
-              false,
-              1
-            );
+            play({
+              currAction,
+              action: go,
+              progress: clockCloseProgress,
+              playbackController: clockCloseProgressChecker,
+              customAnimationDuration: 1000,
+              repetitions: 1,
+              prevAction,
+              clampWhenFinished: false,
+              animationLoop: LoopOnce,
+              mixer,
+            });
+            currAction.current = go;
+            // seekGltfAnimation(
+            //   actionsPointer.current.transform,
+            //   clockCloseProgress,
+            //   clockCloseProgressChecker,
+            //   1000,
+            //   false,
+            //   1
+            // );
             break;
           case "timeDefinitionCloseProgress":
             timeDefinitionClose.seek(timeDefinitionCloseProgress);
@@ -713,14 +841,28 @@ export default function Model({ ...props }) {
             actionsPointer.current.transformTweak = 0.0;
             break;
           case "toCamelProgress":
-            seekGltfAnimation(
-              actionsPointer.current.transform,
-              toCamelProgress,
-              toCamelProgressChecker,
-              2000,
-              false,
-              0
-            );
+            play({
+              currAction,
+              action: toCamel,
+              progress: toCamelProgress,
+              playbackController: toCamelProgressChecker,
+              customAnimationDuration: 2000,
+              repetitions: 1,
+              prevAction,
+              clampWhenFinished: false,
+              animationLoop: LoopOnce,
+              mixer,
+            });
+            currAction.current = toCamel;
+
+            // seekGltfAnimation(
+            //   actionsPointer.current.transform,
+            //   toCamelProgress,
+            //   toCamelProgressChecker,
+            //   2000,
+            //   false,
+            //   0
+            // );
             break;
           case "patienceDefinitionProgress":
             showPatienceDefinition.seek(patienceDefinitionProgress);
@@ -729,14 +871,28 @@ export default function Model({ ...props }) {
             actionsPointer.current.move = camelMove;
             actionsPointer.current.moveInfinite = true;
             actionsPointer.current.moveTweak = 0.06;
-            seekGltfAnimation(
-              actionsPointer.current.move,
-              camelMoveProgress,
-              camelMoveProgressChecker,
-              30,
-              false,
-              3
-            );
+
+            play({
+              currAction,
+              action: camelMove,
+              progress: camelMoveProgress,
+              playbackController: camelMoveProgressChecker,
+              customAnimationDuration: 3000,
+              repetitions: 20,
+              prevAction,
+              clampWhenFinished: false,
+              animationLoop: LoopRepeat,
+              mixer,
+            });
+
+            // seekGltfAnimation(
+            //   actionsPointer.current.move,
+            //   camelMoveProgress,
+            //   camelMoveProgressChecker,
+            //   30,
+            //   false,
+            //   3
+            // );
             break;
           case "camelGoProgress":
             actionsPointer.current.paused = true;
@@ -746,14 +902,28 @@ export default function Model({ ...props }) {
             } else {
               mainContainer.current.visible = true;
             }
-            seekGltfAnimation(
-              actionsPointer.current.transform,
-              camelGoProgress,
-              camelGoProgressChecker,
-              1000,
-              false,
-              1
-            );
+
+            play({
+              currAction,
+              action: go,
+              progress: camelGoProgress,
+              playbackController: camelGoProgressChecker,
+              customAnimationDuration: 1000,
+              repetitions: 1,
+              prevAction,
+              clampWhenFinished: false,
+              animationLoop: LoopOnce,
+              mixer,
+            });
+
+            // seekGltfAnimation(
+            //   actionsPointer.current.transform,
+            //   camelGoProgress,
+            //   camelGoProgressChecker,
+            //   1000,
+            //   false,
+            //   1
+            // );
             break;
           case "patienceDefitionCloseProgress":
             hidePatienceDefinition.seek(patienceDefitionCloseProgress);
@@ -770,14 +940,25 @@ export default function Model({ ...props }) {
             break;
           case "toAndroidProgress":
             //preset the next animation
-            seekGltfAnimation(
-              actionsPointer.current.transform,
-              toAndroidProgress,
-              toAndroidProgressChecker,
-              2000,
-              true,
-              1
-            );
+            play({
+              mixer,
+              action: toAndroid,
+              repetitions: 1,
+              clampWhenFinished: false,
+              prevAction,
+              playbackController: toAndroidProgressChecker,
+              progress: toAndroidProgress,
+              customAnimationDuration: 2000,
+              animationLoop: LoopOnce,
+            });
+            // seekGltfAnimation(
+            //   actionsPointer.current.transform,
+            //   toAndroidProgress,
+            //   toAndroidProgressChecker,
+            //   2000,
+            //   true,
+            //   1
+            // );
             break;
 
           case "androidParagraphProgress":
@@ -787,14 +968,26 @@ export default function Model({ ...props }) {
             actionsPointer.current.moveTweak = 0.1;
             break;
           case "androidMoveProgress":
-            seekGltfAnimation(
-              actionsPointer.current.move,
-              androidMoveProgress,
-              androidMoveProgressChecker,
-              30,
-              false,
-              3
-            );
+            play({
+              mixer,
+              action: androidMove,
+              repetitions: 10,
+              prevAction,
+              clampWhenFinished: false,
+              animationLoop: LoopRepeat,
+              customAnimationDuration: 2,
+              progress: androidMoveProgress,
+              playbackController: androidMoveProgressChecker,
+            });
+
+            // seekGltfAnimation(
+            //   actionsPointer.current.move,
+            //   androidMoveProgress,
+            //   androidMoveProgressChecker,
+            //   30,
+            //   false,
+            //   3
+            // );
             break;
 
           case "androidGoProgress":
@@ -805,14 +998,27 @@ export default function Model({ ...props }) {
             } else {
               mainContainer.current.visible = true;
             }
-            seekGltfAnimation(
-              actionsPointer.current.transform,
-              androidGoProgress,
-              androidGoProgressChecker,
-              1000,
-              false,
-              1
-            );
+
+            play({
+              mixer,
+              action: go,
+              repetitions: 1,
+              prevAction,
+              clampWhenFinished: false,
+              animationLoop: LoopOnce,
+              customAnimationDuration: 1000,
+              progress: androidGoProgress,
+              playbackController: androidGoProgressChecker,
+            });
+
+            // seekGltfAnimation(
+            //   actionsPointer.current.transform,
+            //   androidGoProgress,
+            //   androidGoProgressChecker,
+            //   1000,
+            //   false,
+            //   1
+            // );
             break;
           //********************************************************************************* */
           //********************************************************************************* */
@@ -852,14 +1058,25 @@ export default function Model({ ...props }) {
           case "toAppleProgress":
             actionsPointer.current.transform = toApple;
             actionsPointer.current.transformTweak = 0.1;
-            seekGltfAnimation(
-              actionsPointer.current.transform,
-              toAppleProgress,
-              toAppleProgressChecker,
-              2000,
-              true,
-              1
-            );
+            play({
+              mixer,
+              action: toApple,
+              repetitions: 1,
+              prevAction,
+              clampWhenFinished: true,
+              animationLoop: LoopOnce,
+              customAnimationDuration: 2000,
+              progress: toApple,
+              playbackController: toAppleProgressChecker,
+            });
+            // seekGltfAnimation(
+            //   actionsPointer.current.transform,
+            //   toAppleProgress,
+            //   toAppleProgressChecker,
+            //   2000,
+            //   true,
+            //   1
+            // );
             break;
           case "appleParagraphProgress":
             showAppleParagraph.seek(appleParagraphProgress);
@@ -870,14 +1087,27 @@ export default function Model({ ...props }) {
           case "appleMoveProgress":
             actionsPointer.current.move = appleMove;
             actionsPointer.current.moveTweak = 0.1;
-            seekGltfAnimation(
-              actionsPointer.current.move,
-              appleMoveProgress,
-              appleMoveProgressChecker,
-              30,
-              false,
-              3
-            );
+
+            play({
+              mixer,
+              action: appleMove,
+              repetitions: 10,
+              prevAction,
+              clampWhenFinished: false,
+              animationLoop: LoopRepeat,
+              customAnimationDuration: 2,
+              progress: appleMoveProgress,
+              playbackController: appleMoveProgressChecker,
+            });
+
+            // seekGltfAnimation(
+            //   actionsPointer.current.move,
+            //   appleMoveProgress,
+            //   appleMoveProgressChecker,
+            //   30,
+            //   false,
+            //   3
+            // );
             break;
           case "appleGoProgress":
             //TODO: REMOVE THIS UGLY HACK
@@ -886,6 +1116,19 @@ export default function Model({ ...props }) {
             } else {
               mainContainer.current.visible = true;
             }
+
+            play({
+              mixer,
+              action: go,
+              repetitions: 1,
+              prevAction,
+              clampWhenFinished: false,
+              animationLoop: LoopOnce,
+              customAnimationDuration: 1000,
+              progress: appleGoProgress,
+              playbackController: appleGoProgressChecker,
+            });
+
             // seekGltfAnimation(
             //   actionsPointer.current.transform,
             //   appleGoProgress,

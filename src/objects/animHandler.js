@@ -486,7 +486,7 @@ export default function Animator() {
     //clockMove (GLTF)
     timeline.add({
       targets: empty,
-      duration: 300,
+      duration: 3000,
       update: function (anim) {
         handleUpdateAnimation(
           anim,
