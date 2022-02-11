@@ -1099,11 +1099,23 @@ export default function Model({ ...props }) {
             hideAppleParagraph.seek(appleParagraphCloseProgress);
             break;
           case "cubesToReactPositionProgress":
-            actionsPointer.current.transform = toFlower;
             mainContainer.current.visible = true;
             cubesToReactPosition.seek(cubesToReactPositionProgress);
             break;
           case "toFlowerProgress":
+            if (actionsPointer.current.transform != toFlower) {
+              mixer.stopAllAction();
+            }
+            actionsPointer.current.transformTweak = toFlower;
+            play({
+              action: toFlower,
+              progress: toFlowerProgress,
+              playbackController: toFlowerProgressChecker,
+              customAnimationDuration: 2000,
+              animationLoop: LoopOnce,
+              mixer,
+              repetitions: 1,
+            });
             break;
           case "flowerColorsProgress":
             break;
@@ -1112,6 +1124,19 @@ export default function Model({ ...props }) {
           case "flowerParagraphCloseProgress":
             break;
           case "toPineAppleProgress":
+            if (actionsPointer.current.transform != toPineapple) {
+              mixer.stopAllAction();
+            }
+            actionsPointer.current.transformTweak = toPineapple;
+            play({
+              action: toPineapple,
+              progress: toPineAppleProgress,
+              playbackController: toPineappleProgressChecker,
+              customAnimationDuration: 2000,
+              animationLoop: LoopOnce,
+              mixer,
+              repetitions: 1,
+            });
             break;
           case "pineappleColorsProgress":
             break;
@@ -1120,6 +1145,19 @@ export default function Model({ ...props }) {
           case "pineappleParagraphCloseProgress":
             break;
           case "toCannonProgress":
+            if (actionsPointer.current.transform != toCannon) {
+              mixer.stopAllAction();
+            }
+            actionsPointer.current.transformTweak = toCannon;
+            play({
+              action: toCannon,
+              progress: toCannonProgress,
+              playbackController: toCannonProgressChecker,
+              customAnimationDuration: 2000,
+              animationLoop: LoopOnce,
+              mixer,
+              repetitions: 1,
+            });
             break;
           case "cannonColorsProgress":
             break;
