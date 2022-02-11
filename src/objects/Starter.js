@@ -302,30 +302,27 @@ export default function Model({ ...props }) {
       prevAction: AnimationAction | null, //the previous anmation action, should be a ref
     }
   ) {
+    if (prevAction.current) {
+      prevAction.current.stop(0).fadeOut(0);
+    }
+
     action.reset();
     action.timeScale = 1;
-    action.clampWhenFinished = true;
+    action.clampWhenFinished = clampWhenFinished;
     action.repetitions = repetitions;
     action.setLoop(animationLoop);
 
     if (customAnimationDuration) {
       action.setDuration(customAnimationDuration);
     }
-    if (prevAction.current) {
-      prevAction.current.fadeOut(0); // Set the influence of the previous action to 0
-    }
 
     // The animation finished playing
-    mixer.addEventListener(
-      "finished",
-      () => {
-        prevAction.current = action; // Save a reference to the previous action
-      },
-      true
-    );
 
     if (playbackController.current > progress) {
-      const factor = customAnimationDuration / 100;
+      const duration = customAnimationDuration
+        ? customAnimationDuration
+        : action._clip.duration;
+      const factor = duration / 100;
       mixer.setTime(progress * factor);
     } else {
       //animation is playing forward
@@ -336,13 +333,9 @@ export default function Model({ ...props }) {
     }
     //very important
     playbackController.current = progress;
-
-    if (progress === 100 && customAnimationDuration) {
-      prevAction.current = action;
-    }
   }
 
-  useEffect(async () => {
+  useEffect(() => {
     // assignActions(6);
     // startAnimations();
     // endAnimations();
@@ -711,6 +704,13 @@ export default function Model({ ...props }) {
             } else {
               mainContainer.current.visible = true;
             }
+
+            if (initialGoProgressChecker > initialGoProgress) {
+              prevAction.current = toClock;
+            } else {
+              prevAction.current = null;
+            }
+
             play({
               action: go,
               mixer,
@@ -743,6 +743,13 @@ export default function Model({ ...props }) {
           case "toClockProgress":
             actionsPointer.current.transform = toClock;
             actionsPointer.current.transformTweak = 0.1;
+
+            if (toClockProgressChecker > toClockProgress) {
+              prevAction.current = clockMove;
+            } else {
+              prevAction.current = go;
+            }
+
             play({
               currAction,
               action: toClock,
@@ -767,27 +774,25 @@ export default function Model({ ...props }) {
             actionsPointer.current.move = clockMove;
             actionsPointer.current.moveInfinite = true;
             actionsPointer.current.moveTweak = 0.05;
+
+            if (clockMoveProgressChecker > clockMoveProgress) {
+              prevAction.current = go;
+            } else {
+              prevAction.current = toClock;
+            }
+
             play({
               action: clockMove,
               progress: clockMoveProgress,
               playbackController: clockMoveProgressChecker,
-              customAnimationDuration: 200,
-              repetitions: 10,
+              customAnimationDuration: 30,
+              repetitions: 1,
               prevAction,
               clampWhenFinished: false,
               animationLoop: LoopRepeat,
               mixer,
             });
 
-            // seekGltfAnimation(
-            //   actionsPointer.current.move,
-            //   clockMoveProgress,
-            //   clockMoveProgressChecker,
-            //   30,
-            //   false,
-            //   3
-            // );
-            break;
           case "timeDefinitionProgress":
             timeDefinitionShow.seek(timeDefinitionProgress);
             break;
@@ -799,6 +804,12 @@ export default function Model({ ...props }) {
             } else {
               mainContainer.current.visible = true;
             }
+
+            if (clockCloseProgressChecker > clockCloseProgress) {
+              prevAction.current = toCamel;
+            } else {
+              prevAction.current = clockMove;
+            }
             play({
               currAction,
               action: go,
@@ -807,7 +818,7 @@ export default function Model({ ...props }) {
               customAnimationDuration: 1000,
               repetitions: 1,
               prevAction,
-              clampWhenFinished: false,
+              clampWhenFinished: true,
               animationLoop: LoopOnce,
               mixer,
             });
@@ -833,8 +844,13 @@ export default function Model({ ...props }) {
             actionsPointer.current.transformTweak = 0.0;
             break;
           case "toCamelProgress":
+            if (toAndroidProgressChecker > toCamelProgress) {
+              prevAction.current = camelMove;
+            } else {
+              prevAction.current = go;
+            }
+
             play({
-              currAction,
               action: toCamel,
               progress: toCamelProgress,
               playbackController: toCamelProgressChecker,
@@ -860,30 +876,27 @@ export default function Model({ ...props }) {
             break;
           case "camelMoveProgress":
             actionsPointer.current.move = camelMove;
-            actionsPointer.current.moveInfinite = true;
             actionsPointer.current.moveTweak = 0.06;
+            // camelMove.crossFadeFrom(toCamel, 0.1);
+
+            if (camelMoveProgressChecker > camelMoveProgress) {
+              prevAction.current = go;
+            } else {
+              prevAction.current = toCamel;
+            }
 
             play({
-              currAction,
               action: camelMove,
               progress: camelMoveProgress,
               playbackController: camelMoveProgressChecker,
-              customAnimationDuration: 200,
-              repetitions: 10,
+              customAnimationDuration: 30,
+              repetitions: 1,
               prevAction,
               clampWhenFinished: false,
               animationLoop: LoopRepeat,
               mixer,
             });
 
-            // seekGltfAnimation(
-            //   actionsPointer.current.move,
-            //   camelMoveProgress,
-            //   camelMoveProgressChecker,
-            //   30,
-            //   false,
-            //   3
-            // );
             break;
           case "camelGoProgress":
             actionsPointer.current.paused = true;
@@ -892,6 +905,12 @@ export default function Model({ ...props }) {
               mainContainer.current.visible = false;
             } else {
               mainContainer.current.visible = true;
+            }
+
+            if (camelGoProgressChecker > camelGoProgress) {
+              prevAction.current = toAndroid;
+            } else {
+              prevAction.current = camelMove;
             }
 
             play({
@@ -907,14 +926,6 @@ export default function Model({ ...props }) {
               mixer,
             });
 
-            // seekGltfAnimation(
-            //   actionsPointer.current.transform,
-            //   camelGoProgress,
-            //   camelGoProgressChecker,
-            //   1000,
-            //   false,
-            //   1
-            // );
             break;
           case "patienceDefitionCloseProgress":
             hidePatienceDefinition.seek(patienceDefitionCloseProgress);
@@ -931,6 +942,11 @@ export default function Model({ ...props }) {
             break;
           case "toAndroidProgress":
             //preset the next animation
+            if (toAndroidProgressChecker > toAndroidProgress) {
+              prevAction.current = androidMove;
+            } else {
+              prevAction.current = go;
+            }
             play({
               mixer,
               action: toAndroid,
@@ -939,17 +955,10 @@ export default function Model({ ...props }) {
               prevAction,
               playbackController: toAndroidProgressChecker,
               progress: toAndroidProgress,
-              customAnimationDuration: 2000,
-              animationLoop: LoopOnce,
+              customAnimationDuration: 30,
+              animationLoop: LoopRepeat,
             });
-            // seekGltfAnimation(
-            //   actionsPointer.current.transform,
-            //   toAndroidProgress,
-            //   toAndroidProgressChecker,
-            //   2000,
-            //   true,
-            //   1
-            // );
+
             break;
 
           case "androidParagraphProgress":
@@ -959,35 +968,37 @@ export default function Model({ ...props }) {
             actionsPointer.current.moveTweak = 0.1;
             break;
           case "androidMoveProgress":
+            if (androidMoveProgressChecker > androidMoveProgress) {
+              prevAction.current = go;
+            } else {
+              prevAction.current = toAndroid;
+            }
+
             play({
               mixer,
               action: androidMove,
-              repetitions: 10,
+              repetitions: 1,
               prevAction,
               clampWhenFinished: false,
               animationLoop: LoopRepeat,
-              customAnimationDuration: 200,
+              customAnimationDuration: 30,
               progress: androidMoveProgress,
               playbackController: androidMoveProgressChecker,
             });
-
-            // seekGltfAnimation(
-            //   actionsPointer.current.move,
-            //   androidMoveProgress,
-            //   androidMoveProgressChecker,
-            //   30,
-            //   false,
-            //   3
-            // );
             break;
 
           case "androidGoProgress":
-            actionsPointer.current.paused = true;
             actionsPointer.current.transform = go;
             if (androidGoProgress > 90) {
               mainContainer.current.visible = false;
             } else {
               mainContainer.current.visible = true;
+            }
+
+            if (androidMoveProgressChecker > androidGoProgress) {
+              prevAction.current = toApple;
+            } else {
+              prevAction.current = androidMove;
             }
 
             play({
@@ -1001,15 +1012,6 @@ export default function Model({ ...props }) {
               progress: androidGoProgress,
               playbackController: androidGoProgressChecker,
             });
-
-            // seekGltfAnimation(
-            //   actionsPointer.current.transform,
-            //   androidGoProgress,
-            //   androidGoProgressChecker,
-            //   1000,
-            //   false,
-            //   1
-            // );
             break;
           //********************************************************************************* */
           //********************************************************************************* */
@@ -1049,6 +1051,12 @@ export default function Model({ ...props }) {
           case "toAppleProgress":
             actionsPointer.current.transform = toApple;
             actionsPointer.current.transformTweak = 0.1;
+
+            if (toAppleProgressChecker > toAppleProgress) {
+              prevAction.current = appleMove;
+            } else {
+              prevAction.current = go;
+            }
             play({
               mixer,
               action: toApple,
@@ -1060,14 +1068,6 @@ export default function Model({ ...props }) {
               progress: toAppleProgress,
               playbackController: toAppleProgressChecker,
             });
-            // seekGltfAnimation(
-            //   actionsPointer.current.transform,
-            //   toAppleProgress,
-            //   toAppleProgressChecker,
-            //   2000,
-            //   true,
-            //   1
-            // );
             break;
           case "appleParagraphProgress":
             showAppleParagraph.seek(appleParagraphProgress);
@@ -1079,14 +1079,20 @@ export default function Model({ ...props }) {
             actionsPointer.current.move = appleMove;
             actionsPointer.current.moveTweak = 0.1;
 
+            if (appleMoveProgressChecker > appleMove) {
+              prevAction.current = go;
+            } else {
+              prevAction.current = toApple;
+            }
+
             play({
               mixer,
               action: appleMove,
-              repetitions: 10,
+              repetitions: 1,
               prevAction,
               clampWhenFinished: false,
               animationLoop: LoopRepeat,
-              customAnimationDuration: 200,
+              customAnimationDuration: 30,
               progress: appleMoveProgress,
               playbackController: appleMoveProgressChecker,
             });
@@ -1106,6 +1112,12 @@ export default function Model({ ...props }) {
               mainContainer.current.visible = false;
             } else {
               mainContainer.current.visible = true;
+            }
+
+            if (appleMoveProgressChecker > appleGoProgress) {
+              prevAction.current = toFlower;
+            } else {
+              prevAction.current = appleMove;
             }
 
             play({
