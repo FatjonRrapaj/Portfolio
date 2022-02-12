@@ -7,7 +7,6 @@ import { useGLTF, useAnimations } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import useStore from "../store";
 import anime from "animejs/lib/anime.es";
-import { useControls } from "leva";
 
 import Paragraph from "./paragraphs/Paragraph";
 import { seekGltfAnimation } from "../helpers/animation";
@@ -19,7 +18,6 @@ import { AnimationAction } from "three/src/animation/AnimationAction";
 
 export default function Model({ ...props }) {
   const { camera } = useThree();
-  console.log("camera: ", camera.position);
 
   //cube refs
   const mainContainer = useRef();
@@ -33,243 +31,22 @@ export default function Model({ ...props }) {
   const cube3Material = useRef();
   const cube4Material = useRef();
 
-  const { nodes, materials, animations } = useGLTF(
-    process.env.PUBLIC_URL + "/all.glb"
-  );
-  const { actions, mixer } = useAnimations(animations, mainContainer);
-  console.log("mixer: ", mixer);
-
-  //refs
-  const timeouts = useRef([]);
-
+  //TODO: REFACTOR THE PARAGRAPHGS with forwardrefs
   //paragraphs ref
   const timeDefinition = useRef();
   const patienceDefintion = useRef();
   const andoridParagraph = useRef();
   const appleParagraph = useRef();
 
-  const delay = (seconds) =>
-    new Promise((resolve) => {
-      const t = setTimeout(resolve, seconds * 1000);
-      timeouts.current.push(t);
-      return t;
-    });
+  const { nodes, animations } = useGLTF(process.env.PUBLIC_URL + "/all.glb");
+  const { actions, mixer } = useAnimations(animations, mainContainer);
+  const activeAnimation = useRef({});
 
-  const actionsPointer = useRef({
-    transform: null,
-    move: null,
-    moveInfinite: false, //if the moving animation is repeating or not.
-    fromLastPosition: false, //animation should start from where the object is, not from moving.
-    transformTweak: 0, //from manually testing the animations... sorry for the inconvience.
-    moveTweak: 0, //from manually testing the animations... sorry for the inconvience.
-    reverseDelay: 0, //from manually testing the animations... sorry for the inconvience.
-  });
-
-  //pargraphs show & hide
-  // const timeDefinitionScale = useRef([0,0,0])
-
-  const assignActions = (number) => {
-    const {
-      androidMove,
-      appleMove,
-      camelMove,
-      clockMove,
-      toAndroid,
-      toApple,
-      toCamel,
-      toCannon,
-      toClock,
-      toFlower,
-      toPineapple,
-    } = actions;
-
-    switch (number) {
-      case 0:
-        //asign clock animations
-        actionsPointer.current.transform = toClock;
-        actionsPointer.current.move = clockMove;
-        actionsPointer.current.moveInfinite = true;
-        actionsPointer.current.transformTweak = 0.1;
-        actionsPointer.current.moveTweak = 0.05;
-        actionsPointer.current.reverseDelay = 7.75;
-        actionsPointer.current.fromLastPosition = false;
-        break;
-      case 1:
-        //assign camel animations
-        actionsPointer.current.transform = toCamel;
-        actionsPointer.current.move = camelMove;
-        actionsPointer.current.moveInfinite = true;
-        actionsPointer.current.transformTweak = 0.1;
-        actionsPointer.current.moveTweak = 0.055;
-        actionsPointer.current.reverseDelay = 7.75;
-        actionsPointer.current.fromLastPosition = false;
-        break;
-      case 2:
-        //assign android animations
-        actionsPointer.current.transform = toAndroid;
-        actionsPointer.current.move = androidMove;
-        actionsPointer.current.moveInfinite = false;
-        actionsPointer.current.transformTweak = 0;
-        actionsPointer.current.moveTweak = 0.05;
-        actionsPointer.current.reverseDelay = 7.75;
-        actionsPointer.current.fromLastPosition = false;
-        break;
-      case 3:
-        //assign apple animations
-        actionsPointer.current.transform = toApple;
-        actionsPointer.current.move = appleMove;
-        actionsPointer.current.moveInfinite = true;
-        actionsPointer.current.transformTweak = 0.1; //try also 0
-        actionsPointer.current.moveTweak = 0.1; //try also 0.05
-        actionsPointer.current.reverseDelay = 7.75;
-        actionsPointer.current.fromLastPosition = false;
-        break;
-      case 4:
-        //assign flower animations
-        actionsPointer.current.transform = toFlower;
-        actionsPointer.current.move = null;
-        actionsPointer.current.transformTweak = 0.05;
-        actionsPointer.current.fromLastPosition = false;
-        break;
-      case 5:
-        //assign pineapple animations
-        actionsPointer.current.transform = toPineapple;
-        actionsPointer.current.move = null;
-        actionsPointer.current.transformTweak = 0.05;
-        actionsPointer.current.fromLastPosition = true;
-        break;
-      case 6:
-        //assign cannon animations
-        actionsPointer.current.transform = toCannon;
-        actionsPointer.current.move = null;
-        actionsPointer.current.transformTweak = 0.05;
-        actionsPointer.current.fromLastPosition = true;
-      default:
-        break;
-    }
-  };
-
-  const startAnimations = async () => {
-    const { come } = actions;
-    const {
-      transform,
-      transformTweak,
-      move,
-      moveInfinite,
-      moveTweak,
-      fromLastPosition,
-    } = actionsPointer.current;
-
-    if (!fromLastPosition) {
-      //come
-      come.repetitions = 1;
-      come.play();
-      await delay(come._clip.duration); //wait for animation to finish
-    }
-
-    //transform animation
-    transform.repetitions = 1;
-    transform.play();
-    await delay(transform._clip.duration - transformTweak);
-
-    //move animation
-    if (move) {
-      if (moveInfinite) move.time = moveTweak;
-      if (!moveInfinite) move.repetitions = 1;
-      move.play();
-    }
-  };
-
-  const endAnimations = async () => {
-    const { go } = actions;
-    const { transform, move, reverseDelay, moveTweak } = actionsPointer.current;
-
-    if (!move) {
-      return;
-    }
-    //fake waiting
-    await delay(8);
-
-    //reverse move;
-    move.reset();
-    move.time = moveTweak;
-    move.timeScale = -1;
-    move.repetitions = 1;
-    move.startAt(reverseDelay);
-    move.play();
-    await delay(move._clip.duration);
-
-    //reverse transform
-    transform.reset();
-    transform.repetitions = 1;
-    transform.timeScale = -1;
-    transform.startAt(reverseDelay);
-    transform.play(); //+2 needed when going backwards
-    await delay(2.75);
-
-    go.repetitions = 1;
-    go.clampWhenFinished = true;
-    go.play();
-  };
-
-  //for controling backward and forward playing of GLTF animations
-  //initial animation
-  const initialGoProgressChecker = useRef(0);
-
-  //clock
-  const toClockProgressChecker = useRef(0);
-  const clockMoveProgressChecker = useRef(0);
-  const clockCloseProgressChecker = useRef(0);
-
-  //camel
-  const toCamelProgressChecker = useRef(0);
-  const camelMoveProgressChecker = useRef(0);
-  const camelGoProgressChecker = useRef(0);
-
-  //android
-  const toAndroidProgressChecker = useRef(0);
-  const androidMoveProgressChecker = useRef(0);
-  const androidGoProgressChecker = useRef(0);
-
-  //apple
-  const toAppleProgressChecker = useRef(0);
-  const appleMoveProgressChecker = useRef(0);
-  const appleGoProgressChecker = useRef(0);
-
-  //react
-  const toFlowerProgressChecker = useRef(0);
-  const toPineappleProgressChecker = useRef(0);
-  const toCannonProgressChecker = useRef(0);
-
-  const currAction = useRef(null);
-  const prevAction = useRef(null);
-
-  function play(
-    {
-      mixer,
-      action,
-      progress = 0,
-      timeTweak = 0,
-      moveTweak = 0,
-      repetitions = 1,
-      animationLoop = LoopOnce,
-    } = {
-      action: AnimationAction, //the actions, auto genearated by pmndrs-drei (gltfjsx)
-      mixer: AnimationMixer, //the animation mixer auto genearated by pmndrs-drei (gltfjsx)
-      progress: Number, // the progress passed from the timeline progress
-      timeTweak: Number, //tweak to pause before time
-      repetitions: Number,
-      animationLoop: Number, //Animation action loop styles
-    }
-  ) {
-    action.timeScale = 1;
-    action.clampWhenFinished = false;
-    action.repetitions = repetitions;
+  function play({ progress = 0.0, timeTweak = 0.0, animationLoop = LoopOnce }) {
+    const action = activeAnimation.current;
+    action.repetitions = 1;
     action.setLoop(animationLoop);
 
-    if (action.time >= action._clip.duration - moveTweak) {
-      action.time = moveTweak;
-    }
     if (action.time <= action._clip.duration - timeTweak) {
       //handle transform animation reset glitch
       action.reset().play();
@@ -280,21 +57,8 @@ export default function Model({ ...props }) {
   }
 
   useEffect(() => {
-    // assignActions(6);
-    // startAnimations();
-    // endAnimations();
-
-    //return refs are not do not have values yet.
     if (!mainContainer.current) return;
-
-    const {
-      planeInitialPosition: initialPosition,
-      clock,
-      camel,
-      android,
-      ios,
-      react,
-    } = objectPositionsInSpace;
+    const { clock, camel, android, ios, react } = objectPositionsInSpace;
 
     const _ = anime({
       targets: mainContainer.current.position,
@@ -494,8 +258,6 @@ export default function Model({ ...props }) {
       autoplay: false,
     });
 
-    //secondaryCubes cubes to react animation
-
     //cubes to react rotation
     const cubesToReactRotation = anime({
       targets: mainContainer.current.rotation,
@@ -511,9 +273,6 @@ export default function Model({ ...props }) {
     const mainCubeMaterialToXColor = anime({
       targets: mainCubeFaceMaterial.current.color,
     });
-
-    //LEFT HERE. <= check the file on the left and add the animation handlers at the swiths tatement here, also at the plane.
-    // q2#!!A>Sd
 
     const {
       go,
@@ -595,58 +354,43 @@ export default function Model({ ...props }) {
             break;
           case "initialScaleProgress":
             scaleDown.seek(initialScaleProgress);
+            if (activeAnimation.current.fadeOut) {
+              activeAnimation.current.fadeOut(0);
+            }
             mixer.stopAllAction();
             break;
           case "initialGoProgress":
-            if (initialGoProgress > 90) {
-              mainContainer.current.visible = false;
-            } else {
-              mainContainer.current.visible = true;
-            }
-            if (actionsPointer.current.transform != go) {
+            if (activeAnimation.current !== go) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = go;
+            activeAnimation.current = go;
             play({
-              action: go,
-              mixer,
               progress: initialGoProgress,
-              timeTweak: 0.0,
-              repetitions: 1,
+              timeTweak: 0.1,
             });
             break;
           case "experienceCubesToClockPositionProgress":
-            mainContainer.current.visible = true;
             cubesToClockPosition.seek(experienceCubesToClockPositionProgress);
             cubesToClockRotation.seek(experienceCubesToClockPositionProgress);
             break;
           case "toClockProgress":
-            if (actionsPointer.current.transform != toClock) {
+            if (activeAnimation.current !== toClock) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = toClock;
+            activeAnimation.current = toClock;
             play({
-              currAction,
-              action: toClock,
               progress: toClockProgress,
-              clampWhenFinished: false,
               timeTweak: 0.1,
-              repetitions: 1,
-              mixer,
             });
             break;
           case "clockMoveProgress":
-            if (actionsPointer.current.transform != clockMove) {
+            if (activeAnimation.current !== clockMove) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = clockMove;
+            activeAnimation.current = clockMove;
             play({
-              mixer,
-              action: clockMove,
-              repetitions: 1,
-              timeTweak: 0,
-              moveTweak: 0.05,
               animationLoop: LoopRepeat,
+              repetitions: 1,
               progress: clockMoveProgress,
             });
             break;
@@ -654,148 +398,97 @@ export default function Model({ ...props }) {
             timeDefinitionShow.seek(timeDefinitionProgress);
             break;
           case "clockCloseProgress":
-            if (actionsPointer.current.transform != go) {
+            if (activeAnimation.current !== go) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = go;
-            if (clockCloseProgress > 90) {
-              mainContainer.current.visible = false;
-            } else {
-              mainContainer.current.visible = true;
-            }
+            activeAnimation.current = go;
             play({
-              currAction,
-              action: go,
               progress: clockCloseProgress,
-              repetitions: 1,
-              animationLoop: LoopOnce,
-              mixer,
+              timeTweak: 0.1,
             });
             break;
           case "timeDefinitionCloseProgress":
             timeDefinitionClose.seek(timeDefinitionCloseProgress);
             break;
           case "cubesToCamelPositionProgress":
-            mainContainer.current.visible = true;
             cubesToCamelPosition.seek(cubesToCamelPositionProgress);
             rotateCubesForCamelAnim.seek(cubesToCamelPositionProgress);
             break;
           case "toCamelProgress":
-            if (actionsPointer.current.transform != toCamel) {
+            if (activeAnimation.current !== toCamel) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = toCamel;
-            actionsPointer.current.transformTweak = 0.5;
+            activeAnimation.current = toCamel;
             play({
-              action: toCamel,
               progress: toCamelProgress,
-              customAnimationDuration: 2000,
-              repetitions: 1,
               timeTweak: 0.1,
-              moveTweak: 0,
-              animationLoop: LoopOnce,
-              mixer,
             });
             break;
           case "patienceDefinitionProgress":
             showPatienceDefinition.seek(patienceDefinitionProgress);
             break;
           case "camelMoveProgress":
-            if (actionsPointer.current.transform != camelMove) {
+            if (activeAnimation.current !== camelMove) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = camelMove;
+            activeAnimation.current = camelMove;
             play({
-              action: camelMove,
               progress: camelMoveProgress,
-              repetitions: 1,
-              timeTweak: 0,
               moveTweak: 0.055,
               animationLoop: LoopRepeat,
-              mixer,
             });
             break;
           case "camelGoProgress":
-            if (actionsPointer.current.transform != go) {
+            if (activeAnimation.current !== go) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = go;
-            if (camelGoProgress > 90) {
-              mainContainer.current.visible = false;
-            } else {
-              mainContainer.current.visible = true;
-            }
+            activeAnimation.current = go;
             play({
-              currAction,
-              action: go,
               progress: camelGoProgress,
-              repetitions: 1,
-              animationLoop: LoopOnce,
-              mixer,
+              timeTweak: 0.1,
             });
             break;
           case "patienceDefitionCloseProgress":
             hidePatienceDefinition.seek(patienceDefitionCloseProgress);
             break;
           case "cubesToAndroidPositionProgress":
-            mainContainer.current.visible = true;
             cubesToAndroidPosition.seek(cubesToAndroidPositionProgress);
             rotateCubesForAndroidAnimation.seek(cubesToAndroidPositionProgress);
             //TODO: animate color chages for cube materials and mabybe environment
             break;
           case "toAndroidProgress":
-            if (actionsPointer.current.transform != toAndroid) {
+            if (activeAnimation.current !== toAndroid) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = toAndroid;
+            activeAnimation.current = toAndroid;
             play({
-              mixer,
-              action: toAndroid,
-              repetitions: 1,
               timeTweak: 0.1,
-              moveTweak: 0.0,
               progress: toAndroidProgress,
-              animationLoop: LoopOnce,
             });
             break;
           case "androidParagraphProgress":
             showAndroidParagraph.seek(androidParagraphProgress);
-            actionsPointer.current.moveInfinite = false;
-            actionsPointer.current.moveTweak = 0.1;
             break;
           case "androidMoveProgress":
-            if (actionsPointer.current.transform != androidMove) {
+            if (activeAnimation.current !== androidMove) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = androidMove;
+            activeAnimation.current = androidMove;
             play({
-              mixer,
-              action: androidMove,
-              repetitions: 1,
-              timeTweak: 0,
               moveTweak: 0.05,
               animationLoop: LoopRepeat,
               progress: androidMoveProgress,
             });
             break;
           case "androidGoProgress":
-            if (actionsPointer.current.transform != go) {
+            if (activeAnimation.current !== go) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = go;
-            if (androidGoProgress > 90) {
-              mainContainer.current.visible = false;
-            } else {
-              mainContainer.current.visible = true;
-            }
+            activeAnimation.current = go;
+
             play({
-              mixer,
-              action: go,
-              repetitions: 1,
-              timeTweak: 0.1,
-              prevAction,
-              animationLoop: LoopOnce,
               progress: androidGoProgress,
+              timeTweak: 0.1,
             });
             break;
           case "androidParagraphCloseProgress":
@@ -803,7 +496,6 @@ export default function Model({ ...props }) {
             break;
           case "experienceCubesToApplePositionProgress":
             //TODO: FIX THE FISIBILITIY 4 WHEN GOING BACKWARDS
-            mainContainer.current.visible = true;
             //adjust cubes
             //TODO: ADJUST ALL CUBES AND ALSO ANIMATE THE COLORS HERE & MAYBE CHANGE THE DURATION TO 1000
             cubesToApplePosition.seek(experienceCubesToApplePositionProgress);
@@ -811,17 +503,12 @@ export default function Model({ ...props }) {
             cubesToAppleRotation.seek(experienceCubesToApplePositionProgress);
             break;
           case "toAppleProgress":
-            if (actionsPointer.current.transform != toApple) {
+            if (activeAnimation.current !== toApple) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = toApple;
-            actionsPointer.current.transformTweak = 0.1;
+            activeAnimation.current = toApple;
             play({
-              mixer,
-              action: toApple,
-              repetitions: 1,
               timeTweak: 0.1,
-              moveTweak: 0.0,
               animationLoop: LoopOnce,
               progress: toAppleProgress,
             });
@@ -830,58 +517,40 @@ export default function Model({ ...props }) {
             showAppleParagraph.seek(appleParagraphProgress);
             break;
           case "appleMoveProgress":
-            if (actionsPointer.current.transform != appleMove) {
+            if (activeAnimation.current !== appleMove) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = appleMove;
+            activeAnimation.current = appleMove;
             play({
-              mixer,
-              action: appleMove,
-              repetitions: 10,
-              moveTweak: 0.1,
-              timeTweak: 0.0,
               animationLoop: LoopRepeat,
               progress: appleMoveProgress,
             });
             break;
           case "appleGoProgress":
-            if (actionsPointer.current.transform != go) {
+            if (activeAnimation.current !== go) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = go;
-            if (appleGoProgress > 90) {
-              mainContainer.current.visible = false;
-            } else {
-              mainContainer.current.visible = true;
-            }
+            activeAnimation.current = go;
+
             play({
-              mixer,
-              action: go,
-              repetitions: 1,
-              timeTweak: 0.05,
-              animationLoop: LoopOnce,
               progress: appleGoProgress,
+              timeTweak: 0.1,
             });
             break;
           case "appleParagraphCloseProgress":
             hideAppleParagraph.seek(appleParagraphCloseProgress);
             break;
           case "cubesToReactPositionProgress":
-            mainContainer.current.visible = true;
             cubesToReactPosition.seek(cubesToReactPositionProgress);
             break;
           case "toFlowerProgress":
-            if (actionsPointer.current.transform != toFlower) {
+            if (activeAnimation.current !== toFlower) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = toFlower;
+            activeAnimation.current = toFlower;
             play({
-              action: toFlower,
               progress: toFlowerProgress,
               timeTweak: 0.2,
-              animationLoop: LoopOnce,
-              mixer,
-              repetitions: 1,
             });
             break;
           case "flowerColorsProgress":
@@ -891,17 +560,13 @@ export default function Model({ ...props }) {
           case "flowerParagraphCloseProgress":
             break;
           case "toPineAppleProgress":
-            if (actionsPointer.current.transform != toPineapple) {
+            if (activeAnimation.current !== toPineapple) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = toPineapple;
+            activeAnimation.current = toPineapple;
             play({
-              action: toPineapple,
               progress: toPineAppleProgress,
-              animationLoop: LoopOnce,
               timeTweak: 0.2,
-              mixer,
-              repetitions: 1,
             });
             break;
           case "pineappleColorsProgress":
@@ -911,17 +576,13 @@ export default function Model({ ...props }) {
           case "pineappleParagraphCloseProgress":
             break;
           case "toCannonProgress":
-            if (actionsPointer.current.transform != toCannon) {
+            if (activeAnimation.current !== toCannon) {
               mixer.stopAllAction();
             }
-            actionsPointer.current.transform = toCannon;
+            activeAnimation.current = toCannon;
             play({
-              action: toCannon,
               progress: toCannonProgress,
-              animationLoop: LoopOnce,
-              mixer,
               timeTweak: 0.2,
-              repetitions: 1,
             });
             break;
           case "cannonColorsProgress":
@@ -931,7 +592,6 @@ export default function Model({ ...props }) {
           case "cannonParagraphCloseProgress":
             break;
           default:
-            mixer.stopAllAction();
             break;
         }
       }
@@ -940,11 +600,28 @@ export default function Model({ ...props }) {
     return () => {
       unsubscribeInitialAnimation();
       unsubscribeExperieneStore();
-      for (let i = 0; i < timeouts.current.length; i++) {
-        clearTimeout(timeouts[i]);
-      }
     };
   }, [mainContainer.current]);
+
+  useFrame(() => {
+    if (!activeAnimation.current) return;
+    const { clockMove, camelMove, androidMove, appleMove } = actions;
+    const acAnim = activeAnimation.current;
+    if (
+      acAnim === clockMove ||
+      acAnim === androidMove ||
+      acAnim === camelMove ||
+      acAnim === androidMove
+    ) {
+      if (acAnim.time + 0.055 >= acAnim._clip.duration) {
+        acAnim.time = 0.055;
+      }
+    } else if (acAnim === appleMove) {
+      if (acAnim.time + 0.1 >= acAnim._clip.duration) {
+        acAnim.time = 0.1;
+      }
+    }
+  });
 
   return (
     <group
@@ -1078,5 +755,3 @@ export default function Model({ ...props }) {
 }
 
 useGLTF.preload(process.env.PUBLIC_URL + "/all.glb");
-
-//700 lines and still going, do consider refactoring
