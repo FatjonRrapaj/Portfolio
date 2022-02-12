@@ -26,7 +26,7 @@ export default function Animator() {
   const isScrolling = useRef(false);
 
   function onWheel(e) {
-    e.preventDefault();
+    // e.preventDefault();
 
     if (scrollTimeout) {
       clearTimeout(scrollTimeout);

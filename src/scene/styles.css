@@ -7,6 +7,7 @@
 .container {
   position: relative;
   min-height: 100%;
+  width: 100%;
   height: 100%;
   width: 100%;
   z-index: 1000;
@@ -21,4 +22,7 @@
 
 #fold {
   height: 3000vh;
+  position: absolute;
+  width: 100vw;
+  background-color: transparent;
 }
