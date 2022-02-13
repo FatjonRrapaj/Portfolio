@@ -30,12 +30,10 @@ function LoadingText() {
   }, [text.current]);
 
   return (
-    <Text
-      ref={text}
-      position={[0, 1, 688]}
-      rotation={[0, Math.PI / 8, 0]}
-      children="LOADING"
-    />
+    <group position={[2, 1, 686]} rotation={[0, Math.PI / 8, 0]}>
+      <Text position={[-13, 0, 0]} ref={text} children="JUST" />
+      <Text ref={text} children="SCROLL" />
+    </group>
   );
 }
 

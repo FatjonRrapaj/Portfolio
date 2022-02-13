@@ -28,12 +28,12 @@ function Text(
   const config = useMemo(
     () => ({
       font,
-      size: 40,
+      size: 36,
       height: 10,
       curveSegments: 32,
       bevelEnabled: true,
-      bevelThickness: 6,
-      bevelSize: 2,
+      bevelThickness: 5,
+      bevelSize: 1,
       bevelOffset: -0.1,
       bevelSegments: 8,
     }),
