@@ -1,23 +1,24 @@
 {
   "files": {
-    "main.css": "/Portfolio/static/css/main.a3145afa.chunk.css",
-    "main.js": "/Portfolio/static/js/main.1260edad.chunk.js",
-    "main.js.map": "/Portfolio/static/js/main.1260edad.chunk.js.map",
-    "runtime-main.js": "/Portfolio/static/js/runtime-main.70c528e7.js",
-    "runtime-main.js.map": "/Portfolio/static/js/runtime-main.70c528e7.js.map",
-    "static/js/2.601698bd.chunk.js": "/Portfolio/static/js/2.601698bd.chunk.js",
-    "static/js/2.601698bd.chunk.js.map": "/Portfolio/static/js/2.601698bd.chunk.js.map",
-    "static/js/3.0910c126.chunk.js": "/Portfolio/static/js/3.0910c126.chunk.js",
-    "static/js/3.0910c126.chunk.js.map": "/Portfolio/static/js/3.0910c126.chunk.js.map",
+    "main.css": "/Portfolio/static/css/main.138ac5a9.chunk.css",
+    "main.js": "/Portfolio/static/js/main.a92440ef.chunk.js",
+    "main.js.map": "/Portfolio/static/js/main.a92440ef.chunk.js.map",
+    "runtime-main.js": "/Portfolio/static/js/runtime-main.3e39a2bf.js",
+    "runtime-main.js.map": "/Portfolio/static/js/runtime-main.3e39a2bf.js.map",
+    "static/js/2.9adb3fca.chunk.js": "/Portfolio/static/js/2.9adb3fca.chunk.js",
+    "static/js/2.9adb3fca.chunk.js.map": "/Portfolio/static/js/2.9adb3fca.chunk.js.map",
+    "static/js/3.58da7098.chunk.js": "/Portfolio/static/js/3.58da7098.chunk.js",
+    "static/js/3.58da7098.chunk.js.map": "/Portfolio/static/js/3.58da7098.chunk.js.map",
     "index.html": "/Portfolio/index.html",
-    "static/css/main.a3145afa.chunk.css.map": "/Portfolio/static/css/main.a3145afa.chunk.css.map",
-    "static/js/2.601698bd.chunk.js.LICENSE.txt": "/Portfolio/static/js/2.601698bd.chunk.js.LICENSE.txt",
-    "static/media/index.css": "/Portfolio/static/media/Anonymous Pro I.01bdd4a2.ttf"
+    "static/css/main.138ac5a9.chunk.css.map": "/Portfolio/static/css/main.138ac5a9.chunk.css.map",
+    "static/js/2.9adb3fca.chunk.js.LICENSE.txt": "/Portfolio/static/js/2.9adb3fca.chunk.js.LICENSE.txt",
+    "static/media/index.css": "/Portfolio/static/media/Anonymous Pro I.01bdd4a2.ttf",
+    "static/media/bold.65e5a908.blob": "/Portfolio/static/media/bold.65e5a908.blob"
   },
   "entrypoints": [
-    "static/js/runtime-main.70c528e7.js",
-    "static/js/2.601698bd.chunk.js",
-    "static/css/main.a3145afa.chunk.css",
-    "static/js/main.1260edad.chunk.js"
+    "static/js/runtime-main.3e39a2bf.js",
+    "static/js/2.9adb3fca.chunk.js",
+    "static/css/main.138ac5a9.chunk.css",
+    "static/js/main.a92440ef.chunk.js"
   ]
 }
