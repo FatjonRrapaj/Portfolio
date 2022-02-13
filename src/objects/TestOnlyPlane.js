@@ -21,34 +21,34 @@ import { objectPositionsInSpace } from "./constants";
 export default function Model({ ...props }) {
   const { camera } = useThree();
 
-  useControls("Camera", {
-    x: {
-      value: camera.position.x,
-      min: -1000,
-      max: 1000,
+  // useControls("Camera", {
+  //   x: {
+  //     value: camera.position.x,
+  //     min: -1000,
+  //     max: 1000,
 
-      onChange: (val) => {
-        camera.position.x = val;
-      },
-    },
-    y: {
-      value: camera.position.y,
-      min: -1000,
-      max: 1000,
-      onChange: (val) => {
-        camera.position.y = val;
-      },
-    },
-    z: {
-      value: camera.position.z,
-      min: -1000,
-      max: 1000,
-      onChange: (val) => {
-        camera.position.z = val;
-      },
-    },
-    a: {},
-  });
+  //     onChange: (val) => {
+  //       camera.position.x = val;
+  //     },
+  //   },
+  //   y: {
+  //     value: camera.position.y,
+  //     min: -1000,
+  //     max: 1000,
+  //     onChange: (val) => {
+  //       camera.position.y = val;
+  //     },
+  //   },
+  //   z: {
+  //     value: camera.position.z,
+  //     min: -1000,
+  //     max: 1000,
+  //     onChange: (val) => {
+  //       camera.position.z = val;
+  //     },
+  //   },
+  //   a: {},
+  // });
 
   const group = useRef();
   const { nodes, animations } = useGLTF(
@@ -200,7 +200,7 @@ export default function Model({ ...props }) {
     //TODO: fix this
     const planeToInitialRotation = anime({
       targets: group.current.quaternion,
-      w: [0, 0.709238017607531],
+      w: [1, 0.709238017607531],
       x: [0, -0.701731634510443],
       y: [0, 0],
       z: [0, 0.06748442418396647],
@@ -225,7 +225,9 @@ export default function Model({ ...props }) {
           case "planeFoldingProgress":
             if (!group.current.visible) group.current.visible = true;
             if (!lineRef.current.visible) lineRef.current.visible = true;
-
+            group.current.quaternion.setFromAxisAngle(new Vector3(0, 0, 0), 0);
+            camera.position.z = group.current.position.z + 3;
+            camera.position.y = group.current.position.y + 0.6;
             seekGltfAnimation(
               fold,
               planeFoldingProgress,
@@ -239,7 +241,6 @@ export default function Model({ ...props }) {
           case "planeToInitialTrajectoryPointProgress":
             planeToIntialPosition.seek(planeToInitialTrajectoryPointProgress);
             planeToInitialRotation.seek(planeToInitialTrajectoryPointProgress);
-            // cameraToInitialPosition.seek(planeToInitialTrajectoryPointProgress);
             break;
           case "planeToClockProgress":
             handleMovePlane(
@@ -313,7 +314,7 @@ export default function Model({ ...props }) {
       if (moveCamera.current) {
         camera.position.copy({
           x: planePosition.current.x,
-          y: planePosition.current.y + 3,
+          y: planePosition.current.y + 3.5,
           z: planePosition.current.z + 30,
         });
       }
