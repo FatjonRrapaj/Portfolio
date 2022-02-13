@@ -8,7 +8,8 @@ import { useFrame, useThree } from "@react-three/fiber";
 import useStore from "../store";
 import anime from "animejs/lib/anime.es";
 
-import Paragraph from "./paragraphs/Paragraph";
+import { Time, Patience, Android, IOS, ReactJS } from "./paragraphs";
+
 import { seekGltfAnimation } from "../helpers/animation";
 import { objectPositionsInSpace } from "./constants";
 import { AnimationMixer, LoopRepeat, LoopOnce, LoopPingPong } from "three";
@@ -37,6 +38,7 @@ export default function Model({ ...props }) {
   const patienceDefintion = useRef();
   const andoridParagraph = useRef();
   const appleParagraph = useRef();
+  const reactParagraph = useRef();
 
   const { nodes, animations } = useGLTF(process.env.PUBLIC_URL + "/all.glb");
   const { actions, mixer } = useAnimations(animations, mainContainer);
@@ -268,6 +270,14 @@ export default function Model({ ...props }) {
     const cubesToReactRotation = anime({
       targets: mainContainer.current.rotation,
       y: Math.PI / 2, //TODO: check this
+      duration: 500,
+      autoplay: false,
+    });
+
+    //show react paragraph
+    const showReactParagraph = anime({
+      targets: reactParagraph.current.style,
+      opacity: 1,
       duration: 500,
       autoplay: false,
     });
@@ -578,6 +588,7 @@ export default function Model({ ...props }) {
           case "flowerColorsProgress":
             break;
           case "flowerParagraphProgress":
+            showReactParagraph.seek(flowerParagraphProgress);
             break;
           case "flowerParagraphCloseProgress":
             break;
@@ -743,35 +754,11 @@ export default function Model({ ...props }) {
           />
         </mesh>
       </group>
-      {/**Time paragraph */}
-      <Paragraph ref={timeDefinition} />
-
-      {/**Patience paragraph */}
-      <Paragraph
-        ref={patienceDefintion}
-        position={[-22, 2, 0]}
-        title="Patience"
-        pronounciation="/ˈpeɪʃ(ə)ns/"
-        definition="Sometimes I put myself in difficult circumstances 😤"
-        sentence1="Just to endure them 💪"
-        sentence2="Don't worry, I tend not to do this in work-related stuff"
-        conclusion="If we don't train our patience, we cannot acomplish bigger things"
-      />
-
-      {/**TODO: EDIt the EXPERIENCE PARAGRAPHS IN THE RIGHT WAY */}
-      <Paragraph
-        ref={andoridParagraph}
-        position={[30, 0, 0]}
-        title="Android"
-        pronounciation="/ˈandrɔɪd/"
-        definition="I started my career as an Android Developer"
-        sentence1="Just to endure them 💪"
-        sentence2="Don't worry, I tend not to do this in work-related stuff"
-        conclusion="If we don't train our patience, we cannot acomplish bigger things"
-      />
-      {/**TODO: EDIt the EXPERIENCE PARAGRAPHS IN THE RIGHT WAY */}
-
-      <Paragraph ref={appleParagraph} title="Apple/iOS" />
+      <Time ref={timeDefinition} />
+      <Patience ref={patienceDefintion} />
+      <Android ref={andoridParagraph} />
+      <IOS ref={appleParagraph} />
+      <ReactJS ref={reactParagraph} />
     </group>
   );
 }
