@@ -59,13 +59,13 @@ const useStore = create(
     },
     experience: {
       visible: false,
-
       //initial animations progress values
       initialJoinProgress: null,
       initialGoProgress: null,
       lastChanged: null,
       initialScaleProgress: null,
       experienceCubesToClockPositionProgress: null,
+      experienceCubesToClockRotationProgress: null,
 
       //clock animation progress values
       toClockProgress: null,
@@ -76,6 +76,7 @@ const useStore = create(
 
       //camel animation progress values
       cubesToCamelPositionProgress: null,
+      cubesToCamelRotationProgress: null,
       toCamelProgress: null,
       camelMoveProgress: null,
       patienceDefinitionProgress: null,
@@ -84,6 +85,7 @@ const useStore = create(
 
       //android animation progress values
       cubesToAndroidPositionProgress: null,
+      cubesToAndroidRotationProgress: null,
       toAndroidProgress: null,
       androidParagraphProgress: null,
       androidMoveProgress: null,
@@ -92,6 +94,7 @@ const useStore = create(
 
       //apple animation progress values
       experienceCubesToApplePositionProgress: null,
+      experienceCubesToAppleRotationProgress: null,
       toAppleProgress: null,
       appleParagraphProgress: null,
       appleParagraphCloseProgress: null,
@@ -100,6 +103,7 @@ const useStore = create(
 
       //react animation progress values
       cubesToReactPositionProgress: null,
+      cubesToReactRotationProgress: null,
 
       //flower
       flowerColorsProgress: null,
@@ -119,28 +123,6 @@ const useStore = create(
       cannonParagraphProgress: null,
       cannonParagraphCloseProgress: null,
 
-      hide() {
-        set((state) => {
-          return {
-            experience: {
-              ...state.experience,
-              visible: false,
-              lastChanged: "visible",
-            },
-          };
-        });
-      },
-      show() {
-        set((state) => {
-          return {
-            experience: {
-              ...state.experience,
-              visible: true,
-              lastChanged: "visible",
-            },
-          };
-        });
-      },
       setInitialJoinProgress(initialJoinProgress) {
         set((state) => {
           return {
@@ -183,6 +165,20 @@ const useStore = create(
               ...state.experience,
               experienceCubesToClockPositionProgress,
               lastChanged: "experienceCubesToClockPositionProgress",
+            },
+          };
+        });
+      },
+
+      setExperienceCubesToClockRotationProgress(
+        experienceCubesToClockRotationProgress
+      ) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              experienceCubesToClockRotationProgress,
+              lastChanged: "experienceCubesToClockRotationProgress",
             },
           };
         });
@@ -253,6 +249,17 @@ const useStore = create(
           };
         });
       },
+      setCubesToCamelRotationProgress(cubesToCamelRotationProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              cubesToCamelRotationProgress,
+              lastChanged: "cubesToCamelRotationProgress",
+            },
+          };
+        });
+      },
       setToCamelProgress(toCamelProgress) {
         set((state) => {
           return {
@@ -315,6 +322,17 @@ const useStore = create(
               ...state.experience,
               cubesToAndroidPositionProgress,
               lastChanged: "cubesToAndroidPositionProgress",
+            },
+          };
+        });
+      },
+      setCubesToAndroidRotationProgress(cubesToAndroidRotationProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              cubesToAndroidRotationProgress,
+              lastChanged: "cubesToAndroidRotationProgress",
             },
           };
         });
@@ -387,6 +405,19 @@ const useStore = create(
           };
         });
       },
+      setExperienceCubesToAppleRotationProgress(
+        experienceCubesToAppleRotationProgress
+      ) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              experienceCubesToAppleRotationProgress,
+              lastChanged: "experienceCubesToAppleRotationProgress",
+            },
+          };
+        });
+      },
       setToAppleProgress(toAppleProgress) {
         set((state) => {
           return {
@@ -449,6 +480,17 @@ const useStore = create(
               ...state.experience,
               cubesToReactPositionProgress,
               lastChanged: "cubesToReactPositionProgress",
+            },
+          };
+        });
+      },
+      setCubesToReactRotationProgress(cubesToReactRotationProgress) {
+        set((state) => {
+          return {
+            experience: {
+              ...state.experience,
+              cubesToReactRotationProgress,
+              lastChanged: "cubesToReactRotationProgress",
             },
           };
         });

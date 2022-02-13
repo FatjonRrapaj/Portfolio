@@ -152,20 +152,19 @@ export default function Model({ ...props }) {
 
   const up = new Vector3(0, 1, 0);
   const axis = new Vector3();
+
   function movePlane({ fraction, isBackward, moveCamera }) {
     if (!group.current) return;
-
     //move
     const position = line.getPoint(fraction);
-    // group.current.position.copy(position);
     planePosition.current = { ...position };
-    //rotate
     if (isBackward) {
       //TODO: take care of this when the all journey is completed.
       up.y = -1;
     } else {
       up.y = 1;
     }
+    //rotate
     const tangent = line.getTangent(fraction);
     axis.crossVectors(up, tangent).normalize();
     const angle = Math.acos(up.dot(tangent));
@@ -186,12 +185,14 @@ export default function Model({ ...props }) {
       }
     );
 
+    // position={[15, -1.09, 682]}
+
     //TODO: fix this
     const planeToIntialPosition = anime({
       targets: group.current.position,
-      x: 14.178674093594697,
-      y: -0.560381565596393,
-      z: 675.3947160427972,
+      x: [15, 12.949322347666651],
+      y: [-1.09, -0.9357873478198813],
+      z: [682, 656.1792166619816],
       duration: 500,
       autoplay: false,
     });
@@ -199,20 +200,10 @@ export default function Model({ ...props }) {
     //TODO: fix this
     const planeToInitialRotation = anime({
       targets: group.current.quaternion,
-      w: 0.823702215991931,
-      x: 0.05006559194915403,
-      y: 0.5648080168276323,
-      z: 0,
-      duration: 500,
-      autoplay: false,
-    });
-
-    //TODO: fix or remove this
-    const cameraToInitialPosition = anime({
-      targets: camera.position,
-      x: 14.178674093594697,
-      y: -0.560381565596393,
-      z: 690,
+      w: [0, 0.709238017607531],
+      x: [0, -0.701731634510443],
+      y: [0, 0],
+      z: [0, 0.06748442418396647],
       duration: 500,
       autoplay: false,
     });
@@ -248,7 +239,7 @@ export default function Model({ ...props }) {
           case "planeToInitialTrajectoryPointProgress":
             planeToIntialPosition.seek(planeToInitialTrajectoryPointProgress);
             planeToInitialRotation.seek(planeToInitialTrajectoryPointProgress);
-            cameraToInitialPosition.seek(planeToInitialTrajectoryPointProgress);
+            // cameraToInitialPosition.seek(planeToInitialTrajectoryPointProgress);
             break;
           case "planeToClockProgress":
             handleMovePlane(
@@ -319,7 +310,6 @@ export default function Model({ ...props }) {
         planeRotation.current.axis,
         planeRotation.current.angle
       );
-
       if (moveCamera.current) {
         camera.position.copy({
           x: planePosition.current.x,
@@ -345,7 +335,7 @@ export default function Model({ ...props }) {
       <group
         //it's a very very very absolutley bad idea to change the position, only if you match it with the seet position, as they swap visibilies. incopetent blender trick just to save some time, please don't be judge too much :/
         position={[15, -1.09, 682]}
-        // rotation={[0, 0, 0]}
+        rotation={[0, 0, 0]}
         ref={group}
         {...props}
         visible={false}

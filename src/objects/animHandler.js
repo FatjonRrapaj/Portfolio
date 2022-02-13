@@ -145,6 +145,7 @@ export default function Animator() {
   //to clock animations group progress
   const planeToClockProgress = useRef(0);
   const experienceCubesToClockPositionProgress = useRef(0);
+  const experienceCubesToClockRotationProgress = useRef(0);
   const toClockProgress = useRef(0);
   const clockMoveProgress = useRef(0);
   const timeDefinitionProgress = useRef(0);
@@ -154,6 +155,7 @@ export default function Animator() {
   //camel animations group progress handlers
   const planeToCamelProgres = useRef(0);
   const experienceCubesToCamelPosition = useRef(0);
+  const experienceCubesToCamelRotation = useRef(0);
   const toCamelProgress = useRef(0);
   const camelMoveProgress = useRef(0);
   const patienceDefitionProgress = useRef(0);
@@ -163,6 +165,7 @@ export default function Animator() {
   //android animations group progress
   const planeToAndroidProgress = useRef(0);
   const cubesToAndroidPositionProgress = useRef(0);
+  const cubesToAndroidRotationProgress = useRef(0);
   const toAndroidProgress = useRef(0);
   const showAndroidParagraphProgress = useRef(0);
   const androidMoveProgress = useRef(0);
@@ -172,6 +175,7 @@ export default function Animator() {
   //apple animations group progress
   const planeToAppleProgress = useRef(0);
   const experienceCubesToApplePositionProgress = useRef(0);
+  const experienceCubesToAppleRotationProgress = useRef(0);
   const toAppleProgress = useRef(0);
   const appleParagraphProgress = useRef(0);
   const appleMoveProgress = useRef(0);
@@ -181,6 +185,7 @@ export default function Animator() {
   //react animations group progress
   const planeToReactPositionProgress = useRef(0);
   const cubesToReactPositionProgress = useRef(0);
+  const cubesToReactRotationProgress = useRef(0);
 
   //flower
   const flowerColorsProgress = useRef(0);
@@ -451,6 +456,25 @@ export default function Animator() {
       },
     });
 
+    //rotate for clock animations
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          experienceCubesToClockRotationProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setExperienceCubesToClockRotationProgress(
+                anim.progress
+              );
+          }
+        );
+      },
+    });
+
     //convert to clock (GLTF)
     timeline.add({
       targets: empty,
@@ -499,6 +523,7 @@ export default function Animator() {
     });
 
     //give it some time
+    //TODO: move the clock around or rotate or something
     timeline.add({
       targets: empty,
       duration: 3000,
@@ -565,6 +590,23 @@ export default function Animator() {
             useStore
               .getState()
               .experience.setCubesToCamelPositionProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //rotate the cubes to camel position
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          experienceCubesToCamelRotation,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setCubesToCamelRotationProgress(anim.progress);
           }
         );
       },
@@ -689,6 +731,23 @@ export default function Animator() {
       },
     });
 
+    //bring the cubes to android rotation
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          cubesToAndroidRotationProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setCubesToAndroidRotationProgress(anim.progress);
+          }
+        );
+      },
+    });
+
     //transform to android(GLTF)
     timeline.add({
       targets: empty,
@@ -745,7 +804,7 @@ export default function Animator() {
       duration: 3000,
     });
 
-    //androd go (GLTF)
+    //android go (GLTF)
     timeline.add({
       targets: empty,
       duration: 1000,
@@ -806,6 +865,24 @@ export default function Animator() {
             useStore
               .getState()
               .experience.setExperienceCubesToApplePositionProgress(
+                anim.progress
+              );
+          }
+        );
+      },
+    });
+    //bring the cubes to apple rotation
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          experienceCubesToAppleRotationProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setExperienceCubesToAppleRotationProgress(
                 anim.progress
               );
           }
@@ -927,6 +1004,23 @@ export default function Animator() {
             useStore
               .getState()
               .experience.setCubesToReactPositionProgress(anim.progress);
+          }
+        );
+      },
+    });
+
+    //cubes to react rotation
+    timeline.add({
+      targets: empty,
+      duration: 500,
+      update: function (anim) {
+        handleUpdateAnimation(
+          anim,
+          cubesToReactRotationProgress,
+          function progressSetter(anim) {
+            useStore
+              .getState()
+              .experience.setCubesToReactRotationProgress(anim.progress);
           }
         );
       },

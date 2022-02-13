@@ -68,6 +68,12 @@ export default function Model({ ...props }) {
       duration: 1,
       autoplay: true,
     });
+    const __ = anime({
+      targets: mainContainer.current.rotation,
+      y: [Math.PI / 8, Math.PI / 8],
+      duration: 1,
+      autoplay: true,
+    });
 
     //initial rotation
     const initialRotation = anime({
@@ -121,7 +127,7 @@ export default function Model({ ...props }) {
     //rotate cubes to show good clock animation
     const cubesToClockRotation = anime({
       targets: mainContainer.current.rotation,
-      y: Math.PI / 3,
+      y: [Math.PI / 8, Math.PI / 3],
       duration: 500,
       autoplay: false,
     });
@@ -148,7 +154,7 @@ export default function Model({ ...props }) {
     const cubesToCamelPosition = anime({
       targets: mainContainer.current.position,
       x: [clock.x - 4, camel.x - 10],
-      y: [clock.y + 8, camel.y + 5],
+      y: [clock.y + 10, camel.y + 5],
       z: [clock.z + 20, camel.z + 40],
       duration: 500,
       autoplay: false,
@@ -157,7 +163,7 @@ export default function Model({ ...props }) {
     //rotate cubes for camel anim
     const rotateCubesForCamelAnim = anime({
       targets: mainContainer.current.rotation,
-      y: -Math.PI / 3,
+      y: [0, -Math.PI / 3],
       duration: 500,
       autoplay: false,
     });
@@ -181,16 +187,16 @@ export default function Model({ ...props }) {
     //bring the cubes to android position
     const cubesToAndroidPosition = anime({
       targets: mainContainer.current.position,
-      x: [camel.x - 10, android.x - 6],
+      x: [camel.x - 4, android.x - 6],
       y: [camel.y + 5, android.y + 3],
-      z: [camel.z + 10, android.z + 36],
+      z: [camel.z + 20, android.z + 36],
       duration: 500,
       autoplay: false,
     });
 
     const rotateCubesForAndroidAnimation = anime({
       targets: mainContainer.current.rotation,
-      y: Math.PI / 3,
+      y: [0, Math.PI / 3],
       duration: 500,
       autoplay: false,
     });
@@ -214,9 +220,9 @@ export default function Model({ ...props }) {
     //bring the cubes to apple position
     const cubesToApplePosition = anime({
       targets: mainContainer.current.position,
-      x: [android.x - 8, ios.x + 15],
-      y: [android.y + 2, ios.y],
-      z: [android.z + 10, ios.z + 40],
+      x: [android.x + 2, ios.x + 15],
+      y: [android.y, ios.y],
+      z: [android.z + 20, ios.z + 40],
       duration: 500,
       autoplay: false,
     });
@@ -227,7 +233,7 @@ export default function Model({ ...props }) {
     //TODO: adjust
     const cubesToAppleRotation = anime({
       targets: mainContainer.current.rotation,
-      y: Math.PI / 3,
+      y: [Math.PI / 3, Math.PI / 2],
       duration: 500,
       autoplay: false,
     });
@@ -251,9 +257,9 @@ export default function Model({ ...props }) {
     //cubes to react animation
     const cubesToReactPosition = anime({
       targets: mainContainer.current.position,
-      x: [ios.x + 15, react.x - 2],
-      y: [ios.y, react.y + 4],
-      z: [ios.z + 20, react.z + 50],
+      x: [ios.x - 4, react.x - 2],
+      y: [ios.y, react.y + 2],
+      z: [ios.z + 30, react.z + 20],
       duration: 500,
       autoplay: false,
     });
@@ -261,7 +267,7 @@ export default function Model({ ...props }) {
     //cubes to react rotation
     const cubesToReactRotation = anime({
       targets: mainContainer.current.rotation,
-      // y: Math.PI / 2, //TODO: check this
+      y: Math.PI / 2, //TODO: check this
       duration: 500,
       autoplay: false,
     });
@@ -300,6 +306,7 @@ export default function Model({ ...props }) {
 
         //clock
         experienceCubesToClockPositionProgress,
+        experienceCubesToClockRotationProgress,
         toClockProgress,
         clockMoveProgress,
         timeDefinitionProgress,
@@ -308,6 +315,7 @@ export default function Model({ ...props }) {
 
         //camel
         cubesToCamelPositionProgress,
+        cubesToCamelRotationProgress,
         toCamelProgress,
         patienceDefinitionProgress,
         camelMoveProgress,
@@ -316,6 +324,7 @@ export default function Model({ ...props }) {
 
         //android
         cubesToAndroidPositionProgress,
+        cubesToAndroidRotationProgress,
         toAndroidProgress,
         androidParagraphProgress,
         androidMoveProgress,
@@ -324,6 +333,7 @@ export default function Model({ ...props }) {
 
         //apple
         experienceCubesToApplePositionProgress,
+        experienceCubesToAppleRotationProgress,
         toAppleProgress,
         appleParagraphProgress,
         appleMoveProgress,
@@ -332,6 +342,7 @@ export default function Model({ ...props }) {
 
         //react
         cubesToReactPositionProgress,
+        cubesToReactRotationProgress,
         //fower
         toFlowerProgress,
         flowerColorsProgress,
@@ -354,9 +365,7 @@ export default function Model({ ...props }) {
             break;
           case "initialScaleProgress":
             scaleDown.seek(initialScaleProgress);
-            if (activeAnimation.current.fadeOut) {
-              activeAnimation.current.fadeOut(0);
-            }
+
             mixer.stopAllAction();
             break;
           case "initialGoProgress":
@@ -371,7 +380,9 @@ export default function Model({ ...props }) {
             break;
           case "experienceCubesToClockPositionProgress":
             cubesToClockPosition.seek(experienceCubesToClockPositionProgress);
-            cubesToClockRotation.seek(experienceCubesToClockPositionProgress);
+            break;
+          case "experienceCubesToClockRotationProgress":
+            cubesToClockRotation.seek(experienceCubesToClockRotationProgress);
             break;
           case "toClockProgress":
             if (activeAnimation.current !== toClock) {
@@ -412,7 +423,9 @@ export default function Model({ ...props }) {
             break;
           case "cubesToCamelPositionProgress":
             cubesToCamelPosition.seek(cubesToCamelPositionProgress);
-            rotateCubesForCamelAnim.seek(cubesToCamelPositionProgress);
+            break;
+          case "cubesToCamelRotationProgress":
+            rotateCubesForCamelAnim.seek(cubesToCamelRotationProgress);
             break;
           case "toCamelProgress":
             if (activeAnimation.current !== toCamel) {
@@ -453,7 +466,10 @@ export default function Model({ ...props }) {
             break;
           case "cubesToAndroidPositionProgress":
             cubesToAndroidPosition.seek(cubesToAndroidPositionProgress);
-            rotateCubesForAndroidAnimation.seek(cubesToAndroidPositionProgress);
+            //TODO: animate color chages for cube materials and mabybe environment
+            break;
+          case "cubesToAndroidRotationProgress":
+            rotateCubesForAndroidAnimation.seek(cubesToAndroidRotationProgress);
             //TODO: animate color chages for cube materials and mabybe environment
             break;
           case "toAndroidProgress":
@@ -502,6 +518,9 @@ export default function Model({ ...props }) {
 
             cubesToAppleRotation.seek(experienceCubesToApplePositionProgress);
             break;
+          case "experienceCubesToAppleRotationProgress":
+            cubesToAppleRotation.seek(experienceCubesToAppleRotationProgress);
+            break;
           case "toAppleProgress":
             if (activeAnimation.current !== toApple) {
               mixer.stopAllAction();
@@ -543,6 +562,9 @@ export default function Model({ ...props }) {
           case "cubesToReactPositionProgress":
             cubesToReactPosition.seek(cubesToReactPositionProgress);
             break;
+          case "cubesToReactRotationProgress":
+            cubesToReactRotation.seek(cubesToReactRotationProgress);
+            break;
           case "toFlowerProgress":
             if (activeAnimation.current !== toFlower) {
               mixer.stopAllAction();
@@ -550,7 +572,7 @@ export default function Model({ ...props }) {
             activeAnimation.current = toFlower;
             play({
               progress: toFlowerProgress,
-              timeTweak: 0.2,
+              timeTweak: 0.15,
             });
             break;
           case "flowerColorsProgress":
@@ -566,7 +588,7 @@ export default function Model({ ...props }) {
             activeAnimation.current = toPineapple;
             play({
               progress: toPineAppleProgress,
-              timeTweak: 0.2,
+              timeTweak: 0.15,
             });
             break;
           case "pineappleColorsProgress":
@@ -582,7 +604,7 @@ export default function Model({ ...props }) {
             activeAnimation.current = toCannon;
             play({
               progress: toCannonProgress,
-              timeTweak: 0.2,
+              timeTweak: 0.15,
             });
             break;
           case "cannonColorsProgress":
