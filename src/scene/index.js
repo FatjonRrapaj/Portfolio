@@ -24,52 +24,7 @@ const Scene = () => {
           <World />
         </Canvas>
       </div>
-      <div id="fold" className="container">
-        <div
-          style={{
-            position: "absolute",
-            top: "50vh",
-            left: 0,
-            backgroundColor: "green",
-          }}
-        >
-          <h1>welcome to my website here we do cool stuff</h1>
-          <h1>welcome to my website here we do cool stuff</h1>
-          <h1>welcome to my website here we do cool stuff</h1>
-          <h1>welcome to my website here we do cool stuff</h1>
-          <h1>welcome to my website here we do cool stuff</h1>
-        </div>
-
-        <div
-          style={{
-            position: "absolute",
-            top: "500vh",
-            left: 0,
-            backgroundColor: "white",
-          }}
-        >
-          <h1>welcome to my website here we do cool stuff</h1>
-          <h1>welcome to my website here we do cool stuff</h1>
-          <h1>welcome to my website here we do cool stuff</h1>
-          <h1>welcome to my website here we do cool stuff</h1>
-          <h1>welcome to my website here we do cool stuff</h1>
-        </div>
-
-        <div
-          style={{
-            position: "absolute",
-            top: "1000vh",
-            left: 0,
-            backgroundColor: "red",
-          }}
-        >
-          <h1>welcome to my website here we do cool stuff</h1>
-          <h1>welcome to my website here we do cool stuff</h1>
-          <h1>welcome to my website here we do cool stuff</h1>
-          <h1>welcome to my website here we do cool stuff</h1>
-          <h1>welcome to my website here we do cool stuff</h1>
-        </div>
-      </div>
+      <div id="fold" className="container" />
     </div>
   );
 };

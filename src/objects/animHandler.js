@@ -1236,7 +1236,7 @@ export default function Animator() {
   useEffect(() => {
     camera.position.z = 725;
     camera.position.y = 8;
-    divContainer.scroll({ top: 0, left: 0 });
+    // divContainer.scroll({ top: 0, left: 0 });
     //Scroll & resize event listeners
     divContainer.addEventListener("wheel", onWheel, false);
     window.addEventListener("resize", onResize, { passive: true });
@@ -1244,30 +1244,6 @@ export default function Animator() {
     divContainer.addEventListener("touchmove", onTouchMove);
 
     addTimelineEvents();
-
-    //animate camera to look at 3 cubes
-    //bring the cubes to straight position
-    //join the 2 everything cubes together
-    //play the go animation for everything cubes
-    //set the cubes to the clock position
-    //play the toSheetAnim for the sheet cube
-    //replace the sheet cube with the plane cube on the same position
-    //play the fold plane animation
-
-    //the above tasks are completed
-
-    //0. set up the path points
-    //1. move the plane to the initial trajectory point
-    //2. make the points path visible
-    //animate plane to the path points
-
-    //move the plane to clock position
-    //play the come animation for cubes
-    //play the to clock position
-    //render the text for clock
-    //play the clock move & keep rendering text
-    //...
-
     return () => {
       divContainer.removeEventListener("wheel", onWheel);
       window.removeEventListener("resize", onResize);
