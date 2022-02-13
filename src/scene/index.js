@@ -13,7 +13,7 @@ const Scene = () => {
         <Canvas
           shadows
           camera={{
-            far: 200,
+            far: 50, //important to have a clean view from the curve path (plane trajectory)
             near: 1,
             fov: 45,
             aspect: window.innerWidth / window.innerHeight,
@@ -24,9 +24,7 @@ const Scene = () => {
           <World />
         </Canvas>
       </div>
-
-      {/* <Welcome /> */}
-      <div id="fold" className="container"></div>
+      <div id="fold" className="container" />
     </div>
   );
 };
