@@ -1,0 +1,239 @@
+import { Suspense, useState, useEffect, useRef, createRef } from "react";
+import { Vector3, CatmullRomCurve3, BufferGeometry } from "three";
+import { useFrame, useThree, extend } from "@react-three/fiber";
+import { Stats } from "@react-three/drei";
+
+import { lerp } from "../../helpers/animation";
+import createSpiralPathFromCoordinateWithRadius from "./createPath";
+import anime from "animejs/lib/anime.es.js";
+
+import Everything from "../Starter";
+import TestPlane from "../TestOnlyPlane";
+import Sheet from "../Sheet";
+import Loading from "../Loading";
+import Effect from "../../postprocessing";
+import AnimHandler from "../animHandler";
+
+import useStore from "../../store";
+
+const World = () => {
+  const { camera, ...rest } = useThree();
+
+  /** Window event listener handlers */
+  const divContainer = document.getElementById("fold");
+  var maxHeight = divContainer.clientHeight - window.innerHeight;
+  var percentage = 0;
+  var scrollY = 0;
+  var touchStartY = 0;
+
+  var event = {
+    y: 0,
+    deltaY: 0,
+  };
+
+  const onResize = () => {
+    maxHeight = divContainer.clientHeight - window.innerHeight;
+  };
+
+  let isScrolling;
+
+  function onWheel(e) {
+    var evt = event;
+    evt.deltaY = e.wheelDeltaY || e.deltaY * -1;
+    evt.deltaY *= 0.5;
+    clearTimeout(isScrolling);
+    useStore.getState().world.setScrollingStopped(false);
+    isScrolling = setTimeout(function () {
+      useStore.getState().world.setScrollingStopped(true);
+    }, 66);
+    scroll(e);
+  }
+
+  function scroll() {
+    var evt = event;
+    if (evt.y + evt.deltaY > 0) {
+      evt.y = 0;
+    } else if (-(evt.y + evt.deltaY) >= maxHeight) {
+      evt.y = -maxHeight;
+    } else {
+      evt.y += evt.deltaY;
+    }
+    scrollY = -evt.y;
+    useStore.getState().world.setScrollY(scrollY);
+    percentage = lerp(percentage, scrollY, 0.07);
+    useStore.getState().world.setProgress(percentage);
+  }
+
+  function animatePlane(percentage) {
+    useStore.getState().paperPlane.setAnimationTime(percentage);
+  }
+
+  function animatePlaneToInitialTrajectoryPoint(fraction) {
+    useStore
+      .getState()
+      .paperPlane.setInitialTrajectoryPointAnimationTime(fraction);
+  }
+
+  const up = new Vector3(0, 0, -1);
+  const axis = new Vector3();
+
+  function movePlane({ fraction, isBackward, moveCamera }) {
+    // const point = line.getPoint(fraction);
+    // const { x, y, z } = point;
+    // useStore.getState().paperPlane.move([x, y, z]);
+    // if (isBackward) {
+    //   up.z = 1;
+    // } else {
+    //   up.z = -1;
+    // }
+    // const tangent = line.getTangent(fraction);
+    // axis.crossVectors(up, tangent).normalize();
+    // const radians = Math.acos(up.dot(tangent));
+    // useStore.getState().paperPlane.setRotationAngle({ axis, angle: radians });
+    // if (moveCamera) {
+    //   camera.position.set(...[x, y + 3, z + 10]);
+    // }
+  }
+
+  let oldProgress = -Infinity;
+
+  function handleProgress(progress) {
+    // console.log("progress: ", progress);
+    let isBackward = false;
+    if (oldProgress > progress) {
+      isBackward = true;
+    } else {
+      isBackward = false;
+    }
+    oldProgress = progress;
+
+    if (progress <= 18000) {
+      animatePlane(progress);
+    } else if (progress > 18000 && progress <= 20000) {
+      const fraction = progress - 18000;
+      animatePlaneToInitialTrajectoryPoint(fraction);
+    } else if (progress > 18000) {
+      const localProgress = progress - 18000;
+      const fraction = localProgress / 30000;
+      let prevCameraPosition = camera.position;
+      if (progress > 20760 && progress <= 26262) {
+        //PLANE
+        movePlane({
+          fraction,
+          isBackward,
+          moveCamera: false,
+        });
+        const xFactor = isBackward ? 1 : -1;
+        const zFactor = 1;
+        let cameraX;
+        let cameraY;
+        let cameraZ;
+        const zoomProgress = localProgress / 50000;
+        if (isBackward) {
+          cameraX = Math.min(
+            -190,
+            prevCameraPosition.x + zoomProgress * xFactor
+          );
+        } else {
+          cameraX = Math.max(
+            -190,
+            prevCameraPosition.x + zoomProgress * xFactor
+          );
+        }
+        cameraY = camera.position.y;
+        cameraZ = Math.min(550, prevCameraPosition.z + zoomProgress * zFactor);
+        camera.position.set(...[cameraX, cameraY, cameraZ]);
+      } else if (progress > 26262 && progress <= 27300) {
+        //PLANE TO BRAIN
+        movePlane({
+          fraction,
+          isBackward,
+          moveCamera: true,
+        });
+      } else if (progress > 27300 && progress <= 33611) {
+        //BRAIN
+        movePlane({
+          fraction,
+          isBackward,
+          moveCamera: false,
+        });
+        const xFactor = isBackward ? 1 : -1;
+        const zFactor = 1;
+        let cameraX;
+        let cameraY;
+        let cameraZ;
+        const zoomProgress = localProgress / 50000;
+        if (isBackward) {
+          cameraX = Math.min(
+            190,
+            prevCameraPosition.x + zoomProgress * xFactor
+          );
+        } else {
+          cameraX = Math.max(
+            190,
+            prevCameraPosition.x + zoomProgress * xFactor
+          );
+        }
+        cameraY = Math.min(8, prevCameraPosition.y + zoomProgress);
+        if (isBackward) {
+          cameraZ = Math.max(
+            490,
+            prevCameraPosition.z + zoomProgress * zFactor
+          );
+        }
+        cameraZ = Math.min(490, prevCameraPosition.z + zoomProgress * zFactor);
+        camera.position.set(...[cameraX, cameraY, cameraZ]);
+      } else if (progress > 33611 && progress <= 34600) {
+        //BRAIN TO WORLD
+        movePlane({
+          fraction,
+          isBackward,
+          moveCamera: true,
+        });
+      } else if (progress > 34600 && progress <= 42000) {
+        movePlane({
+          fraction,
+          isBackward,
+          moveCamera: true,
+        });
+      } else {
+        movePlane({
+          fraction,
+          isBackward,
+          moveCamera: true,
+        });
+      }
+    }
+  }
+
+  function onTouchStart(e) {
+    var t = e.targetTouches ? e.targetTouches[0] : e;
+    touchStartY = t.pageY;
+  }
+
+  function onTouchMove(e) {
+    var evt = event;
+    var t = e.targetTouches ? e.targetTouches[0] : e;
+    // the multiply factor on mobile must be about 10x the factor applied on the wheel
+    evt.deltaY = (t.pageY - touchStartY) * 5;
+    touchStartY = t.pageY;
+    scroll(e);
+  }
+
+  return (
+    <>
+      <Effect />
+      <Stats />
+      <AnimHandler />
+      <Suspense fallback={null}>
+        <Loading />
+        <Everything />
+        <TestPlane />
+        <Sheet />
+      </Suspense>
+      <directionalLight intensity={1} position={[2, 1, 697]} color="white" />
+    </>
+  );
+};
+
+export default World;
