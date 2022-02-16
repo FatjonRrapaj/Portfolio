@@ -99,29 +99,24 @@ export default function Animator() {
   /**
    * Taken from actions, exported from blender. //TODO: check for automatization
    */
-  const animationTimes = {
-    //experience
-    androidMove: 1.5833333730697632,
-    appleMove: 1.25,
-    camelMove: 1,
-    clockMove: 0.875,
-    come: 1.2916666269302368,
-    go: 1.5,
-    join: 1.7083333730697632,
-    toAndroid: 2.5416667461395264,
-    toApple: 3.375,
-    toCamel: 3.375,
-    toCannon: 2.4166667461395264,
-    toClock: 3.375,
-    toFlower: 2.5416667461395264,
-    toPineapple: 3.8333332538604736,
-    //sheet
-    toSheet: 2,
-  };
 
   const { camera } = useThree();
 
   const empty = {};
+
+  // function onTouchStart(e) {
+  //   var t = e.targetTouches ? e.targetTouches[0] : e;
+  //   touchStartY = t.pageY;
+  // }
+
+  // function onTouchMove(e) {
+  //   var evt = event;
+  //   var t = e.targetTouches ? e.targetTouches[0] : e;
+  //   // the multiply factor on mobile must be about 10x the factor applied on the wheel
+  //   evt.deltaY = (t.pageY - touchStartY) * 5;
+  //   touchStartY = t.pageY;
+  //   scroll(e);
+  // }
 
   //these refs control animations to avoid emitting multiple times 0's and 100's progress from onUpdate(animation.progress) function from anime js
 

@@ -1,16 +1,8 @@
 import create from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
-import useObject from "./object";
-
 const useStore = create(
   subscribeWithSelector((set, get) => ({
-    ...useObject(set, get, "world"),
-    ...useObject(set, get, "paperPlane"),
-    ...useObject(set, get, "fatstronaut"),
-    ...useObject(set, get, "sky"),
-    ...useObject(set, get, "camera"),
-
     //TODO: set scrollstatus checks before each update.
     //TODO: separate initialAnimation,experience,shet,plane to different files
     //TODO: create state modifier function with key string as arguments (or don't do that)

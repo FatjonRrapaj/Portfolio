@@ -25,7 +25,7 @@ const Scene = () => {
         </Canvas>
       </div>
       <div id="fold" className="container">
-        <div
+        {/* <div
           style={{
             position: "absolute",
             height: "100vh",
@@ -40,7 +40,7 @@ const Scene = () => {
           <h1>Cool stuff going on here</h1>
           <h1>Cool stuff going on here</h1>
           <h1>Cool stuff going on here</h1>
-        </div>
+        </div> */}
       </div>
     </div>
   );
