@@ -1,6 +1,6 @@
 {
-  "short_name": "Protfolio",
-  "name": "Fatjon Rrapaj's Protfolio website",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",
