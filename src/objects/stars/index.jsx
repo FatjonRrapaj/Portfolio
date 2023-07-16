@@ -15,7 +15,7 @@ function Stars() {
   );
 
   const { particlesMaterial, particlesGeometry } = useMemo(() => {
-    const count = 10000;
+    const count = 1000;
     const distance = 1000;
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
